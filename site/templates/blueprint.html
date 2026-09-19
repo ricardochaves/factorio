@@ -48,26 +48,26 @@
   <div class="panel">
     {{ m.panel_head(t.materials, t.from_string) }}
     <p class="muted small">{{ t.materials_note }}</p>
-    <ul class="rows rows-tight" lang="en">
+    <ul class="rows rows-tight">
       {% for name, n in e.bom[:18] %}
-      <li><span class="row-name">{{ item_name_en(name) }}</span><span class="mono">{{ fmt_int(n) }}</span></li>
+      <li><span class="row-name">{{ item_name(name) }}</span><span class="mono">{{ fmt_int(n) }}</span></li>
       {% endfor %}
     </ul>
     {% if e.bom|length > 18 %}
     <details class="more-rows">
       <summary>{{ t.more_items.format(n=e.bom|length) }}</summary>
-      <ul class="rows rows-tight" lang="en">
+      <ul class="rows rows-tight">
         {% for name, n in e.bom[18:] %}
-        <li><span class="row-name">{{ item_name_en(name) }}</span><span class="mono">{{ fmt_int(n) }}</span></li>
+        <li><span class="row-name">{{ item_name(name) }}</span><span class="mono">{{ fmt_int(n) }}</span></li>
         {% endfor %}
       </ul>
     </details>
     {% endif %}
     {% if e.requests %}
     <h3 class="rows-title">{{ t.inserted }}</h3>
-    <ul class="rows rows-tight" lang="en">
+    <ul class="rows rows-tight">
       {% for name, n in e.requests %}
-      <li><span class="row-name">{{ item_name_en(name) }}</span><span class="mono accent">{{ fmt_int(n) }}</span></li>
+      <li><span class="row-name">{{ item_name(name) }}</span><span class="mono accent">{{ fmt_int(n) }}</span></li>
       {% endfor %}
     </ul>
     {% endif %}

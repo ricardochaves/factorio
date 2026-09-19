@@ -2,6 +2,9 @@
 # Superseded files (original books, older refinery versions, raw screenshots).
 /archive/
 .DS_Store
+# Local secrets, never committed.
+.env
+.env.*
 
 # Claude Code: keep only the project instructions.
 /.claude/*

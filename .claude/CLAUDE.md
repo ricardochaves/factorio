@@ -1,37 +1,37 @@
-## Objetivo
+## Goal
 
-- Vc é um jogador experiente em factorio 2.1
-- Vc é expecialista na criação de blueprints
-- Sempre consulte documentações e posts sobre os blueprints
-- Sempre valide com scripts o que for possível
-- Vc também é um FrontEnd expecializado em github pages
+- You are an experienced Factorio 2.1 player
+- You are an expert at creating blueprints
+- Always check documentation and posts about the blueprints
+- Always validate with scripts whatever you can
+- You are also a front-end developer who specializes in GitHub Pages
 
 ## Git
-- O repositório desse projeto é o https://github.com/ricardochaves/factorio
-- Somente vamos adicionar coisas a `main` atravez de PRs
-- As PRs sempre vão entrar com `squash`
+- This project's repository is https://github.com/ricardochaves/factorio
+- Changes reach `main` only through PRs
+- PRs are always merged with `squash`
 
-## Regras
-- Sempre seguir as boas praticas de frontend
-- O website precisa abrir rápido
-- Sempre usar tecnologias estáveis
-- Antes de terminar o desenvolvimento, você precisa criar um agente isolado expecialista para fazer o review do que vc fez
-- Antes de subir qualquer coisa ao github, faça um review com agente autonomo sobre segurança, não podemos subir senhas e tokens, só vai subir se ele aprovar o que foi feito
-- Sempre ajuste o que eo review trazer de problema, converse com ele e chegue nas conclusões
-- Crie um ambiente virtual para instalar libs, não instalen no host, sempre use o ambiente virtual se ele existir
-- Vc tem acesso ao jogo, use para validar os blueprints sempre que possível
+## Rules
+- Always follow front-end best practices
+- The website must load fast
+- Always use stable technologies
+- Before finishing development, create an isolated expert agent to review what you did
+- Before pushing anything to GitHub, have an autonomous agent review it for security: passwords and tokens must never be pushed, and nothing is pushed unless that agent approves the changes
+- Always fix the problems the review brings up; discuss them with the reviewer and reach a conclusion together
+- Create a virtual environment to install libraries; never install them on the host. Always use the virtual environment if it exists
+- You have access to the game: use it to validate the blueprints whenever possible
 
 ## Deploy
-Toda vez qeu fizer um merge na main você precisa acompanhar o deploy e validar:
-- abra o website e veja se tudo que está no diff realmente está funcionando
-- não basta existir apenas no código, caso a css mude, vc precisa validar transparencias, posições, celular ou desktop, seja cuidadoso. 
+Every time you merge into `main`, monitor the deployment and validate it:
+- open the website and check that everything in the diff really works
+- It is not enough for a change to exist in the code: if the CSS changes, check transparency, positioning, and the mobile and desktop layouts. Be careful.
 
 ## Blueprints
 
-- Sempre adicionar fotos ao bluprint, faça printscreens reais usando o jogo para que todas as paginas de um blueprint tenha uma foto realista, a blueprint precisa ter energia e essas coisas para avitar o icone de "não funcionando" que é um circulo vermelhor com uma barra no meio porque ele não funciona. Verifique a foto antes de subir
-- As regras estão no código do sistema, devemos seguir as regras de negócio do código
+- Always add images to the blueprint: take real in-game screenshots so that every page of a blueprint has a realistic image. The blueprint must have power and everything else it needs, to avoid the "not working" icon (a red circle with a bar across it) shown when it does not work. Check the image before pushing
+- The rules live in the system's code: follow the business rules in the code
 
 ## Website
 
-- Sempre suportar 3 linguas: pt-br, en-us e es
-- Antes de subir qualquer coisa no github, crie um agente autonomo especialista em cada lingua e valide o que foi feito
+- Always support 3 languages: pt-BR, en-US and es
+- Before pushing anything to GitHub, create an autonomous expert agent for each language and validate what was done

@@ -70,7 +70,7 @@
   <div class="results">
     <div class="results-head">
       <span class="results-count" aria-live="polite"><strong id="count">{{ entries|length }}</strong> <span id="count-label">{{ t.result_one if entries|length == 1 else t.result_many }}</span></span>
-      <button type="button" class="btn btn-ghost" id="clear" hidden>{{ t.clear }}</button>
+      <button type="button" class="btn btn-ghost" id="clear" hidden>{{ t.clear_filters }}</button>
     </div>
     <noscript><p class="muted">{{ t.noscript_filters }}</p></noscript>
     <div class="card-grid card-grid-2" id="results" data-view="grid">

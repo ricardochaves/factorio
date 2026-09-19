@@ -231,9 +231,12 @@ def split_book(entry, f, out):
         kind = bp.kind(child)
         inner = child[kind]
         label = inner.get('label') or ''
-        count = len(list(bp.walk({kind: inner})))
-        children.append({'label': label, 'kind': kind, 'count': count, 'description': inner.get('description', ''),
-                         'url': f'{rel}/{slugify(label) or "item"}.txt', 'obj': {kind: inner}})
+        leaves = [b.get('label') or '' for _, b in bp.walk({kind: inner})]
+        pairs = [nxm_pair(x) for x in (leaves[0], leaves[-1])] if leaves else [None, None]
+        children.append({'label': label, 'kind': kind, 'count': len(leaves), 'description': inner.get('description', ''),
+                         'url': f'{rel}/{slugify(label) or "item"}.txt', 'obj': {kind: inner},
+                         # "N to 1 ... N to 24": the page writes it in its own language
+                         'range': pairs if all(pairs) else None})
     if not cached.exists():
         tmp = cached.with_suffix('.tmp')
         shutil.rmtree(tmp, ignore_errors=True)
@@ -251,6 +254,12 @@ def split_book(entry, f, out):
     for c in children:
         del c['obj']
     return children, data
+
+
+def nxm_pair(label):
+    """'2 to 3 (Wide)' -> {'n': 2, 'm': 3, 'variant': 'wide'}; None when the label is not an N x M pair."""
+    m = NXM_LABEL.match(label or '')
+    return {'n': int(m[1]), 'm': int(m[2]), 'variant': slugify(m[3]) if m[3] else None} if m else None
 
 
 def origin_code(description):
@@ -368,8 +377,15 @@ def build_model(out):
                 fo['children'], data = split_book(c, f, out)
                 if c.get('viewer') == 'nxm-matrix':
                     fo['grid'] = nxm_grid(c, f, data)
-                    codes = Counter(fo['grid']['o'].replace('-', ''))
+                    # count blueprints, not matrix cells: a pair can have several variants (2 to 3 Long and Wide)
+                    codes = Counter(origin_code(b.get('description')) for _, b in bp.walk(data)
+                                    if NXM_LABEL.match(b.get('label') or ''))
                     fo['origins'] = {o['code']: codes.get(o['code'], 0) for o in i18n.ORIGINS}
+                    if sum(fo['origins'].values()) != f['blueprint_count']:
+                        raise SystemExit(f'{slug}/{f["path"]}: origins cover {sum(fo["origins"].values())} of '
+                                         f'{f["blueprint_count"]} blueprints')
+            if fo['largest']:
+                fo['largest'] = dict(fo['largest'], pair=nxm_pair(fo['largest']['label']))
             files.append(fo)
         e['files'] = files
         e['default_file'] = len(files) - 1  # files go from the simplest to the most advanced variant
@@ -440,6 +456,11 @@ class Site:
                                undefined=StrictUndefined, trim_blocks=True, lstrip_blocks=True)
         self.assets = {}
         self.pages = []
+        # Jinja resolves t.clear to dict.clear before the key "clear": no text key may shadow a dict method.
+        for lang, strings in i18n.T.items():
+            clash = set(strings) & set(dir(dict))
+            if clash:
+                raise SystemExit(f'site/i18n.py: T[{lang!r}] keys {sorted(clash)} shadow dict methods; rename them')
 
     def copy_static(self):
         dest = self.out / 'assets'
@@ -489,7 +510,20 @@ class Site:
             if e['single']:
                 s = e['single']
                 return t['facts_bp'].format(e=i18n.fmt_int(s['entities'], lang), w=s['width'], h=s['height'])
+            if e['blueprint_count'] == 1:
+                return t['facts_book_one']
             return t['facts_book'].format(n=i18n.fmt_int(e['blueprint_count'], lang))
+
+        def variant_name(slug, fallback=''):
+            return i18n.VARIANTS[slug][lang] if slug in i18n.VARIANTS else fallback or slug
+
+        def pair_label(p):
+            """{'n', 'm', 'variant'} from nxm_pair -> '17 para 18' (+ ' (Largo)')."""
+            text = t['pair_label'].format(n=p['n'], m=p['m'])
+            return text + (f' ({variant_name(p["variant"])})' if p.get('variant') else '')
+
+        def count_label(n, one_key, many_key):
+            return t[one_key] if n == 1 else t[many_key].format(n=i18n.fmt_int(n, lang))
 
         def srcset(img):
             return ', '.join(f'{root}{p} {w}w' for p, w, _ in img['variants'])
@@ -508,25 +542,31 @@ class Site:
             'fmt_date': lambda d: i18n.fmt_date(d, lang) if d else '',
             'tag_label': tag_label, 'cat_label': cat_label, 'machine_label': machine_label,
             'kind_label': kind_label, 'facts': facts, 'srcset': srcset,
+            'pair_label': pair_label, 'variant_name': variant_name, 'count_label': count_label,
             'recipe_name': lambda r: game['recipe'].get(r, r),
-            'item_name_en': lambda i: game_en['item'].get(i, game_en['entity'].get(i, i)),
+            # items with their in-game name in the page's language (English name when the game has no translation)
+            'item_name': lambda i: game['item'].get(i) or game['entity'].get(i) or game_en['item'].get(i, i),
             'categories': i18n.CATEGORIES, 'origins': i18n.ORIGINS,
             'phases': i18n.PHASES, 'city': i18n.CITY, 'uses': i18n.USES,
             'entries': self.entries, 'news': self.news,
         }
 
+    def write(self, dest, html):
+        if 'built-in method' in html or 'bound method' in html:  # a template printed a Python method, not text
+            raise SystemExit(f'{dest}: a template printed a Python method; check the attribute names')
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_text(html, encoding='utf-8')
+
     def render(self, template, lang, path, page, **extra):
         ctx = self.context(lang, path, page)
         ctx.update(extra)
-        dest = self.out / i18n.PREFIX[lang] / path / 'index.html'
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_text(self.env.get_template(template).render(**ctx), encoding='utf-8')
+        self.write(self.out / i18n.PREFIX[lang] / path / 'index.html', self.env.get_template(template).render(**ctx))
         self.pages.append(ctx['canonical'])
 
     def render_404(self):
         """GitHub Pages serves /404.html for any missing path, so its links are absolute and it speaks every language."""
         ctx = self.context(i18n.DEFAULT, '', '404', root=SITE_URL)
-        (self.out / '404.html').write_text(self.env.get_template('404.html').render(**ctx), encoding='utf-8')
+        self.write(self.out / '404.html', self.env.get_template('404.html').render(**ctx))
 
     def catalog_index(self, lang):
         rows = []
@@ -544,9 +584,13 @@ class Site:
         return rows
 
     def book_data(self, e, lang):
+        def localized(grid):
+            variants = {key: [[slug, i18n.VARIANTS[slug][lang] if slug in i18n.VARIANTS else name]
+                              for slug, name in vs] for key, vs in grid['v'].items()}
+            return dict(grid, v=variants)
         return [{
             'id': f['id'], 'color': f['color'], 'url': f['url'], 'size': i18n.fmt_bytes(f['bytes'], lang),
-            'name': i18n.label(f['name'], lang), 'grid': f['grid'],
+            'name': i18n.label(f['name'], lang), 'grid': localized(f['grid']),
         } for f in e['files']]
 
     def build(self):

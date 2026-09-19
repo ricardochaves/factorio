@@ -1,5 +1,5 @@
 title = "Refinaria de petróleo"
-summary = "Processamento avançado de óleo com cracking, plástico, combustível sólido e de foguete, baterias, enxofre, ácido sulfúrico e lubrificante."
+summary = "Refinamento avançado de petróleo com craqueamento, plástico, combustível sólido e de foguete, baterias, enxofre, ácido sulfúrico e lubrificante."
 category = "oil"
 tags = ["late-game", "modules", "beacons", "blue-belt"]
 
@@ -16,27 +16,27 @@ report = "README.md"
 
 [[images]]
 path = "images/overview.webp"
-alt = "Mapa completo da refinaria, capturado no jogo"
-alt_en = "The whole refinery, captured in the game"
-alt_es = "Mapa completo de la refinería, capturado en el juego"
+alt = "Vista completa da refinaria, capturada no jogo"
+alt_en = "The whole refinery, captured in-game"
+alt_es = "Vista completa de la refinería, captura del juego"
 
 [[images]]
 path = "images/plastic-feed-pumps.webp"
-alt = "Detalhe: bombas que levam gás ao bloco direito de plástico (v2), capturado no jogo"
-alt_en = "Detail: pumps feeding gas to the right plastic block (v2), captured in the game"
-alt_es = "Detalle: bombas que llevan gas al bloque derecho de plástico (v2), capturado en el juego"
+alt = "Detalhe: bombas que levam gás de petróleo ao bloco de plástico da direita (v2), capturado no jogo"
+alt_en = "Detail: pumps feeding petroleum gas to the right-hand plastic block (v2), captured in-game"
+alt_es = "Detalle: bombas que llevan gas de petróleo al bloque de plástico de la derecha (v2), captura del juego"
 
 [[images]]
 path = "images/water-feed-p1.webp"
 alt = "Detalhe: bomba P1, que leva água ao bloco de ácido sulfúrico (v3), capturado no jogo"
-alt_en = "Detail: pump P1, feeding water to the sulfuric acid block (v3), captured in the game"
-alt_es = "Detalle: bomba P1, que lleva agua al bloque de ácido sulfúrico (v3), capturado en el juego"
+alt_en = "Detail: pump P1, feeding water to the sulfuric acid block (v3), captured in-game"
+alt_es = "Detalle: bomba P1, que lleva agua al bloque de ácido sulfúrico (v3), captura del juego"
 
 [[images]]
 path = "images/water-feed-p2.webp"
 alt = "Detalhe: bomba P2, que enche o tanque de água do bloco de ácido sulfúrico (v3), capturado no jogo"
-alt_en = "Detail: pump P2, filling the water tank of the sulfuric acid block (v3), captured in the game"
-alt_es = "Detalle: bomba P2, que llena el tanque de agua del bloque de ácido sulfúrico (v3), capturado en el juego"
+alt_en = "Detail: pump P2, filling the water tank of the sulfuric acid block (v3), captured in-game"
+alt_es = "Detalle: bomba P2, que llena la cisterna de agua del bloque de ácido sulfúrico (v3), captura del juego"
 
 [en]
 title = "Oil refinery"

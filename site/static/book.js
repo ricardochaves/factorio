@@ -187,7 +187,8 @@
     var origin = ORIGIN[code] || ORIGIN.u;
     var tier = D.lang === 'en' ? f.name : f.name.toLowerCase();
     $('sel-book').textContent = fill(T.book_tier, { tier: tier, n: g.sub[i] || n });
-    $('sel-title').textContent = n + ' → ' + m;
+    $('sel-title-arrow').textContent = n + ' → ' + m;  // screen readers get "8 to 8", not "8 right arrow 8"
+    $('sel-title-text').textContent = fill(T.pair_label, { n: n, m: m });
     var badge = $('sel-origin');
     badge.textContent = origin.name;
     badge.style.setProperty('--c', origin.color);
@@ -388,9 +389,10 @@
   var fromHash = D.files.map(function (f) { return f.id; }).indexOf(hash[0]);
   if (fromHash >= 0) {
     start = fromHash;
-    if (+hash[1]) state.n = +hash[1];
-    if (+hash[2]) state.m = +hash[2];
-    state.variant = hash[3] || null;
+    var hn = parseInt(hash[1], 10), hm = parseInt(hash[2], 10);
+    if (hn > 0) state.n = hn;
+    if (hm > 0) state.m = hm;
+    state.variant = hash[3] || null;  // select() keeps it only if the pair has that variant
   } else {
     try {
       var saved2 = window.localStorage.getItem(storeKey);
