@@ -1,0 +1,4261 @@
+{
+ "active_mods": {
+  "base": "2.0.77"
+ },
+ "asteroid_chunk": [
+  "asteroid-chunk-unknown"
+ ],
+ "entity": {
+  "1x2-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 2
+  },
+  "accumulator": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "accumulator"
+    }
+   ],
+   "type": "accumulator",
+   "w": 2
+  },
+  "accumulator-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "accumulator-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 2
+  },
+  "acid-splash-fire-spitter-behemoth": {
+   "h": 0,
+   "type": "fire",
+   "w": 0
+  },
+  "acid-splash-fire-spitter-big": {
+   "h": 0,
+   "type": "fire",
+   "w": 0
+  },
+  "acid-splash-fire-spitter-medium": {
+   "h": 0,
+   "type": "fire",
+   "w": 0
+  },
+  "acid-splash-fire-spitter-small": {
+   "h": 0,
+   "type": "fire",
+   "w": 0
+  },
+  "acid-splash-fire-worm-behemoth": {
+   "h": 0,
+   "type": "fire",
+   "w": 0
+  },
+  "acid-splash-fire-worm-big": {
+   "h": 0,
+   "type": "fire",
+   "w": 0
+  },
+  "acid-splash-fire-worm-medium": {
+   "h": 0,
+   "type": "fire",
+   "w": 0
+  },
+  "acid-splash-fire-worm-small": {
+   "h": 0,
+   "type": "fire",
+   "w": 0
+  },
+  "acid-sticker-behemoth": {
+   "h": 0,
+   "type": "sticker",
+   "w": 0
+  },
+  "acid-sticker-big": {
+   "h": 0,
+   "type": "sticker",
+   "w": 0
+  },
+  "acid-sticker-medium": {
+   "h": 0,
+   "type": "sticker",
+   "w": 0
+  },
+  "acid-sticker-small": {
+   "h": 0,
+   "type": "sticker",
+   "w": 0
+  },
+  "acid-stream-spitter-behemoth": {
+   "h": 0,
+   "type": "stream",
+   "w": 0
+  },
+  "acid-stream-spitter-big": {
+   "h": 0,
+   "type": "stream",
+   "w": 0
+  },
+  "acid-stream-spitter-medium": {
+   "h": 0,
+   "type": "stream",
+   "w": 0
+  },
+  "acid-stream-spitter-small": {
+   "h": 0,
+   "type": "stream",
+   "w": 0
+  },
+  "acid-stream-worm-behemoth": {
+   "h": 0,
+   "type": "stream",
+   "w": 0
+  },
+  "acid-stream-worm-big": {
+   "h": 0,
+   "type": "stream",
+   "w": 0
+  },
+  "acid-stream-worm-medium": {
+   "h": 0,
+   "type": "stream",
+   "w": 0
+  },
+  "acid-stream-worm-small": {
+   "h": 0,
+   "type": "stream",
+   "w": 0
+  },
+  "active-provider-chest": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "active-provider-chest"
+    }
+   ],
+   "type": "logistic-container",
+   "w": 1
+  },
+  "active-provider-chest-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "active-provider-chest-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "arithmetic-combinator": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "arithmetic-combinator"
+    }
+   ],
+   "type": "arithmetic-combinator",
+   "w": 1
+  },
+  "arithmetic-combinator-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "arithmetic-combinator-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 1
+  },
+  "artillery-cannon-muzzle-flash": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "artillery-flare": {
+   "h": 0,
+   "type": "artillery-flare",
+   "w": 0
+  },
+  "artillery-projectile": {
+   "h": 0,
+   "type": "artillery-projectile",
+   "w": 0
+  },
+  "artillery-turret": {
+   "h": 3,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "artillery-turret"
+    }
+   ],
+   "type": "artillery-turret",
+   "w": 3
+  },
+  "artillery-turret-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "artillery-turret-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "artillery-wagon": {
+   "h": 5,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "artillery-wagon"
+    }
+   ],
+   "type": "artillery-wagon",
+   "w": 2
+  },
+  "artillery-wagon-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "artillery-wagon-remnants": {
+   "h": 6,
+   "type": "corpse",
+   "w": 2
+  },
+  "assembling-machine-1": {
+   "h": 3,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "assembling-machine-1"
+    }
+   ],
+   "type": "assembling-machine",
+   "w": 3
+  },
+  "assembling-machine-1-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "assembling-machine-1-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "assembling-machine-2": {
+   "h": 3,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "assembling-machine-2"
+    }
+   ],
+   "type": "assembling-machine",
+   "w": 3
+  },
+  "assembling-machine-2-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "assembling-machine-2-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "assembling-machine-3": {
+   "h": 3,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "assembling-machine-3"
+    }
+   ],
+   "type": "assembling-machine",
+   "w": 3
+  },
+  "assembling-machine-3-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "assembling-machine-3-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "atomic-bomb-ground-zero-projectile": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "atomic-bomb-wave": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "atomic-bomb-wave-spawns-cluster-nuke-explosion": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "atomic-bomb-wave-spawns-fire-smoke-explosion": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "atomic-bomb-wave-spawns-nuclear-smoke": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "atomic-bomb-wave-spawns-nuke-shockwave-explosion": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "atomic-fire-smoke": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "atomic-nuke-shockwave": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "atomic-rocket": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "beacon": {
+   "h": 3,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "beacon"
+    }
+   ],
+   "type": "beacon",
+   "w": 3
+  },
+  "beacon-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "beacon-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 1
+  },
+  "behemoth-biter": {
+   "h": 1,
+   "type": "unit",
+   "w": 1
+  },
+  "behemoth-biter-corpse": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "behemoth-biter-die": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "behemoth-spitter": {
+   "h": 1,
+   "type": "unit",
+   "w": 1
+  },
+  "behemoth-spitter-corpse": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "behemoth-spitter-die": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "behemoth-worm-corpse": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "behemoth-worm-corpse-burrowed": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "behemoth-worm-die": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "behemoth-worm-turret": {
+   "h": 3,
+   "type": "turret",
+   "w": 3
+  },
+  "big-artillery-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "big-biter": {
+   "h": 1,
+   "type": "unit",
+   "w": 1
+  },
+  "big-biter-corpse": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "big-biter-die": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "big-electric-pole": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "big-electric-pole"
+    }
+   ],
+   "type": "electric-pole",
+   "w": 2
+  },
+  "big-electric-pole-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "big-electric-pole-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 2
+  },
+  "big-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "big-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "big-rock": {
+   "h": 2,
+   "type": "simple-entity",
+   "w": 2
+  },
+  "big-sand-rock": {
+   "h": 2,
+   "type": "simple-entity",
+   "w": 2
+  },
+  "big-scorchmark": {
+   "h": 9,
+   "type": "corpse",
+   "w": 9
+  },
+  "big-scorchmark-tintable": {
+   "h": 9,
+   "type": "corpse",
+   "w": 9
+  },
+  "big-spitter": {
+   "h": 1,
+   "type": "unit",
+   "w": 1
+  },
+  "big-spitter-corpse": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "big-spitter-die": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "big-worm-corpse": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "big-worm-corpse-burrowed": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "big-worm-die": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "big-worm-turret": {
+   "h": 3,
+   "type": "turret",
+   "w": 3
+  },
+  "biter-spawner": {
+   "h": 5,
+   "type": "unit-spawner",
+   "w": 5
+  },
+  "biter-spawner-corpse": {
+   "h": 4,
+   "type": "corpse",
+   "w": 4
+  },
+  "biter-spawner-die": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "blood-explosion-big": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "blood-explosion-huge": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "blood-explosion-small": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "blood-fountain": {
+   "h": 0,
+   "type": "particle-source",
+   "w": 0
+  },
+  "blood-fountain-big": {
+   "h": 0,
+   "type": "particle-source",
+   "w": 0
+  },
+  "blood-fountain-hit-spray": {
+   "h": 0,
+   "type": "particle-source",
+   "w": 0
+  },
+  "blue-chest": {
+   "h": 1,
+   "type": "container",
+   "w": 1
+  },
+  "blue-laser": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "boiler": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "boiler"
+    }
+   ],
+   "type": "boiler",
+   "w": 3
+  },
+  "boiler-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "boiler-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 3
+  },
+  "bottomless-chest": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "bottomless-chest"
+    }
+   ],
+   "type": "container",
+   "w": 1
+  },
+  "buffer-chest": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "buffer-chest"
+    }
+   ],
+   "type": "logistic-container",
+   "w": 1
+  },
+  "buffer-chest-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "buffer-chest-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "bulk-inserter": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "bulk-inserter"
+    }
+   ],
+   "type": "inserter",
+   "w": 1
+  },
+  "bulk-inserter-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "bulk-inserter-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "burner-generator": {
+   "h": 5,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "burner-generator"
+    }
+   ],
+   "type": "burner-generator",
+   "w": 3
+  },
+  "burner-inserter": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "burner-inserter"
+    }
+   ],
+   "type": "inserter",
+   "w": 1
+  },
+  "burner-inserter-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "burner-inserter-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "burner-mining-drill": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "burner-mining-drill"
+    }
+   ],
+   "type": "mining-drill",
+   "w": 2
+  },
+  "burner-mining-drill-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "burner-mining-drill-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 2
+  },
+  "cannon-projectile": {
+   "h": 3,
+   "type": "projectile",
+   "w": 1
+  },
+  "car": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "car"
+    }
+   ],
+   "type": "car",
+   "w": 2
+  },
+  "car-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "car-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "cargo-landing-pad": {
+   "h": 8,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "cargo-landing-pad"
+    }
+   ],
+   "type": "cargo-landing-pad",
+   "w": 8
+  },
+  "cargo-landing-pad-remnants": {
+   "h": 8,
+   "type": "corpse",
+   "w": 8
+  },
+  "cargo-pod": {
+   "h": 0,
+   "type": "cargo-pod",
+   "w": 0
+  },
+  "cargo-pod-container": {
+   "h": 2,
+   "type": "temporary-container",
+   "w": 1
+  },
+  "cargo-pod-container-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "cargo-pod-container-remnants": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "cargo-pod-shadow": {
+   "h": 0,
+   "type": "rocket-silo-rocket-shadow",
+   "w": 0
+  },
+  "cargo-wagon": {
+   "h": 5,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "cargo-wagon"
+    }
+   ],
+   "type": "cargo-wagon",
+   "w": 2
+  },
+  "cargo-wagon-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "cargo-wagon-remnants": {
+   "h": 6,
+   "type": "corpse",
+   "w": 2
+  },
+  "centrifuge": {
+   "h": 3,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "centrifuge"
+    }
+   ],
+   "type": "assembling-machine",
+   "w": 3
+  },
+  "centrifuge-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "centrifuge-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "character": {
+   "h": 1,
+   "type": "character",
+   "w": 1
+  },
+  "character-corpse": {
+   "h": 0,
+   "type": "character-corpse",
+   "w": 0
+  },
+  "chemical-plant": {
+   "h": 3,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "chemical-plant"
+    }
+   ],
+   "type": "assembling-machine",
+   "w": 3
+  },
+  "chemical-plant-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "chemical-plant-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "cliff": {
+   "h": 1,
+   "type": "cliff",
+   "w": 2
+  },
+  "cliff-explosives": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "cluster-grenade": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "cluster-nuke-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "coal": {
+   "h": 1,
+   "type": "resource",
+   "w": 1
+  },
+  "compi-speech-bubble": {
+   "h": 0,
+   "type": "speech-bubble",
+   "w": 0
+  },
+  "constant-combinator": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "constant-combinator"
+    }
+   ],
+   "type": "constant-combinator",
+   "w": 1
+  },
+  "constant-combinator-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "constant-combinator-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "construction-robot": {
+   "h": 0,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "construction-robot"
+    }
+   ],
+   "type": "construction-robot",
+   "w": 0
+  },
+  "construction-robot-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "construction-robot-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "copper-ore": {
+   "h": 1,
+   "type": "resource",
+   "w": 1
+  },
+  "crash-site-chest-1": {
+   "h": 1,
+   "type": "container",
+   "w": 1
+  },
+  "crash-site-chest-2": {
+   "h": 1,
+   "type": "container",
+   "w": 1
+  },
+  "crash-site-explosion-smoke": {
+   "h": 0,
+   "type": "smoke-with-trigger",
+   "w": 0
+  },
+  "crash-site-fire-flame": {
+   "h": 0,
+   "type": "fire",
+   "w": 0
+  },
+  "crash-site-fire-smoke": {
+   "h": 0,
+   "type": "smoke-with-trigger",
+   "w": 0
+  },
+  "crash-site-spaceship": {
+   "h": 8,
+   "type": "container",
+   "w": 16
+  },
+  "crash-site-spaceship-wreck-big-1": {
+   "h": 2,
+   "type": "container",
+   "w": 3
+  },
+  "crash-site-spaceship-wreck-big-2": {
+   "h": 3,
+   "type": "container",
+   "w": 3
+  },
+  "crash-site-spaceship-wreck-medium-1": {
+   "h": 2,
+   "type": "container",
+   "w": 3
+  },
+  "crash-site-spaceship-wreck-medium-2": {
+   "h": 2,
+   "type": "container",
+   "w": 3
+  },
+  "crash-site-spaceship-wreck-medium-3": {
+   "h": 3,
+   "type": "container",
+   "w": 2
+  },
+  "crash-site-spaceship-wreck-small-1": {
+   "h": 2,
+   "type": "simple-entity-with-owner",
+   "w": 2
+  },
+  "crash-site-spaceship-wreck-small-2": {
+   "h": 1,
+   "type": "simple-entity-with-owner",
+   "w": 2
+  },
+  "crash-site-spaceship-wreck-small-3": {
+   "h": 2,
+   "type": "simple-entity-with-owner",
+   "w": 2
+  },
+  "crash-site-spaceship-wreck-small-4": {
+   "h": 2,
+   "type": "simple-entity-with-owner",
+   "w": 2
+  },
+  "crash-site-spaceship-wreck-small-5": {
+   "h": 1,
+   "type": "simple-entity-with-owner",
+   "w": 2
+  },
+  "crash-site-spaceship-wreck-small-6": {
+   "h": 1,
+   "type": "simple-entity-with-owner",
+   "w": 2
+  },
+  "crude-oil": {
+   "h": 3,
+   "type": "resource",
+   "w": 3
+  },
+  "curved-rail-a": {
+   "h": 4,
+   "placed_by": [
+    {
+     "count": 3,
+     "name": "rail"
+    }
+   ],
+   "type": "curved-rail-a",
+   "w": 2
+  },
+  "curved-rail-a-remnants": {
+   "h": 4,
+   "type": "rail-remnants",
+   "w": 2
+  },
+  "curved-rail-b": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 3,
+     "name": "rail"
+    }
+   ],
+   "type": "curved-rail-b",
+   "w": 2
+  },
+  "curved-rail-b-remnants": {
+   "h": 2,
+   "type": "rail-remnants",
+   "w": 2
+  },
+  "dead-dry-hairy-tree": {
+   "h": 2,
+   "type": "tree",
+   "w": 2
+  },
+  "dead-grey-trunk": {
+   "h": 2,
+   "type": "tree",
+   "w": 2
+  },
+  "dead-tree-desert": {
+   "h": 2,
+   "type": "tree",
+   "w": 2
+  },
+  "decider-combinator": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "decider-combinator"
+    }
+   ],
+   "type": "decider-combinator",
+   "w": 1
+  },
+  "decider-combinator-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "decider-combinator-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 1
+  },
+  "deconstructible-tile-proxy": {
+   "h": 1,
+   "type": "deconstructible-tile-proxy",
+   "w": 1
+  },
+  "defender": {
+   "h": 0,
+   "type": "combat-robot",
+   "w": 0
+  },
+  "defender-capsule": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "defender-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "defender-robot-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "destroyer": {
+   "h": 0,
+   "type": "combat-robot",
+   "w": 0
+  },
+  "destroyer-capsule": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "destroyer-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "destroyer-robot-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "display-panel": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "display-panel"
+    }
+   ],
+   "type": "display-panel",
+   "w": 1
+  },
+  "display-panel-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "display-panel-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "distractor": {
+   "h": 0,
+   "type": "combat-robot",
+   "w": 0
+  },
+  "distractor-capsule": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "distractor-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "distractor-robot-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "dry-hairy-tree": {
+   "h": 2,
+   "type": "tree",
+   "w": 2
+  },
+  "dry-tree": {
+   "h": 1,
+   "type": "tree",
+   "w": 1
+  },
+  "dummy-elevated-curved-rail-a": {
+   "h": 4,
+   "type": "elevated-curved-rail-a",
+   "w": 2
+  },
+  "dummy-elevated-curved-rail-b": {
+   "h": 2,
+   "type": "elevated-curved-rail-b",
+   "w": 2
+  },
+  "dummy-elevated-half-diagonal-rail": {
+   "h": 2,
+   "type": "elevated-half-diagonal-rail",
+   "w": 2
+  },
+  "dummy-elevated-straight-rail": {
+   "h": 2,
+   "type": "elevated-straight-rail",
+   "w": 2
+  },
+  "dummy-rail-ramp": {
+   "h": 16,
+   "type": "rail-ramp",
+   "w": 2
+  },
+  "dummy-rail-support": {
+   "h": 2,
+   "type": "rail-support",
+   "w": 4
+  },
+  "dummy-spider-unit": {
+   "h": 2,
+   "type": "spider-unit",
+   "w": 2
+  },
+  "electric-beam": {
+   "h": 0,
+   "type": "beam",
+   "w": 0
+  },
+  "electric-beam-no-sound": {
+   "h": 0,
+   "type": "beam",
+   "w": 0
+  },
+  "electric-energy-interface": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "electric-energy-interface"
+    }
+   ],
+   "type": "electric-energy-interface",
+   "w": 2
+  },
+  "electric-furnace": {
+   "h": 3,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "electric-furnace"
+    }
+   ],
+   "type": "furnace",
+   "w": 3
+  },
+  "electric-furnace-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "electric-furnace-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "electric-mini-stun": {
+   "h": 0,
+   "type": "sticker",
+   "w": 0
+  },
+  "electric-mining-drill": {
+   "h": 3,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "electric-mining-drill"
+    }
+   ],
+   "type": "mining-drill",
+   "w": 3
+  },
+  "electric-mining-drill-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "electric-mining-drill-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "enemy-damaged-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "entity-ghost": {
+   "h": 0,
+   "type": "entity-ghost",
+   "w": 0
+  },
+  "entity-unknown": {
+   "h": 0,
+   "type": "entity-ghost",
+   "w": 0
+  },
+  "explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "explosion-gunshot": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "explosion-gunshot-small": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "explosion-hit": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "explosive-cannon-projectile": {
+   "h": 3,
+   "type": "projectile",
+   "w": 1
+  },
+  "explosive-rocket": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "explosive-uranium-cannon-projectile": {
+   "h": 3,
+   "type": "projectile",
+   "w": 1
+  },
+  "express-loader": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "express-loader"
+    }
+   ],
+   "type": "loader",
+   "w": 1
+  },
+  "express-splitter": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "express-splitter"
+    }
+   ],
+   "type": "splitter",
+   "w": 2
+  },
+  "express-splitter-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "express-splitter-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 2
+  },
+  "express-transport-belt": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "express-transport-belt"
+    }
+   ],
+   "type": "transport-belt",
+   "w": 1
+  },
+  "express-transport-belt-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "express-transport-belt-explosion-base": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "express-transport-belt-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "express-underground-belt": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "express-underground-belt"
+    }
+   ],
+   "type": "underground-belt",
+   "w": 1
+  },
+  "express-underground-belt-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "express-underground-belt-explosion-base": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "express-underground-belt-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "factorio-logo-11tiles": {
+   "h": 2,
+   "type": "container",
+   "w": 11
+  },
+  "factorio-logo-16tiles": {
+   "h": 2,
+   "type": "container",
+   "w": 16
+  },
+  "factorio-logo-22tiles": {
+   "h": 3,
+   "type": "container",
+   "w": 22
+  },
+  "fake-selection-box-2x2": {
+   "h": 0,
+   "type": "arrow",
+   "w": 0
+  },
+  "fast-inserter": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "fast-inserter"
+    }
+   ],
+   "type": "inserter",
+   "w": 1
+  },
+  "fast-inserter-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "fast-inserter-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "fast-loader": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "fast-loader"
+    }
+   ],
+   "type": "loader",
+   "w": 1
+  },
+  "fast-splitter": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "fast-splitter"
+    }
+   ],
+   "type": "splitter",
+   "w": 2
+  },
+  "fast-splitter-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "fast-splitter-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 2
+  },
+  "fast-transport-belt": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "fast-transport-belt"
+    }
+   ],
+   "type": "transport-belt",
+   "w": 1
+  },
+  "fast-transport-belt-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "fast-transport-belt-explosion-base": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "fast-transport-belt-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "fast-underground-belt": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "fast-underground-belt"
+    }
+   ],
+   "type": "underground-belt",
+   "w": 1
+  },
+  "fast-underground-belt-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "fast-underground-belt-explosion-base": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "fast-underground-belt-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "fire-flame": {
+   "h": 0,
+   "type": "fire",
+   "w": 0
+  },
+  "fire-flame-on-tree": {
+   "h": 0,
+   "type": "fire",
+   "w": 0
+  },
+  "fire-sticker": {
+   "h": 0,
+   "type": "sticker",
+   "w": 0
+  },
+  "fish": {
+   "h": 2,
+   "type": "fish",
+   "w": 2
+  },
+  "flamethrower-fire-stream": {
+   "h": 0,
+   "type": "stream",
+   "w": 0
+  },
+  "flamethrower-turret": {
+   "h": 3,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "flamethrower-turret"
+    }
+   ],
+   "type": "fluid-turret",
+   "w": 2
+  },
+  "flamethrower-turret-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "flamethrower-turret-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 2
+  },
+  "fluid-wagon": {
+   "h": 5,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "fluid-wagon"
+    }
+   ],
+   "type": "fluid-wagon",
+   "w": 2
+  },
+  "fluid-wagon-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "fluid-wagon-remnants": {
+   "h": 6,
+   "type": "corpse",
+   "w": 2
+  },
+  "flying-robot-damaged-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "gate": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "gate"
+    }
+   ],
+   "type": "gate",
+   "w": 1
+  },
+  "gate-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "gate-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "grenade": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "grenade-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "ground-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "gun-turret": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "gun-turret"
+    }
+   ],
+   "type": "ammo-turret",
+   "w": 2
+  },
+  "gun-turret-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "gun-turret-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 2
+  },
+  "half-diagonal-rail": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 2,
+     "name": "rail"
+    }
+   ],
+   "type": "half-diagonal-rail",
+   "w": 2
+  },
+  "half-diagonal-rail-remnants": {
+   "h": 2,
+   "type": "rail-remnants",
+   "w": 2
+  },
+  "handheld-flamethrower-fire-stream": {
+   "h": 0,
+   "type": "stream",
+   "w": 0
+  },
+  "heat-exchanger": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "heat-exchanger"
+    }
+   ],
+   "type": "boiler",
+   "w": 3
+  },
+  "heat-exchanger-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "heat-exchanger-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 3
+  },
+  "heat-interface": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "heat-interface"
+    }
+   ],
+   "type": "heat-interface",
+   "w": 1
+  },
+  "heat-pipe": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "heat-pipe"
+    }
+   ],
+   "type": "heat-pipe",
+   "w": 1
+  },
+  "heat-pipe-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "heat-pipe-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "hidden-electric-energy-interface": {
+   "h": 0,
+   "type": "electric-energy-interface",
+   "w": 0
+  },
+  "highlight-box": {
+   "h": 0,
+   "type": "highlight-box",
+   "w": 0
+  },
+  "huge-rock": {
+   "h": 3,
+   "type": "simple-entity",
+   "w": 3
+  },
+  "huge-scorchmark": {
+   "h": 9,
+   "type": "corpse",
+   "w": 9
+  },
+  "huge-scorchmark-tintable": {
+   "h": 9,
+   "type": "corpse",
+   "w": 9
+  },
+  "infinity-cargo-wagon": {
+   "h": 5,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "infinity-cargo-wagon"
+    }
+   ],
+   "type": "infinity-cargo-wagon",
+   "w": 2
+  },
+  "infinity-chest": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "infinity-chest"
+    }
+   ],
+   "type": "infinity-container",
+   "w": 1
+  },
+  "infinity-pipe": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "infinity-pipe"
+    }
+   ],
+   "type": "infinity-pipe",
+   "w": 1
+  },
+  "inserter": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "inserter"
+    }
+   ],
+   "type": "inserter",
+   "w": 1
+  },
+  "inserter-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "inserter-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "iron-chest": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "iron-chest"
+    }
+   ],
+   "type": "container",
+   "w": 1
+  },
+  "iron-chest-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "iron-chest-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "iron-ore": {
+   "h": 1,
+   "type": "resource",
+   "w": 1
+  },
+  "item-on-ground": {
+   "h": 1,
+   "type": "item-entity",
+   "w": 1
+  },
+  "item-request-proxy": {
+   "h": 0,
+   "type": "item-request-proxy",
+   "w": 0
+  },
+  "lab": {
+   "h": 3,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "lab"
+    }
+   ],
+   "type": "lab",
+   "w": 3
+  },
+  "lab-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "lab-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "lamp-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "lamp-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "land-mine": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "land-mine"
+    }
+   ],
+   "type": "land-mine",
+   "w": 1
+  },
+  "land-mine-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "land-mine-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "lane-splitter": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "lane-splitter"
+    }
+   ],
+   "type": "lane-splitter",
+   "w": 1
+  },
+  "laser": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "laser-beam": {
+   "h": 0,
+   "type": "beam",
+   "w": 0
+  },
+  "laser-bubble": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "laser-turret": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "laser-turret"
+    }
+   ],
+   "type": "electric-turret",
+   "w": 2
+  },
+  "laser-turret-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "laser-turret-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 2
+  },
+  "legacy-curved-rail": {
+   "h": 8,
+   "placed_by": [
+    {
+     "count": 4,
+     "name": "rail"
+    }
+   ],
+   "type": "legacy-curved-rail",
+   "w": 4
+  },
+  "legacy-curved-rail-remnants": {
+   "h": 8,
+   "type": "rail-remnants",
+   "w": 4
+  },
+  "legacy-straight-rail": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "rail"
+    }
+   ],
+   "type": "legacy-straight-rail",
+   "w": 2
+  },
+  "legacy-straight-rail-remnants": {
+   "h": 2,
+   "type": "rail-remnants",
+   "w": 2
+  },
+  "linked-belt": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "linked-belt"
+    }
+   ],
+   "type": "linked-belt",
+   "w": 1
+  },
+  "linked-chest": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "linked-chest"
+    }
+   ],
+   "type": "linked-container",
+   "w": 1
+  },
+  "loader": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "loader"
+    }
+   ],
+   "type": "loader",
+   "w": 1
+  },
+  "loader-1x1": {
+   "h": 1,
+   "type": "loader-1x1",
+   "w": 1
+  },
+  "locomotive": {
+   "h": 6,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "locomotive"
+    }
+   ],
+   "type": "locomotive",
+   "w": 2
+  },
+  "locomotive-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "locomotive-remnants": {
+   "h": 6,
+   "type": "corpse",
+   "w": 2
+  },
+  "logistic-robot": {
+   "h": 0,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "logistic-robot"
+    }
+   ],
+   "type": "logistic-robot",
+   "w": 0
+  },
+  "logistic-robot-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "logistic-robot-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "long-handed-inserter": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "long-handed-inserter"
+    }
+   ],
+   "type": "inserter",
+   "w": 1
+  },
+  "long-handed-inserter-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "long-handed-inserter-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "market": {
+   "h": 3,
+   "type": "market",
+   "w": 3
+  },
+  "massive-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "medium-biter": {
+   "h": 1,
+   "type": "unit",
+   "w": 1
+  },
+  "medium-biter-corpse": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "medium-biter-die": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "medium-electric-pole": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "medium-electric-pole"
+    }
+   ],
+   "type": "electric-pole",
+   "w": 1
+  },
+  "medium-electric-pole-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "medium-electric-pole-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "medium-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "medium-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "medium-scorchmark": {
+   "h": 5,
+   "type": "corpse",
+   "w": 5
+  },
+  "medium-scorchmark-tintable": {
+   "h": 5,
+   "type": "corpse",
+   "w": 5
+  },
+  "medium-small-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 2
+  },
+  "medium-spitter": {
+   "h": 1,
+   "type": "unit",
+   "w": 1
+  },
+  "medium-spitter-corpse": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "medium-spitter-die": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "medium-worm-corpse": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "medium-worm-corpse-burrowed": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "medium-worm-die": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "medium-worm-turret": {
+   "h": 2,
+   "type": "turret",
+   "w": 3
+  },
+  "nuclear-reactor": {
+   "h": 5,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "nuclear-reactor"
+    }
+   ],
+   "type": "reactor",
+   "w": 5
+  },
+  "nuclear-reactor-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "nuclear-reactor-remnants": {
+   "h": 5,
+   "type": "corpse",
+   "w": 5
+  },
+  "nuclear-smouldering-smoke-source": {
+   "h": 0,
+   "type": "particle-source",
+   "w": 0
+  },
+  "nuke-effects-nauvis": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "nuke-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "offshore-pump": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "offshore-pump"
+    }
+   ],
+   "type": "offshore-pump",
+   "w": 1
+  },
+  "offshore-pump-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "offshore-pump-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "oil-refinery": {
+   "h": 5,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "oil-refinery"
+    }
+   ],
+   "type": "assembling-machine",
+   "w": 5
+  },
+  "oil-refinery-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "oil-refinery-remnants": {
+   "h": 5,
+   "type": "corpse",
+   "w": 5
+  },
+  "one-way-valve": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "one-way-valve"
+    }
+   ],
+   "type": "valve",
+   "w": 1
+  },
+  "orange-arrow-with-circle": {
+   "h": 0,
+   "type": "arrow",
+   "w": 0
+  },
+  "overflow-valve": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "overflow-valve"
+    }
+   ],
+   "type": "valve",
+   "w": 1
+  },
+  "parameter-0": {
+   "h": 0,
+   "type": "simple-entity",
+   "w": 0
+  },
+  "parameter-1": {
+   "h": 0,
+   "type": "simple-entity",
+   "w": 0
+  },
+  "parameter-2": {
+   "h": 0,
+   "type": "simple-entity",
+   "w": 0
+  },
+  "parameter-3": {
+   "h": 0,
+   "type": "simple-entity",
+   "w": 0
+  },
+  "parameter-4": {
+   "h": 0,
+   "type": "simple-entity",
+   "w": 0
+  },
+  "parameter-5": {
+   "h": 0,
+   "type": "simple-entity",
+   "w": 0
+  },
+  "parameter-6": {
+   "h": 0,
+   "type": "simple-entity",
+   "w": 0
+  },
+  "parameter-7": {
+   "h": 0,
+   "type": "simple-entity",
+   "w": 0
+  },
+  "parameter-8": {
+   "h": 0,
+   "type": "simple-entity",
+   "w": 0
+  },
+  "parameter-9": {
+   "h": 0,
+   "type": "simple-entity",
+   "w": 0
+  },
+  "passive-provider-chest": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "passive-provider-chest"
+    }
+   ],
+   "type": "logistic-container",
+   "w": 1
+  },
+  "passive-provider-chest-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "passive-provider-chest-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "piercing-shotgun-pellet": {
+   "h": 1,
+   "type": "projectile",
+   "w": 1
+  },
+  "pipe": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "pipe"
+    }
+   ],
+   "type": "pipe",
+   "w": 1
+  },
+  "pipe-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "pipe-explosion-base": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "pipe-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "pipe-to-ground": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "pipe-to-ground"
+    }
+   ],
+   "type": "pipe-to-ground",
+   "w": 1
+  },
+  "pipe-to-ground-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "pipe-to-ground-explosion-base": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "pipe-to-ground-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "poison-capsule": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "poison-cloud": {
+   "h": 0,
+   "type": "smoke-with-trigger",
+   "w": 0
+  },
+  "poison-cloud-visual-dummy": {
+   "h": 0,
+   "type": "smoke-with-trigger",
+   "w": 0
+  },
+  "power-switch": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "power-switch"
+    }
+   ],
+   "type": "power-switch",
+   "w": 2
+  },
+  "power-switch-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "power-switch-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 1
+  },
+  "programmable-speaker": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "programmable-speaker"
+    }
+   ],
+   "type": "programmable-speaker",
+   "w": 1
+  },
+  "programmable-speaker-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "programmable-speaker-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "proxy-container": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "proxy-container"
+    }
+   ],
+   "type": "proxy-container",
+   "w": 1
+  },
+  "pump": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "pump"
+    }
+   ],
+   "type": "pump",
+   "w": 1
+  },
+  "pump-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "pump-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 1
+  },
+  "pumpjack": {
+   "h": 3,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "pumpjack"
+    }
+   ],
+   "type": "mining-drill",
+   "w": 3
+  },
+  "pumpjack-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "pumpjack-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "radar": {
+   "h": 3,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "radar"
+    }
+   ],
+   "type": "radar",
+   "w": 3
+  },
+  "radar-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "radar-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "rail-chain-signal": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "rail-chain-signal"
+    }
+   ],
+   "type": "rail-chain-signal",
+   "w": 1
+  },
+  "rail-chain-signal-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "rail-chain-signal-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "rail-ending-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 2
+  },
+  "rail-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "rail-signal": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "rail-signal"
+    }
+   ],
+   "type": "rail-signal",
+   "w": 1
+  },
+  "rail-signal-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "rail-signal-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "red-chest": {
+   "h": 1,
+   "type": "container",
+   "w": 1
+  },
+  "requester-chest": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "requester-chest"
+    }
+   ],
+   "type": "logistic-container",
+   "w": 1
+  },
+  "requester-chest-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "requester-chest-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "roboport": {
+   "h": 4,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "roboport"
+    }
+   ],
+   "type": "roboport",
+   "w": 4
+  },
+  "roboport-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "roboport-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "rock-damaged-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "rocket": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "rocket-silo": {
+   "h": 9,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "rocket-silo"
+    }
+   ],
+   "type": "rocket-silo",
+   "w": 9
+  },
+  "rocket-silo-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "rocket-silo-remnants": {
+   "h": 9,
+   "type": "corpse",
+   "w": 9
+  },
+  "rocket-silo-rocket": {
+   "h": 11,
+   "type": "rocket-silo-rocket",
+   "w": 4
+  },
+  "rocket-silo-rocket-shadow": {
+   "h": 4,
+   "type": "rocket-silo-rocket-shadow",
+   "w": 10
+  },
+  "selector-combinator": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "selector-combinator"
+    }
+   ],
+   "type": "selector-combinator",
+   "w": 1
+  },
+  "selector-combinator-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "selector-combinator-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 1
+  },
+  "shotgun-pellet": {
+   "h": 1,
+   "type": "projectile",
+   "w": 1
+  },
+  "simple-entity-with-force": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "simple-entity-with-force"
+    }
+   ],
+   "type": "simple-entity-with-force",
+   "w": 1
+  },
+  "simple-entity-with-owner": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "simple-entity-with-owner"
+    }
+   ],
+   "type": "simple-entity-with-owner",
+   "w": 1
+  },
+  "slowdown-capsule": {
+   "h": 0,
+   "type": "projectile",
+   "w": 0
+  },
+  "slowdown-capsule-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "slowdown-sticker": {
+   "h": 0,
+   "type": "sticker",
+   "w": 0
+  },
+  "small-biter": {
+   "h": 1,
+   "type": "unit",
+   "w": 1
+  },
+  "small-biter-corpse": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "small-biter-die": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "small-electric-pole": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "small-electric-pole"
+    }
+   ],
+   "type": "electric-pole",
+   "w": 1
+  },
+  "small-electric-pole-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "small-electric-pole-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "small-lamp": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "small-lamp"
+    }
+   ],
+   "type": "lamp",
+   "w": 1
+  },
+  "small-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "small-scorchmark": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "small-scorchmark-tintable": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "small-spitter": {
+   "h": 1,
+   "type": "unit",
+   "w": 1
+  },
+  "small-spitter-corpse": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "small-spitter-die": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "small-worm-corpse": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "small-worm-corpse-burrowed": {
+   "h": 0,
+   "type": "corpse",
+   "w": 0
+  },
+  "small-worm-die": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "small-worm-turret": {
+   "h": 2,
+   "type": "turret",
+   "w": 2
+  },
+  "solar-panel": {
+   "h": 3,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "solar-panel"
+    }
+   ],
+   "type": "solar-panel",
+   "w": 3
+  },
+  "solar-panel-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "solar-panel-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "spark-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "spark-explosion-higher": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "spidertron": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "spidertron"
+    }
+   ],
+   "type": "spider-vehicle",
+   "w": 2
+  },
+  "spidertron-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "spidertron-leg-1": {
+   "h": 1,
+   "type": "spider-leg",
+   "w": 1
+  },
+  "spidertron-leg-2": {
+   "h": 1,
+   "type": "spider-leg",
+   "w": 1
+  },
+  "spidertron-leg-3": {
+   "h": 1,
+   "type": "spider-leg",
+   "w": 1
+  },
+  "spidertron-leg-4": {
+   "h": 1,
+   "type": "spider-leg",
+   "w": 1
+  },
+  "spidertron-leg-5": {
+   "h": 1,
+   "type": "spider-leg",
+   "w": 1
+  },
+  "spidertron-leg-6": {
+   "h": 1,
+   "type": "spider-leg",
+   "w": 1
+  },
+  "spidertron-leg-7": {
+   "h": 1,
+   "type": "spider-leg",
+   "w": 1
+  },
+  "spidertron-leg-8": {
+   "h": 1,
+   "type": "spider-leg",
+   "w": 1
+  },
+  "spidertron-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "spitter-spawner": {
+   "h": 5,
+   "type": "unit-spawner",
+   "w": 5
+  },
+  "spitter-spawner-corpse": {
+   "h": 4,
+   "type": "corpse",
+   "w": 4
+  },
+  "spitter-spawner-die": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "splitter": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "splitter"
+    }
+   ],
+   "type": "splitter",
+   "w": 2
+  },
+  "splitter-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "splitter-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 2
+  },
+  "steam-engine": {
+   "h": 5,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "steam-engine"
+    }
+   ],
+   "type": "generator",
+   "w": 3
+  },
+  "steam-engine-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "steam-engine-remnants": {
+   "h": 5,
+   "type": "corpse",
+   "w": 3
+  },
+  "steam-turbine": {
+   "h": 5,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "steam-turbine"
+    }
+   ],
+   "type": "generator",
+   "w": 3
+  },
+  "steam-turbine-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "steam-turbine-remnants": {
+   "h": 5,
+   "type": "corpse",
+   "w": 3
+  },
+  "steel-chest": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "steel-chest"
+    }
+   ],
+   "type": "container",
+   "w": 1
+  },
+  "steel-chest-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "steel-chest-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "steel-furnace": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "steel-furnace"
+    }
+   ],
+   "type": "furnace",
+   "w": 2
+  },
+  "steel-furnace-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "steel-furnace-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 2
+  },
+  "stone": {
+   "h": 1,
+   "type": "resource",
+   "w": 1
+  },
+  "stone-furnace": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "stone-furnace"
+    }
+   ],
+   "type": "furnace",
+   "w": 2
+  },
+  "stone-furnace-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "stone-furnace-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 2
+  },
+  "stone-wall": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "stone-wall"
+    }
+   ],
+   "type": "wall",
+   "w": 1
+  },
+  "storage-chest": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "storage-chest"
+    }
+   ],
+   "type": "logistic-container",
+   "w": 1
+  },
+  "storage-chest-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "storage-chest-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "storage-tank": {
+   "h": 3,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "storage-tank"
+    }
+   ],
+   "type": "storage-tank",
+   "w": 3
+  },
+  "storage-tank-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "storage-tank-remnants": {
+   "h": 3,
+   "type": "corpse",
+   "w": 3
+  },
+  "straight-rail": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "rail"
+    }
+   ],
+   "type": "straight-rail",
+   "w": 2
+  },
+  "straight-rail-remnants": {
+   "h": 2,
+   "type": "rail-remnants",
+   "w": 2
+  },
+  "stun-sticker": {
+   "h": 0,
+   "type": "sticker",
+   "w": 0
+  },
+  "substation": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "substation"
+    }
+   ],
+   "type": "electric-pole",
+   "w": 2
+  },
+  "substation-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "substation-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 2
+  },
+  "tank": {
+   "h": 3,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "tank"
+    }
+   ],
+   "type": "car",
+   "w": 2
+  },
+  "tank-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "tank-flamethrower-fire-stream": {
+   "h": 0,
+   "type": "stream",
+   "w": 0
+  },
+  "tank-remnants": {
+   "h": 5,
+   "type": "corpse",
+   "w": 3
+  },
+  "tile-ghost": {
+   "h": 1,
+   "type": "tile-ghost",
+   "w": 1
+  },
+  "tile-proxy": {
+   "h": 0,
+   "type": "entity-ghost",
+   "w": 0
+  },
+  "top-up-valve": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "top-up-valve"
+    }
+   ],
+   "type": "valve",
+   "w": 1
+  },
+  "train-stop": {
+   "h": 2,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "train-stop"
+    }
+   ],
+   "type": "train-stop",
+   "w": 2
+  },
+  "train-stop-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "train-stop-remnants": {
+   "h": 2,
+   "type": "corpse",
+   "w": 2
+  },
+  "transport-belt": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "transport-belt"
+    }
+   ],
+   "type": "transport-belt",
+   "w": 1
+  },
+  "transport-belt-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "transport-belt-explosion-base": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "transport-belt-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "tree-01": {
+   "h": 1,
+   "type": "tree",
+   "w": 1
+  },
+  "tree-01-stump": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "tree-02": {
+   "h": 1,
+   "type": "tree",
+   "w": 1
+  },
+  "tree-02-red": {
+   "h": 1,
+   "type": "tree",
+   "w": 1
+  },
+  "tree-02-stump": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "tree-03": {
+   "h": 1,
+   "type": "tree",
+   "w": 1
+  },
+  "tree-03-stump": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "tree-04": {
+   "h": 1,
+   "type": "tree",
+   "w": 1
+  },
+  "tree-04-stump": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "tree-05": {
+   "h": 1,
+   "type": "tree",
+   "w": 1
+  },
+  "tree-05-stump": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "tree-06": {
+   "h": 1,
+   "type": "tree",
+   "w": 1
+  },
+  "tree-06-brown": {
+   "h": 1,
+   "type": "tree",
+   "w": 1
+  },
+  "tree-06-stump": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "tree-07": {
+   "h": 1,
+   "type": "tree",
+   "w": 1
+  },
+  "tree-07-stump": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "tree-08": {
+   "h": 1,
+   "type": "tree",
+   "w": 1
+  },
+  "tree-08-brown": {
+   "h": 1,
+   "type": "tree",
+   "w": 1
+  },
+  "tree-08-red": {
+   "h": 1,
+   "type": "tree",
+   "w": 1
+  },
+  "tree-08-stump": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "tree-09": {
+   "h": 1,
+   "type": "tree",
+   "w": 1
+  },
+  "tree-09-brown": {
+   "h": 1,
+   "type": "tree",
+   "w": 1
+  },
+  "tree-09-red": {
+   "h": 1,
+   "type": "tree",
+   "w": 1
+  },
+  "tree-09-stump": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "tree-dying-proxy": {
+   "h": 0,
+   "type": "entity-ghost",
+   "w": 0
+  },
+  "tree-proxy": {
+   "h": 0,
+   "type": "entity-ghost",
+   "w": 0
+  },
+  "underground-belt": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "underground-belt"
+    }
+   ],
+   "type": "underground-belt",
+   "w": 1
+  },
+  "underground-belt-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "underground-belt-explosion-base": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "underground-belt-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "uranium-cannon-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "uranium-cannon-projectile": {
+   "h": 3,
+   "type": "projectile",
+   "w": 1
+  },
+  "uranium-cannon-shell-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "uranium-ore": {
+   "h": 1,
+   "type": "resource",
+   "w": 1
+  },
+  "wall-damaged-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "wall-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "wall-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  },
+  "water-splash": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "wooden-chest": {
+   "h": 1,
+   "placed_by": [
+    {
+     "count": 1,
+     "name": "wooden-chest"
+    }
+   ],
+   "type": "container",
+   "w": 1
+  },
+  "wooden-chest-explosion": {
+   "h": 0,
+   "type": "explosion",
+   "w": 0
+  },
+  "wooden-chest-remnants": {
+   "h": 1,
+   "type": "corpse",
+   "w": 1
+  }
+ },
+ "factorio_version": "2.0.77",
+ "fluid": [
+  "crude-oil",
+  "fluid-unknown",
+  "heavy-oil",
+  "light-oil",
+  "lubricant",
+  "parameter-0",
+  "parameter-1",
+  "parameter-2",
+  "parameter-3",
+  "parameter-4",
+  "parameter-5",
+  "parameter-6",
+  "parameter-7",
+  "parameter-8",
+  "parameter-9",
+  "petroleum-gas",
+  "steam",
+  "sulfuric-acid",
+  "water"
+ ],
+ "item": [
+  "accumulator",
+  "active-provider-chest",
+  "advanced-circuit",
+  "arithmetic-combinator",
+  "artillery-shell",
+  "artillery-targeting-remote",
+  "artillery-turret",
+  "artillery-wagon",
+  "artillery-wagon-cannon",
+  "assembling-machine-1",
+  "assembling-machine-2",
+  "assembling-machine-3",
+  "atomic-bomb",
+  "automation-science-pack",
+  "barrel",
+  "battery",
+  "battery-equipment",
+  "battery-mk2-equipment",
+  "beacon",
+  "belt-immunity-equipment",
+  "big-electric-pole",
+  "blueprint",
+  "blueprint-book",
+  "boiler",
+  "bottomless-chest",
+  "buffer-chest",
+  "bulk-inserter",
+  "burner-generator",
+  "burner-inserter",
+  "burner-mining-drill",
+  "cannon-shell",
+  "car",
+  "cargo-landing-pad",
+  "cargo-wagon",
+  "centrifuge",
+  "chemical-plant",
+  "chemical-science-pack",
+  "cliff-explosives",
+  "cluster-grenade",
+  "coal",
+  "coin",
+  "combat-shotgun",
+  "concrete",
+  "constant-combinator",
+  "construction-robot",
+  "copper-cable",
+  "copper-ore",
+  "copper-plate",
+  "copper-wire",
+  "copy-paste-tool",
+  "crude-oil-barrel",
+  "cut-paste-tool",
+  "decider-combinator",
+  "deconstruction-planner",
+  "defender-capsule",
+  "depleted-uranium-fuel-cell",
+  "destroyer-capsule",
+  "discharge-defense-equipment",
+  "discharge-defense-remote",
+  "display-panel",
+  "distractor-capsule",
+  "efficiency-module",
+  "efficiency-module-2",
+  "efficiency-module-3",
+  "electric-energy-interface",
+  "electric-engine-unit",
+  "electric-furnace",
+  "electric-mining-drill",
+  "electronic-circuit",
+  "empty-module-slot",
+  "energy-shield-equipment",
+  "energy-shield-mk2-equipment",
+  "engine-unit",
+  "exoskeleton-equipment",
+  "explosive-cannon-shell",
+  "explosive-rocket",
+  "explosive-uranium-cannon-shell",
+  "explosives",
+  "express-loader",
+  "express-splitter",
+  "express-transport-belt",
+  "express-underground-belt",
+  "fast-inserter",
+  "fast-loader",
+  "fast-splitter",
+  "fast-transport-belt",
+  "fast-underground-belt",
+  "firearm-magazine",
+  "fission-reactor-equipment",
+  "flamethrower",
+  "flamethrower-ammo",
+  "flamethrower-turret",
+  "fluid-wagon",
+  "flying-robot-frame",
+  "gate",
+  "green-wire",
+  "grenade",
+  "gun-turret",
+  "hazard-concrete",
+  "heat-exchanger",
+  "heat-interface",
+  "heat-pipe",
+  "heavy-armor",
+  "heavy-oil-barrel",
+  "infinity-cargo-wagon",
+  "infinity-chest",
+  "infinity-pipe",
+  "inserter",
+  "iron-chest",
+  "iron-gear-wheel",
+  "iron-ore",
+  "iron-plate",
+  "iron-stick",
+  "item-unknown",
+  "lab",
+  "land-mine",
+  "landfill",
+  "lane-splitter",
+  "laser-turret",
+  "light-armor",
+  "light-oil-barrel",
+  "linked-belt",
+  "linked-chest",
+  "loader",
+  "locomotive",
+  "logistic-robot",
+  "logistic-science-pack",
+  "long-handed-inserter",
+  "low-density-structure",
+  "lubricant-barrel",
+  "medium-electric-pole",
+  "military-science-pack",
+  "modular-armor",
+  "night-vision-equipment",
+  "no-item",
+  "nuclear-fuel",
+  "nuclear-reactor",
+  "offshore-pump",
+  "oil-refinery",
+  "one-way-valve",
+  "overflow-valve",
+  "parameter-0",
+  "parameter-1",
+  "parameter-2",
+  "parameter-3",
+  "parameter-4",
+  "parameter-5",
+  "parameter-6",
+  "parameter-7",
+  "parameter-8",
+  "parameter-9",
+  "passive-provider-chest",
+  "personal-laser-defense-equipment",
+  "personal-roboport-equipment",
+  "personal-roboport-mk2-equipment",
+  "petroleum-gas-barrel",
+  "piercing-rounds-magazine",
+  "piercing-shotgun-shell",
+  "pipe",
+  "pipe-to-ground",
+  "pistol",
+  "plastic-bar",
+  "poison-capsule",
+  "power-armor",
+  "power-armor-mk2",
+  "power-switch",
+  "processing-unit",
+  "production-science-pack",
+  "productivity-module",
+  "productivity-module-2",
+  "productivity-module-3",
+  "programmable-speaker",
+  "proxy-container",
+  "pump",
+  "pumpjack",
+  "radar",
+  "rail",
+  "rail-chain-signal",
+  "rail-signal",
+  "raw-fish",
+  "red-wire",
+  "refined-concrete",
+  "refined-hazard-concrete",
+  "repair-pack",
+  "requester-chest",
+  "roboport",
+  "rocket",
+  "rocket-fuel",
+  "rocket-launcher",
+  "rocket-part",
+  "rocket-silo",
+  "satellite",
+  "science",
+  "selection-tool",
+  "selector-combinator",
+  "shotgun",
+  "shotgun-shell",
+  "simple-entity-with-force",
+  "simple-entity-with-owner",
+  "slowdown-capsule",
+  "small-electric-pole",
+  "small-lamp",
+  "solar-panel",
+  "solar-panel-equipment",
+  "solid-fuel",
+  "space-science-pack",
+  "speed-module",
+  "speed-module-2",
+  "speed-module-3",
+  "spidertron",
+  "spidertron-remote",
+  "spidertron-rocket-launcher-1",
+  "spidertron-rocket-launcher-2",
+  "spidertron-rocket-launcher-3",
+  "spidertron-rocket-launcher-4",
+  "splitter",
+  "steam-engine",
+  "steam-turbine",
+  "steel-chest",
+  "steel-furnace",
+  "steel-plate",
+  "stone",
+  "stone-brick",
+  "stone-furnace",
+  "stone-wall",
+  "storage-chest",
+  "storage-tank",
+  "submachine-gun",
+  "substation",
+  "sulfur",
+  "sulfuric-acid-barrel",
+  "tank",
+  "tank-cannon",
+  "tank-flamethrower",
+  "tank-machine-gun",
+  "top-up-valve",
+  "train-stop",
+  "transport-belt",
+  "underground-belt",
+  "upgrade-planner",
+  "uranium-235",
+  "uranium-238",
+  "uranium-cannon-shell",
+  "uranium-fuel-cell",
+  "uranium-ore",
+  "uranium-rounds-magazine",
+  "utility-science-pack",
+  "vehicle-machine-gun",
+  "water-barrel",
+  "wood",
+  "wooden-chest"
+ ],
+ "quality": [
+  "normal",
+  "quality-unknown"
+ ],
+ "recipe": [
+  "accumulator",
+  "active-provider-chest",
+  "advanced-circuit",
+  "advanced-oil-processing",
+  "arithmetic-combinator",
+  "artillery-shell",
+  "artillery-turret",
+  "artillery-wagon",
+  "assembling-machine-1",
+  "assembling-machine-2",
+  "assembling-machine-3",
+  "atomic-bomb",
+  "automation-science-pack",
+  "barrel",
+  "basic-oil-processing",
+  "battery",
+  "battery-equipment",
+  "battery-mk2-equipment",
+  "beacon",
+  "belt-immunity-equipment",
+  "big-electric-pole",
+  "boiler",
+  "buffer-chest",
+  "bulk-inserter",
+  "burner-inserter",
+  "burner-mining-drill",
+  "cannon-shell",
+  "car",
+  "cargo-landing-pad",
+  "cargo-wagon",
+  "centrifuge",
+  "chemical-plant",
+  "chemical-science-pack",
+  "cliff-explosives",
+  "cluster-grenade",
+  "coal-liquefaction",
+  "combat-shotgun",
+  "concrete",
+  "constant-combinator",
+  "construction-robot",
+  "copper-cable",
+  "copper-plate",
+  "crude-oil-barrel",
+  "decider-combinator",
+  "defender-capsule",
+  "destroyer-capsule",
+  "discharge-defense-equipment",
+  "display-panel",
+  "distractor-capsule",
+  "efficiency-module",
+  "efficiency-module-2",
+  "efficiency-module-3",
+  "electric-engine-unit",
+  "electric-furnace",
+  "electric-mining-drill",
+  "electronic-circuit",
+  "empty-crude-oil-barrel",
+  "empty-heavy-oil-barrel",
+  "empty-light-oil-barrel",
+  "empty-lubricant-barrel",
+  "empty-petroleum-gas-barrel",
+  "empty-sulfuric-acid-barrel",
+  "empty-water-barrel",
+  "energy-shield-equipment",
+  "energy-shield-mk2-equipment",
+  "engine-unit",
+  "exoskeleton-equipment",
+  "explosive-cannon-shell",
+  "explosive-rocket",
+  "explosive-uranium-cannon-shell",
+  "explosives",
+  "express-loader",
+  "express-splitter",
+  "express-transport-belt",
+  "express-underground-belt",
+  "fast-inserter",
+  "fast-loader",
+  "fast-splitter",
+  "fast-transport-belt",
+  "fast-underground-belt",
+  "firearm-magazine",
+  "fission-reactor-equipment",
+  "flamethrower",
+  "flamethrower-ammo",
+  "flamethrower-turret",
+  "fluid-wagon",
+  "flying-robot-frame",
+  "gate",
+  "grenade",
+  "gun-turret",
+  "hazard-concrete",
+  "heat-exchanger",
+  "heat-pipe",
+  "heavy-armor",
+  "heavy-oil-barrel",
+  "heavy-oil-cracking",
+  "inserter",
+  "iron-chest",
+  "iron-gear-wheel",
+  "iron-plate",
+  "iron-stick",
+  "kovarex-enrichment-process",
+  "lab",
+  "land-mine",
+  "landfill",
+  "laser-turret",
+  "light-armor",
+  "light-oil-barrel",
+  "light-oil-cracking",
+  "loader",
+  "locomotive",
+  "logistic-robot",
+  "logistic-science-pack",
+  "long-handed-inserter",
+  "low-density-structure",
+  "lubricant",
+  "lubricant-barrel",
+  "medium-electric-pole",
+  "military-science-pack",
+  "modular-armor",
+  "night-vision-equipment",
+  "nuclear-fuel",
+  "nuclear-fuel-reprocessing",
+  "nuclear-reactor",
+  "offshore-pump",
+  "oil-refinery",
+  "parameter-0",
+  "parameter-1",
+  "parameter-2",
+  "parameter-3",
+  "parameter-4",
+  "parameter-5",
+  "parameter-6",
+  "parameter-7",
+  "parameter-8",
+  "parameter-9",
+  "passive-provider-chest",
+  "personal-laser-defense-equipment",
+  "personal-roboport-equipment",
+  "personal-roboport-mk2-equipment",
+  "petroleum-gas-barrel",
+  "piercing-rounds-magazine",
+  "piercing-shotgun-shell",
+  "pipe",
+  "pipe-to-ground",
+  "pistol",
+  "plastic-bar",
+  "poison-capsule",
+  "power-armor",
+  "power-armor-mk2",
+  "power-switch",
+  "processing-unit",
+  "production-science-pack",
+  "productivity-module",
+  "productivity-module-2",
+  "productivity-module-3",
+  "programmable-speaker",
+  "pump",
+  "pumpjack",
+  "radar",
+  "rail",
+  "rail-chain-signal",
+  "rail-signal",
+  "recipe-unknown",
+  "refined-concrete",
+  "refined-hazard-concrete",
+  "repair-pack",
+  "requester-chest",
+  "roboport",
+  "rocket",
+  "rocket-fuel",
+  "rocket-launcher",
+  "rocket-part",
+  "rocket-silo",
+  "satellite",
+  "selector-combinator",
+  "shotgun",
+  "shotgun-shell",
+  "slowdown-capsule",
+  "small-electric-pole",
+  "small-lamp",
+  "solar-panel",
+  "solar-panel-equipment",
+  "solid-fuel-from-heavy-oil",
+  "solid-fuel-from-light-oil",
+  "solid-fuel-from-petroleum-gas",
+  "speed-module",
+  "speed-module-2",
+  "speed-module-3",
+  "spidertron",
+  "splitter",
+  "steam-engine",
+  "steam-turbine",
+  "steel-chest",
+  "steel-furnace",
+  "steel-plate",
+  "stone-brick",
+  "stone-furnace",
+  "stone-wall",
+  "storage-chest",
+  "storage-tank",
+  "submachine-gun",
+  "substation",
+  "sulfur",
+  "sulfuric-acid",
+  "sulfuric-acid-barrel",
+  "tank",
+  "train-stop",
+  "transport-belt",
+  "underground-belt",
+  "uranium-cannon-shell",
+  "uranium-fuel-cell",
+  "uranium-processing",
+  "uranium-rounds-magazine",
+  "utility-science-pack",
+  "water-barrel",
+  "wooden-chest"
+ ],
+ "space_location": [
+  "nauvis",
+  "space-location-unknown"
+ ],
+ "tile": [
+  "acid-refined-concrete",
+  "black-refined-concrete",
+  "blue-refined-concrete",
+  "brown-refined-concrete",
+  "concrete",
+  "cyan-refined-concrete",
+  "deepwater",
+  "deepwater-green",
+  "dirt-1",
+  "dirt-2",
+  "dirt-3",
+  "dirt-4",
+  "dirt-5",
+  "dirt-6",
+  "dirt-7",
+  "dry-dirt",
+  "grass-1",
+  "grass-2",
+  "grass-3",
+  "grass-4",
+  "green-refined-concrete",
+  "hazard-concrete-left",
+  "hazard-concrete-right",
+  "lab-dark-1",
+  "lab-dark-2",
+  "lab-white",
+  "landfill",
+  "nuclear-ground",
+  "orange-refined-concrete",
+  "out-of-map",
+  "pink-refined-concrete",
+  "purple-refined-concrete",
+  "red-desert-0",
+  "red-desert-1",
+  "red-desert-2",
+  "red-desert-3",
+  "red-refined-concrete",
+  "refined-concrete",
+  "refined-hazard-concrete-left",
+  "refined-hazard-concrete-right",
+  "sand-1",
+  "sand-2",
+  "sand-3",
+  "stone-path",
+  "tile-unknown",
+  "tutorial-grid",
+  "water",
+  "water-green",
+  "water-mud",
+  "water-shallow",
+  "water-wube",
+  "yellow-refined-concrete"
+ ],
+ "tile_items": {
+  "concrete": [
+   {
+    "count": 1,
+    "name": "concrete"
+   }
+  ],
+  "hazard-concrete-left": [
+   {
+    "count": 1,
+    "name": "hazard-concrete"
+   }
+  ],
+  "hazard-concrete-right": [
+   {
+    "count": 1,
+    "name": "hazard-concrete"
+   }
+  ],
+  "landfill": [
+   {
+    "count": 1,
+    "name": "landfill"
+   }
+  ],
+  "refined-concrete": [
+   {
+    "count": 1,
+    "name": "refined-concrete"
+   }
+  ],
+  "refined-hazard-concrete-left": [
+   {
+    "count": 1,
+    "name": "refined-hazard-concrete"
+   }
+  ],
+  "refined-hazard-concrete-right": [
+   {
+    "count": 1,
+    "name": "refined-hazard-concrete"
+   }
+  ],
+  "stone-path": [
+   {
+    "count": 1,
+    "name": "stone-brick"
+   }
+  ]
+ },
+ "virtual_signal": [
+  "down-arrow",
+  "down-left-arrow",
+  "down-right-arrow",
+  "left-arrow",
+  "right-arrow",
+  "shape-circle",
+  "shape-corner",
+  "shape-corner-2",
+  "shape-corner-3",
+  "shape-corner-4",
+  "shape-cross",
+  "shape-curve",
+  "shape-curve-2",
+  "shape-curve-3",
+  "shape-curve-4",
+  "shape-diagonal",
+  "shape-diagonal-2",
+  "shape-diagonal-cross",
+  "shape-horizontal",
+  "shape-t",
+  "shape-t-2",
+  "shape-t-3",
+  "shape-t-4",
+  "shape-vertical",
+  "signal-0",
+  "signal-1",
+  "signal-2",
+  "signal-3",
+  "signal-4",
+  "signal-5",
+  "signal-6",
+  "signal-7",
+  "signal-8",
+  "signal-9",
+  "signal-A",
+  "signal-B",
+  "signal-C",
+  "signal-D",
+  "signal-E",
+  "signal-F",
+  "signal-G",
+  "signal-H",
+  "signal-I",
+  "signal-J",
+  "signal-K",
+  "signal-L",
+  "signal-M",
+  "signal-N",
+  "signal-O",
+  "signal-P",
+  "signal-Q",
+  "signal-R",
+  "signal-S",
+  "signal-T",
+  "signal-U",
+  "signal-V",
+  "signal-W",
+  "signal-X",
+  "signal-Y",
+  "signal-Z",
+  "signal-alarm",
+  "signal-alert",
+  "signal-ampersand",
+  "signal-anticlockwise-circle-arrow",
+  "signal-anything",
+  "signal-apostrophe",
+  "signal-battery-full",
+  "signal-battery-low",
+  "signal-battery-mid-level",
+  "signal-black",
+  "signal-blue",
+  "signal-check",
+  "signal-circumflex-accent",
+  "signal-clock",
+  "signal-clockwise-circle-arrow",
+  "signal-colon",
+  "signal-comma",
+  "signal-cyan",
+  "signal-damage",
+  "signal-deny",
+  "signal-division",
+  "signal-dot",
+  "signal-each",
+  "signal-equal",
+  "signal-everything",
+  "signal-exclamation-mark",
+  "signal-explosion",
+  "signal-fire",
+  "signal-fluid-parameter",
+  "signal-fuel",
+  "signal-fuel-parameter",
+  "signal-ghost",
+  "signal-greater-than",
+  "signal-greater-than-or-equal-to",
+  "signal-green",
+  "signal-grey",
+  "signal-heart",
+  "signal-hourglass",
+  "signal-info",
+  "signal-input",
+  "signal-item-parameter",
+  "signal-left-parenthesis",
+  "signal-left-right-arrow",
+  "signal-left-square-bracket",
+  "signal-less-than",
+  "signal-less-than-or-equal-to",
+  "signal-letter-dot",
+  "signal-lightning",
+  "signal-liquid",
+  "signal-lock",
+  "signal-map-marker",
+  "signal-mining",
+  "signal-minus",
+  "signal-moon",
+  "signal-multiplication",
+  "signal-no-entry",
+  "signal-not-equal",
+  "signal-number-sign",
+  "signal-output",
+  "signal-percent",
+  "signal-pink",
+  "signal-plus",
+  "signal-question-mark",
+  "signal-quotation-mark",
+  "signal-radioactivity",
+  "signal-recycle",
+  "signal-red",
+  "signal-right-parenthesis",
+  "signal-right-square-bracket",
+  "signal-rightwards-leftwards-arrow",
+  "signal-science-pack",
+  "signal-shuffle",
+  "signal-signal-parameter",
+  "signal-skull",
+  "signal-slash",
+  "signal-snowflake",
+  "signal-speed",
+  "signal-stack-size",
+  "signal-star",
+  "signal-sun",
+  "signal-thermometer-blue",
+  "signal-thermometer-red",
+  "signal-trash-bin",
+  "signal-unknown",
+  "signal-unlock",
+  "signal-up-down-arrow",
+  "signal-upwards-downwards-arrow",
+  "signal-weapon",
+  "signal-white",
+  "signal-white-flag",
+  "signal-yellow",
+  "up-arrow",
+  "up-left-arrow",
+  "up-right-arrow"
+ ]
+}

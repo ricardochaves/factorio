@@ -1,0 +1,379 @@
+#!/usr/bin/env python3
+"""Validate the blueprint catalog and compute its numbers from the blueprint strings.
+
+Each folder blueprints/<slug>/ holds the final blueprint string file(s), a blueprint.toml with the hand-written
+metadata and a README.md. Numbers (entities, size, materials, recipes, blueprints per book) are never written by
+hand: this script computes them from the strings.
+
+usage:
+  python3 scripts/catalog/validate.py                          check everything, print the computed stats
+  python3 scripts/catalog/validate.py --json build/catalog.json  also write the catalog index (build/ is git-ignored)
+  python3 scripts/catalog/validate.py --readme                 also refresh the catalog table in README.md
+Exit status is 1 when anything is wrong. Standard library only (Python 3.11+ for tomllib).
+"""
+import argparse
+import hashlib
+import json
+import re
+import sys
+import tomllib
+from collections import Counter
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent))
+import bp  # noqa: E402  (scripts/bp.py)
+
+CATEGORIES = {
+    'belts': 'Belts', 'mining-smelting': 'Mining & smelting', 'oil': 'Oil processing', 'production': 'Production',
+    'science': 'Science', 'power': 'Power', 'trains': 'Trains', 'bots': 'Logistic robots',
+    'city-blocks': 'City blocks', 'circuits': 'Circuits',
+    'defense': 'Defense', 'rocket': 'Rocket',
+}
+TEST_STATUS = {'in-game': 'in game', 'simulation': 'simulation only', 'untested': 'not tested'}
+VIEWERS = {'nxm-matrix'}
+IMAGE_EXT = {'.webp', '.png', '.jpg', '.jpeg'}
+SLUG = re.compile(r'^[a-z0-9]+(?:-[a-z0-9]+)*$')
+TAG = SLUG
+VERSION_STR = re.compile(r'^\d+\.\d+\.\d+$')
+SCHEMA = {  # key: (required, type)
+    'title': (True, str), 'summary': (True, str), 'category': (True, str), 'tags': (True, list),
+    'files': (True, list), 'test': (False, dict), 'images': (True, list), 'viewer': (False, str),
+    'credits': (False, str), 'en': (False, dict), 'es': (False, dict),
+}
+# The site is in Portuguese (the default, written in the top-level keys), English and Spanish. Translations go in
+# the [en] / [es] tables and in the name_<lang> / alt_<lang> keys; anything missing falls back to Portuguese.
+TRANSLATION = {'title': (False, str), 'summary': (False, str), 'credits': (False, str)}
+SUB_SCHEMA = {
+    'files': {'name': (True, str), 'name_en': (False, str), 'name_es': (False, str), 'path': (True, str)},
+    'images': {'path': (True, str), 'alt': (True, str), 'alt_en': (False, str), 'alt_es': (False, str)},
+    'test': {'status': (True, str), 'game_version': (False, str), 'report': (False, str)},
+    'en': TRANSLATION, 'es': TRANSLATION,
+}
+README_START, README_END = '<!-- catalog:start -->', '<!-- catalog:end -->'
+
+
+def game_version(v):
+    return f'{v >> 48}.{(v >> 32) & 0xffff}.{(v >> 16) & 0xffff}'
+
+
+def fmt(n):
+    return f'{n:,}'
+
+
+class Checker:
+    def __init__(self, root, protos):
+        self.root = root
+        self.errors = []
+        self.p = protos
+        self.entity = protos['entity']
+        self.tiles = set(protos['tile'])
+        self.names = (set(self.entity) | set(protos['item']) | set(protos['recipe']) | set(protos['fluid'])
+                      | self.tiles | set(protos['virtual_signal']) | set(protos['quality'])
+                      | set(protos.get('space_location', [])) | set(protos.get('asteroid_chunk', [])))
+
+    def err(self, where, msg):
+        self.errors.append(f'{where}: {msg}')
+
+    # ---------- metadata ----------
+    def check_fields(self, where, table, schema):
+        ok = True
+        for key in table:
+            if key not in schema:
+                self.err(where, f'unknown key "{key}"'); ok = False
+        for key, (required, typ) in schema.items():
+            if key not in table:
+                if required:
+                    self.err(where, f'missing required key "{key}"'); ok = False
+                continue
+            if not isinstance(table[key], typ) or (typ is str and not table[key].strip()):
+                self.err(where, f'"{key}" must be a non-empty {typ.__name__}'); ok = False
+        return ok
+
+    def rel_file(self, where, folder, rel, exts=None):
+        path = (folder / rel)
+        if Path(rel).is_absolute() or '..' in Path(rel).parts:
+            self.err(where, f'path "{rel}" must stay inside the folder'); return None
+        if exts and path.suffix.lower() not in exts:
+            self.err(where, f'"{rel}" must be one of {sorted(exts)}'); return None
+        if not path.is_file():
+            self.err(where, f'file "{rel}" not found'); return None
+        return path
+
+    def load_meta(self, folder):
+        where = self.where(folder / 'blueprint.toml')
+        try:
+            meta = tomllib.loads((folder / 'blueprint.toml').read_text(encoding='utf-8'))
+        except tomllib.TOMLDecodeError as e:
+            self.err(where, f'invalid TOML: {e}'); return None
+        self.check_fields(where, meta, SCHEMA)
+        # Keep going after a schema error so one run reports every problem; wrong types count as absent.
+        for key, (_, typ) in SCHEMA.items():
+            if key in meta and not isinstance(meta[key], typ):
+                del meta[key]
+        meta.setdefault('files', []); meta.setdefault('tags', [])
+        if 'category' in meta and meta['category'] not in CATEGORIES:
+            self.err(where, f'category "{meta["category"]}" is not one of {sorted(CATEGORIES)}')
+        for t in meta['tags']:
+            if not isinstance(t, str) or not TAG.match(t):
+                self.err(where, f'tag {t!r} must be lower-case words joined by "-"')
+        if 'viewer' in meta and meta['viewer'] not in VIEWERS:
+            self.err(where, f'viewer "{meta["viewer"]}" is not one of {sorted(VIEWERS)}')
+        for key in ('files', 'images'):
+            items = meta.get(key, [])
+            if not items:
+                # Every page shows real screenshots taken in the game, so a blueprint needs at least one image.
+                self.err(where, f'needs at least one [[{key}]] entry')
+            for i, item in enumerate(items):
+                if not isinstance(item, dict):
+                    self.err(where, f'{key}[{i}] must be a table'); continue
+                self.check_fields(f'{where} {key}[{i}]', item, SUB_SCHEMA[key])
+        for key in ('test', 'en', 'es'):
+            if key in meta:
+                self.check_fields(f'{where} [{key}]', meta[key], SUB_SCHEMA[key])
+        test = meta.get('test', {})
+        if test.get('status') and test['status'] not in TEST_STATUS:
+            self.err(where, f'test.status "{test["status"]}" is not one of {sorted(TEST_STATUS)}')
+        if test.get('game_version') and not VERSION_STR.match(test['game_version']):
+            self.err(where, f'test.game_version "{test["game_version"]}" must look like 2.0.77')
+        if test.get('report'):
+            self.rel_file(where, folder, test['report'])
+        for i, img in enumerate(meta.get('images', [])):
+            if isinstance(img, dict) and isinstance(img.get('path'), str):
+                self.rel_file(f'{where} images[{i}]', folder, img['path'], IMAGE_EXT)
+        return meta
+
+    # ---------- blueprint strings ----------
+    def check_tree(self, where, data):
+        """Walk the decoded JSON once: versions, prototype names, quality."""
+        unknown = Counter(); first_seen = {}
+        stack = [(data, '')]
+        while stack:
+            node, path = stack.pop()
+            if isinstance(node, dict):
+                for k, v in node.items():
+                    p = f'{path}.{k}' if path else k
+                    if k == 'version' and isinstance(v, int) and not game_version(v).startswith('2.0.'):
+                        self.err(where, f'{p} is game version {game_version(v)}, expected 2.0.x')
+                    elif k == 'name' and isinstance(v, str) and v not in self.names:
+                        unknown[v] += 1; first_seen.setdefault(v, p)
+                    elif k in ('quality', 'recipe_quality') and isinstance(v, str) and v != 'normal':
+                        self.err(where, f'{p} = "{v}": only normal quality exists in the base game')
+                    elif isinstance(v, (dict, list)):
+                        stack.append((v, p))
+            elif isinstance(node, list):
+                for i, v in enumerate(node):
+                    if isinstance(v, (dict, list)):
+                        stack.append((v, f'{path}[{i}]'))
+        for name, n in sorted(unknown.items()):
+            self.err(where, f'"{name}" is not a vanilla Factorio 2.0 prototype ({n}x, e.g. {first_seen[name]})')
+
+    def blueprint_stats(self, where, b, labels):
+        ents, tiles = b.get('entities', []), b.get('tiles', [])
+        bom, requests, recipes = Counter(), Counter(), Counter()
+        x0 = y0 = float('inf'); x1 = y1 = float('-inf')
+        for e in ents:
+            proto = self.entity.get(e['name'])
+            if proto is None:
+                continue  # reported by check_tree
+            w, h = proto['w'], proto['h']
+            if e.get('direction', 0) in (4, 12):
+                w, h = h, w
+            x, y = e['position']['x'], e['position']['y']
+            x0, x1, y0, y1 = min(x0, x - w / 2), max(x1, x + w / 2), min(y0, y - h / 2), max(y1, y + h / 2)
+            placed = (proto.get('placed_by') or [{'name': e['name'], 'count': 1}])[0]
+            bom[placed['name']] += placed['count']
+            if e.get('recipe'):
+                recipes[e['recipe']] += 1
+            items = e.get('items')
+            if isinstance(items, list):          # 2.0 insert plans
+                for plan in items:
+                    spots = plan.get('items', {})
+                    n = sum(s.get('count', 1) for s in spots.get('in_inventory', [])) + spots.get('grid_count', 0)
+                    requests[plan['id']['name']] += n
+            elif isinstance(items, dict):        # 1.1 style
+                for name, n in items.items():
+                    requests[name] += n
+        for t in tiles:
+            name = t['name']
+            if name not in self.tiles:
+                continue
+            x, y = t['position']['x'], t['position']['y']
+            x0, x1, y0, y1 = min(x0, x), max(x1, x + 1), min(y0, y), max(y1, y + 1)
+            placed = (self.p['tile_items'].get(name) or [{'name': name, 'count': 1}])[0]
+            bom[placed['name']] += placed['count']
+        width = round(x1 - x0) if ents or tiles else 0
+        height = round(y1 - y0) if ents or tiles else 0
+        return {
+            'book_path': list(labels[:-1]), 'label': b.get('label') or '', 'description': b.get('description', ''),
+            'entities': len(ents), 'tiles': len(tiles), 'width': width, 'height': height,
+            'bom': dict(bom.most_common()), 'item_requests': dict(requests.most_common()),
+            'recipes': dict(recipes.most_common()),
+        }
+
+    def check_file(self, folder, entry):
+        where = self.where(folder / entry['path'])
+        path = self.rel_file(self.where(folder / 'blueprint.toml'), folder, entry['path'], {'.txt'})
+        if path is None:
+            return None
+        text = path.read_text(encoding='utf-8').strip()
+        try:
+            if not text.startswith('0'):
+                raise ValueError('does not start with version byte 0')
+            data = bp.decode(text)
+            kind = bp.kind(data)
+        except Exception as e:  # noqa: BLE001 - any failure here means "not a blueprint string"
+            self.err(where, f'not a valid blueprint string ({type(e).__name__}: {e})'); return None
+        self.check_tree(where, data)
+        top = data[kind]
+        prints = [self.blueprint_stats(where, b, labels) for labels, b in bp.walk(data)] if kind in (
+            'blueprint', 'blueprint_book') else []
+        if kind in ('blueprint', 'blueprint_book') and not prints:
+            self.err(where, 'contains no blueprint')
+        total_bom, total_req, total_rec = Counter(), Counter(), Counter()
+        for s in prints:
+            total_bom.update(s['bom']); total_req.update(s['item_requests']); total_rec.update(s['recipes'])
+        largest = max(prints, key=lambda s: (s['entities'], s['width'] * s['height']), default=None)
+        return {
+            'name': entry['name'], 'name_en': entry.get('name_en'), 'name_es': entry.get('name_es'),
+            'path': entry['path'], 'bytes': path.stat().st_size,
+            'sha256': hashlib.sha256(text.encode()).hexdigest(), 'kind': kind, 'label': top.get('label') or '',
+            'description': top.get('description', ''),
+            'game_version': game_version(top['version']) if isinstance(top.get('version'), int) else None,
+            'icons': [i.get('signal', {}).get('name') for i in top.get('icons', [])],
+            'blueprint_count': len(prints), 'entities': sum(s['entities'] for s in prints),
+            'largest': None if largest is None else {k: largest[k] for k in ('label', 'entities', 'width', 'height')},
+            'bom': dict(total_bom.most_common()), 'item_requests': dict(total_req.most_common()),
+            'recipes': dict(total_rec.most_common()), 'blueprints': prints,
+        }
+
+    # ---------- folders ----------
+    def where(self, path):
+        return str(path.relative_to(self.root))
+
+    def check_folder(self, folder):
+        where = self.where(folder)
+        if not SLUG.match(folder.name):
+            self.err(where, 'folder name must be lower-case words joined by "-"')
+        if not (folder / 'blueprint.toml').is_file():
+            self.err(where, 'missing blueprint.toml'); return None
+        if not (folder / 'README.md').is_file():
+            self.err(where, 'missing README.md')
+        meta = self.load_meta(folder)
+        if meta is None:
+            return None
+        listed = {Path(f['path']).name for f in meta['files'] if isinstance(f, dict) and isinstance(f.get('path'), str)}
+        for stray in sorted(p.name for p in folder.glob('*.txt')):
+            if stray not in listed:
+                self.err(where, f'"{stray}" is not listed in blueprint.toml; keep only the final version '
+                                '(older versions live in git history)')
+        files = [self.check_file(folder, f) for f in meta['files'] if isinstance(f, dict) and 'path' in f]
+        if any(k not in meta for k in ('title', 'summary', 'category')):
+            return None
+        return {
+            'slug': folder.name, 'title': meta['title'], 'summary': meta['summary'], 'category': meta['category'],
+            'tags': meta['tags'], 'viewer': meta.get('viewer'), 'test': meta.get('test', {'status': 'untested'}),
+            'images': meta.get('images', []), 'credits': meta.get('credits'), 'en': meta.get('en', {}),
+            'es': meta.get('es', {}),
+            'readme': 'README.md',
+            'files': [f for f in files if f],
+        }
+
+
+def contents(entry):
+    files = entry['files']
+    books = [f for f in files if f['kind'] == 'blueprint_book']
+    if books:
+        n = sum(f['blueprint_count'] for f in books)
+        return f'{len(books)} book{"s" if len(books) > 1 else ""}, {fmt(n)} blueprints'
+    if len(files) == 1 and files[0]['blueprint_count'] == 1:
+        b = files[0]['blueprints'][0]
+        return f'{fmt(b["entities"])} entities, {b["width"]} × {b["height"]} tiles'
+    return f'{sum(f["blueprint_count"] for f in files)} blueprints'
+
+
+def print_report(catalog):
+    for e in catalog:
+        test = e['test']
+        tested = TEST_STATUS.get(test.get('status'), '?') + (f' {test["game_version"]}' if test.get('game_version') else '')
+        print(f'blueprints/{e["slug"]}  "{e["title"]}"  [{e["category"]}]  test: {tested}')
+        for f in e['files']:
+            kind = 'book' if f['kind'] == 'blueprint_book' else f['kind']
+            line = f'  {f["path"]}  {kind}'
+            if f['kind'] == 'blueprint_book':
+                lg = f['largest']
+                line += (f' · {f["blueprint_count"]} blueprints · {fmt(f["entities"])} entities in total'
+                         f' · largest "{lg["label"]}": {fmt(lg["entities"])} entities, {lg["width"]}×{lg["height"]} tiles')
+            elif f['blueprints']:
+                b = f['blueprints'][0]
+                line += f' · {fmt(b["entities"])} entities · {b["width"]}×{b["height"]} tiles'
+            line += f' · game {f["game_version"]} · {f["bytes"] / 1e6:.1f} MB'
+            print(line)
+            scope = ' (sum over all blueprints)' if f['blueprint_count'] > 1 else ''
+            top = ', '.join(f'{k} {fmt(v)}' for k, v in list(f['bom'].items())[:6])
+            print(f'    materials{scope}: {top}' + (f' … {len(f["bom"])} kinds' if len(f['bom']) > 6 else ''))
+            if f['item_requests']:
+                print('    item requests: ' + ', '.join(f'{k} {fmt(v)}' for k, v in f['item_requests'].items()))
+            if f['recipes'] and f['blueprint_count'] == 1:
+                top = ', '.join(f'{k} {v}' for k, v in list(f['recipes'].items())[:6])
+                print(f'    recipes: {top}' + (f' … {len(f["recipes"])} kinds' if len(f['recipes']) > 6 else ''))
+
+
+def readme_table(catalog):
+    rows = ['| Blueprint | Category | What is inside | Files | Tested |', '|---|---|---|---|---|']
+    order = list(CATEGORIES)
+    for e in sorted(catalog, key=lambda e: (order.index(e['category']), e['title'])):
+        title = e['en'].get('title', e['title'])
+        files = ' · '.join(f'[`{f["path"]}`](blueprints/{e["slug"]}/{f["path"]})' for f in e['files'])
+        test = e['test']
+        tested = TEST_STATUS.get(test.get('status'), '?') + (f', {test["game_version"]}' if test.get('game_version') else '')
+        rows.append(f'| [{title}](blueprints/{e["slug"]}/) | {CATEGORIES[e["category"]]} | {contents(e)} | {files} | {tested} |')
+    return '\n'.join(rows)
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
+    ap.add_argument('--root', type=Path, default=HERE.parent.parent, help='repository root (default: this repo)')
+    ap.add_argument('--prototypes', type=Path, default=HERE / 'vanilla-prototypes.json')
+    ap.add_argument('--json', type=Path, help='write the catalog index here (use a git-ignored path such as build/)')
+    ap.add_argument('--readme', action='store_true', help='refresh the catalog table in README.md')
+    args = ap.parse_args()
+    root = args.root.resolve()
+    try:
+        protos = json.loads(args.prototypes.read_text())
+    except FileNotFoundError:
+        sys.exit(f'{args.prototypes} not found: run scripts/catalog/dump_prototypes.sh')
+    chk = Checker(root, protos)
+    folders = sorted(p for p in (root / 'blueprints').iterdir() if p.is_dir()) if (root / 'blueprints').is_dir() else []
+    if not folders:
+        chk.err('blueprints', 'no blueprint folders found')
+    catalog = [c for c in (chk.check_folder(f) for f in folders) if c]
+    print_report(catalog)
+    if chk.errors:
+        sys.stdout.flush()
+        print(f'\nFAILED: {len(chk.errors)} error(s)', file=sys.stderr)
+        for e in chk.errors:
+            print(f'  ERROR {e}', file=sys.stderr)
+        return 1
+    if args.json:
+        args.json.parent.mkdir(parents=True, exist_ok=True)
+        index = {'factorio_version': protos.get('factorio_version'), 'blueprints': catalog}
+        args.json.write_text(json.dumps(index, ensure_ascii=False, separators=(',', ':')))
+        print(f'wrote {args.json}')
+    if args.readme:
+        readme = root / 'README.md'
+        text = readme.read_text(encoding='utf-8')
+        if README_START not in text or README_END not in text:
+            print(f'README.md has no {README_START} / {README_END} markers', file=sys.stderr)
+            return 1
+        head, rest = text.split(README_START, 1)
+        _, tail = rest.split(README_END, 1)
+        readme.write_text(f'{head}{README_START}\n{readme_table(catalog)}\n{README_END}{tail}', encoding='utf-8')
+        print('updated README.md catalog table')
+    n_files = sum(len(e['files']) for e in catalog)
+    print(f'\nOK: {len(catalog)} blueprint folders, {n_files} files, 0 errors (vanilla {protos.get("factorio_version")})')
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

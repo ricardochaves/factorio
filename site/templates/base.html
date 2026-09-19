@@ -1,0 +1,75 @@
+{% import 'macros.html' as m with context %}
+<!doctype html>
+<html lang="{{ html_lang }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ t.site_name }}{% endblock %}</title>
+<meta name="description" content="{% block description %}{{ t.site_description }}{% endblock %}">
+<link rel="canonical" href="{{ canonical }}">
+{% for l in languages %}
+<link rel="alternate" hreflang="{{ l.html_lang }}" href="{{ l.abs }}">
+{% endfor %}
+<link rel="alternate" hreflang="x-default" href="{{ languages[0].abs }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ t.site_name }}">
+<meta property="og:title" content="{{ self.title() }}">
+<meta property="og:description" content="{{ self.description() }}">
+<meta property="og:url" content="{{ canonical }}">
+<meta property="og:locale" content="{{ og_locale }}">
+{% block og_image %}{% endblock %}
+<meta name="theme-color" content="#171614">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="{{ root }}favicon.svg" type="image/svg+xml">
+<link rel="preload" href="{{ root }}assets/fonts/titillium-web-400-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ root }}assets/fonts/titillium-web-900-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="{{ asset('site.css') }}">
+<script>document.documentElement.classList.add('js')</script>
+<script src="{{ asset('site.js') }}" defer></script>
+{% block head %}{% endblock %}
+</head>
+<body>
+<a class="skip" href="#main">{{ t.skip }}</a>
+<header class="topbar" data-menu>
+  <div class="container topbar-inner">
+    <a class="brand" href="{{ link() }}">{{ m.logo() }}<span>{{ t.site_name }}</span></a>
+    <button class="menu-btn btn-icon" type="button" aria-expanded="false" aria-controls="site-menu"
+            data-label-open="{{ t.menu_open }}" data-label-close="{{ t.menu_close }}" aria-label="{{ t.menu_open }}">{{ m.icon('menu', 22) }}</button>
+    <div class="menu" id="site-menu">
+      <nav class="nav" aria-label="{{ t.nav_label }}">
+        <a href="{{ link('catalog/') }}"{% if page == 'catalog' %} aria-current="page"{% endif %}>{{ t.nav_catalog }}</a>
+        <a href="{{ link() }}#news">{{ t.nav_news }}</a>
+        <a href="{{ link() }}#import">{{ t.nav_import }}</a>
+      </nav>
+      <div class="topbar-end">
+        <nav class="lang" aria-label="{{ t.lang_group }}">
+          {% for l in languages %}
+          <a href="{{ l.url }}" hreflang="{{ l.html_lang }}" lang="{{ l.html_lang }}" title="{{ l.name }}"{% if l.current %} aria-current="true"{% endif %}><span aria-hidden="true">{{ l.short }}</span><span class="sr-only">{{ l.name }}</span></a>
+          {% endfor %}
+        </nav>
+        <a class="gh" href="{{ repo_url }}" aria-label="{{ t.repo_aria }}">{{ m.icon('code') }}<span>GitHub</span></a>
+      </div>
+    </div>
+  </div>
+</header>
+<main id="main">
+{% block main %}{% endblock %}
+</main>
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-text">
+      <strong>{{ t.footer_about }}</strong>
+      <span>{{ t.footer_credits }}</span>
+      <span>{{ t.footer_wube }}</span>
+    </div>
+    <div class="footer-links">
+      <a href="{{ repo_url }}">{{ t.footer_code }}</a>
+      <span>{{ t.footer_fonts }}</span>
+    </div>
+  </div>
+</footer>
+<div class="sr-only" aria-live="polite" id="live"></div>
+<script type="application/json" id="i18n">{{ {'copied': t.copied, 'copying': t.copying, 'copy_failed': t.copy_failed, 'link_copied': t.link_copied}|tojson }}</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

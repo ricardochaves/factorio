@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as m with context %}
+{% import '_blueprint_parts.html' as parts with context %}
+{% block title %}{{ loc(e.title) }} · {{ t.site_name }}{% endblock %}
+{% block description %}{{ loc(e.summary) }}{% endblock %}
+{% block og_image %}<meta property="og:image" content="{{ site_url ~ e.images[0].variants[-1][0] }}">{% endblock %}
+{% block main %}
+{% set nxm = e.viewer == 'nxm-matrix' %}
+{{ parts.head(e, true) }}
+<section class="container">{{ parts.gallery(e) }}</section>
+
+<section class="container book-bar">
+  <div class="tabs" role="tablist" aria-label="{{ t.book_sections }}">
+    {% if nxm %}<button type="button" role="tab" id="tab-matrix" aria-controls="panel-matrix" aria-selected="true">{{ t.tab_matrix }}</button>{% endif %}
+    <button type="button" role="tab" id="tab-contents" aria-controls="panel-contents" aria-selected="{{ 'false' if nxm else 'true' }}">{{ t.tab_contents }}</button>
+    <button type="button" role="tab" id="tab-about" aria-controls="panel-about" aria-selected="false">{{ t.tab_about }}</button>
+  </div>
+  {% if e.files|length > 1 %}
+  <div class="variants" role="group" aria-label="{{ t.variant }}">
+    {% for f in e.files %}
+    <button type="button" data-file="{{ loop.index0 }}" aria-pressed="{{ 'true' if loop.index0 == e.default_file else 'false' }}"
+            data-url="{{ root ~ f.url }}" data-size="{{ t.download_txt.format(size=fmt_bytes(f.bytes)) }}" data-name="{{ loc(f.name) }}"><span class="swatch" style="background:{{ f.color }}" aria-hidden="true"></span>{{ loc(f.name) }}</button>
+    {% endfor %}
+  </div>
+  {% endif %}
+</section>
+
+{% if nxm %}
+<section class="container tabpanel" role="tabpanel" id="panel-matrix" aria-labelledby="tab-matrix">
+  <div class="matrix-controls">
+    <div class="mode-toggle" role="group" aria-label="{{ t.color_by }}">
+      <span class="muted">{{ t.color_by }}</span>
+      <button type="button" data-mode="origin" aria-pressed="true">{{ t.mode_origin }}</button>
+      <button type="button" data-mode="size" aria-pressed="false">{{ t.mode_size }}</button>
+    </div>
+    <div class="pair-select">
+      <label>{{ t.select_in }} <select id="sel-n"></select></label>
+      <span aria-hidden="true">→</span>
+      <label>{{ t.select_out }} <select id="sel-m"></select></label>
+    </div>
+  </div>
+  <div class="matrix-layout">
+    <div class="panel matrix-wrap">
+      <p class="muted small matrix-hint">{{ t.matrix_hint }}</p>
+      <div class="matrix-axes">
+        <span class="axis-x muted">{{ t.outputs }}</span>
+        <span class="axis-y muted">{{ t.inputs }}</span>
+        <div id="matrix" class="matrix" role="grid" aria-label="{{ loc(e.title) }}"></div>
+      </div>
+      <noscript><p class="muted">{{ t.noscript_matrix }}</p></noscript>
+      <ul class="legend" data-legend="origin">
+        {% for o in origins %}<li><span class="swatch" style="background:{{ o.color }}" aria-hidden="true"></span>{{ o[lang] }}</li>{% endfor %}
+      </ul>
+      <ul class="legend" data-legend="size" hidden>
+        {% for color in ('#3a342c', '#6b4f22', '#a36c1c', '#d98f1e', '#f7b84a') %}<li><span class="swatch" style="background:{{ color }}" aria-hidden="true"></span>{{ t.size_legend[loop.index0] }}</li>{% endfor %}
+      </ul>
+    </div>
+    <aside class="panel selected" aria-labelledby="sel-title" aria-live="polite">
+      <div class="selected-head">
+        <div>
+          <span class="muted" id="sel-book"></span>
+          <h2 id="sel-title">—</h2>
+        </div>
+        <span class="origin-badge" id="sel-origin"></span>
+      </div>
+      <div class="preview" id="preview" role="img" aria-label="">
+        <p class="muted small" id="preview-status">{{ t.preview_loading }}</p>
+      </div>
+      <dl class="sel-stats">
+        <div><dt>{{ t.sel_entities }}</dt><dd id="sel-ent">—</dd></div>
+        <div><dt>{{ t.sel_size }}</dt><dd id="sel-dim">—</dd></div>
+        <div><dt>{{ t.sel_throughput }}</dt><dd id="sel-thr">—</dd></div>
+      </dl>
+      <div class="sel-variants" id="sel-variants" hidden>
+        <span class="small" id="sel-variants-note"></span>
+        <div class="sel-variant-buttons" role="group"></div>
+      </div>
+      <div class="sel-desc">
+        <h3 class="small">{{ t.ingame_description }}</h3>
+        <p class="mono small" id="sel-desc">—</p>
+      </div>
+      <p class="verif" id="sel-verif" hidden>{{ m.icon('check') }}<span></span></p>
+      <div class="sel-actions">
+        <button type="button" class="btn btn-primary" id="sel-copy" data-copy="">{{ m.icon('copy') }}<span data-copy-label>{{ t.copy_blueprint }}</span></button>
+        <a class="btn" id="sel-download" href="#" download>{{ m.icon('download') }}<span>{{ t.download }}</span></a>
+        <button type="button" class="btn" id="sel-link">{{ m.icon('link') }}<span data-copy-label>{{ t.direct_link }}</span></button>
+      </div>
+    </aside>
+  </div>
+</section>
+{% endif %}
+
+<section class="container tabpanel" role="tabpanel" id="panel-contents" aria-labelledby="tab-contents">
+  <p class="muted">{{ t.contents_intro }}</p>
+  {% for f in e.files %}
+  <div class="panel contents" data-file-panel="{{ loop.index0 }}">
+    <h2 class="contents-title"><span class="swatch" style="background:{{ f.color }}" aria-hidden="true"></span>{{ loc(f.name) }} <span class="muted small">· {{ t.subbook_count.format(n=fmt_int(f.count)) }}</span></h2>
+    <ul class="contents-list">
+      {% for c in f.children %}
+      <li>
+        <span class="muted">{{ m.icon('book', 16) }}</span>
+        <span class="contents-label">{{ t.subbook.format(label=c.label) if c.kind == 'blueprint_book' else c.label }}</span>
+        <span class="contents-desc">{{ c.description }}</span>
+        <span class="mono muted">{{ t.subbook_count.format(n=fmt_int(c.count)) }}</span>
+        {{ m.copy_button(c.url, aria=t.copy_subbook.format(label=c.label) ~ ' · ' ~ loc(f.name), cls='btn-icon') }}
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endfor %}
+</section>
+
+<section class="tabpanel" role="tabpanel" id="panel-about" aria-labelledby="tab-about">
+  <div class="container about-grid">
+    {% for f in e.files %}
+    {% if f.origins is defined %}
+    <div class="panel prose" data-file-panel="{{ loop.index0 }}">
+      <h2 class="h3">{{ t.origin_here }} <span class="muted small">· {{ loc(f.name) }}</span></h2>
+      <p>{{ t.origin_summary.format(o=f.origins.o, f=f.origins.f, r=f.origins.r, g=f.origins.g) }}</p>
+    </div>
+    {% endif %}
+    {% if f.largest %}
+    <div class="panel prose" data-file-panel="{{ loop.index0 }}">
+      <h2 class="h3">{{ t.largest }} <span class="muted small">· {{ loc(f.name) }}</span></h2>
+      <p>{{ t.largest_text.format(label=f.largest.label, e=fmt_int(f.largest.entities), w=f.largest.width, h=f.largest.height) }}</p>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+  {{ parts.credits(e) }}
+  {{ parts.report(e) }}
+  {{ parts.history(e) }}
+</section>
+
+{{ parts.related(e) }}
+{% endblock %}
+{% block scripts %}
+{% if e.viewer == 'nxm-matrix' %}
+<script type="application/json" id="book-data">{{ {
+  'slug': e.slug, 'files': book_data, 'default': e.default_file, 'lang': lang, 'root': root,
+  'origins': origins,
+  'names': e.files|map(attribute='name')|map(attribute=lang)|list,
+  't': {'book_tier': t.book_tier, 'cell_label': t.cell_label, 'pair_label': t.pair_label,
+        'belts_one': t.belts_one, 'belts_many': t.belts_many, 'tiles_suffix': t.tiles_suffix,
+        'verif_splitter': t.verif_splitter, 'verif_plain': t.verif_plain, 'variants_note': t.variants_note,
+        'preview_loading': t.preview_loading, 'preview_error': t.preview_error, 'preview_label': t.preview_label,
+        'copy_blueprint': t.copy_blueprint, 'download_txt': t.download_txt, 'in_game': e.test.get('status') == 'in-game'},
+}|tojson }}</script>
+{% endif %}
+<script src="{{ asset('book.js') }}" defer></script>
+{% endblock %}

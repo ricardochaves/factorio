@@ -1,0 +1,125 @@
+{# Pieces shared by the single-blueprint page and the book page. #}
+{% import 'macros.html' as m with context %}
+
+{% macro head(e, is_book) %}
+<section class="container page-head bp-head">
+  <div class="bp-head-main">
+    <nav class="breadcrumb" aria-label="{{ t.breadcrumb }}">
+      <a href="{{ link('catalog/') }}">{{ t.catalog }}</a><span aria-hidden="true">/</span>
+      <a href="{{ link('catalog/') }}?cat={{ e.category }}">{{ cat_label(e.category) }}</a><span aria-hidden="true">/</span>
+      <span aria-current="page">{{ loc(e.title) }}</span>
+    </nav>
+    <h1>{{ loc(e.title) }}</h1>
+    <div class="chips">{{ m.chip(kind_label(e)) }}{% for tag in e.tags %}{{ m.chip(tag_label(tag)) }}{% endfor %}</div>
+    <p class="lead">{{ loc(e.summary) }}</p>
+    <div class="test-banner test-banner-{{ e.test.get('status', 'untested') }}">
+      {{ m.test_badge(e.test, big=true) }}
+      <span>{% if e.test.get('game_version') %}{{ t.test_banner.format(v=e.test.game_version) }}{% endif %}{% if e.date %} {{ t.updated.format(date=fmt_date(e.date)) }}{% endif %}</span>
+      {% if e.report %}<a href="#report">{{ t.see_report }}</a>{% endif %}
+    </div>
+  </div>
+  <div class="bp-actions" {% if is_book %}data-book-actions{% endif %}>
+    {% set f = e.files[e.default_file] %}
+    {% if is_book %}
+    {{ m.copy_button(f.url, t.copy_book, cls='btn btn-primary btn-lg') }}
+    <a class="btn btn-lg" href="{{ root ~ f.url }}" download data-download><span class="sr-only">{{ loc(f.name) }}: </span>{{ m.icon('download') }}<span data-size-label>{{ t.download_txt.format(size=fmt_bytes(f.bytes)) }}</span></a>
+    {% else %}
+    {% for f in e.files %}
+    {{ m.copy_button(f.url, t.copy_blueprint if e.files|length == 1 else t.copy_aria.format(title=loc(f.name)), cls='btn btn-primary btn-lg') }}
+    <a class="btn btn-lg" href="{{ root ~ f.url }}" download>{{ m.icon('download') }}<span>{{ t.download_txt.format(size=fmt_bytes(f.bytes)) }}</span></a>
+    {% endfor %}
+    {% endif %}
+    <a class="btn btn-ghost btn-lg" href="{{ repo_url }}/commits/{{ branch }}/blueprints/{{ e.slug }}">{{ m.icon('code') }}<span>{{ t.history_github }}</span></a>
+  </div>
+</section>
+{% endmacro %}
+
+{% macro gallery(e) %}
+{% set first = e.images[0] %}
+<figure class="panel gallery" data-gallery>
+  <a class="gallery-main" href="{{ root ~ first.full }}" data-gallery-link>
+    <img src="{{ root ~ first.variants[-1][0] }}" srcset="{{ srcset(first) }}" sizes="(min-width: 1280px) 1184px, calc(100vw - 32px)"
+         width="{{ first.variants[-1][1] }}" height="{{ first.variants[-1][2] }}" alt="{{ loc(first.alt) }}" fetchpriority="high" data-gallery-img>
+  </a>
+  <figcaption class="gallery-caption">
+    <span class="muted"><span class="source">{{ t.gallery_caption }}</span> <a href="{{ root ~ first.full }}" data-gallery-full>{{ m.icon('expand', 16) }} {{ t.full_size }}</a></span>
+    {% if e.images|length > 1 %}
+    <span class="thumbs">
+      {% for img in e.images %}
+      <a href="{{ root ~ img.full }}" class="thumb" data-thumb{% if loop.first %} aria-current="true"{% endif %}
+         data-src="{{ root ~ img.variants[-1][0] }}" data-srcset="{{ srcset(img) }}" data-alt="{{ loc(img.alt) }}"
+         data-w="{{ img.variants[-1][1] }}" data-h="{{ img.variants[-1][2] }}">
+        <img src="{{ root ~ img.small }}" alt="{{ loc(img.alt) }}" width="110" height="82" loading="lazy" decoding="async">
+      </a>
+      {% endfor %}
+    </span>
+    {% endif %}
+  </figcaption>
+</figure>
+{% endmacro %}
+
+{% macro report(e) %}
+{% if e.report %}
+<section class="container section" aria-labelledby="report">
+  <div class="section-head">
+    <h2 id="report">{{ t.report }}</h2>
+    <span class="source">{{ t.report_source }}{% if t.report_lang_note %} · {{ t.report_lang_note }}{% endif %}</span>
+  </div>
+  <div class="report"{% if lang != 'pt' %} lang="pt-BR"{% endif %}>
+    {% for s in e.report if not s.big %}
+    <article class="panel prose">
+      {{ m.panel_head((s.title or t.overview)|safe, none, s.id, 'h3') }}
+      {{ s.html|safe }}
+    </article>
+    {% endfor %}
+  </div>
+  {% for s in e.report if s.big %}
+  <details class="panel prose big-section"{% if lang != 'pt' %} lang="pt-BR"{% endif %}>
+    <summary><h3 id="{{ s.id }}">{{ s.title|safe }}</h3><span class="source">{{ t.expand }}</span></summary>
+    {{ s.html|safe }}
+  </details>
+  {% endfor %}
+</section>
+{% endif %}
+{% endmacro %}
+
+{% macro credits(e) %}
+{% if e.credits %}
+<section class="container section" aria-labelledby="credits">
+  <div class="panel prose">
+    {{ m.panel_head(t.credits, none, 'credits') }}
+    <p>{{ loc(e.credits)|safe }}</p>
+  </div>
+</section>
+{% endif %}
+{% endmacro %}
+
+{% macro history(e) %}
+<section class="container section" aria-labelledby="history">
+  <div class="panel">
+    {{ m.panel_head(t.history, t.history_source, 'history') }}
+    {% if e.history %}
+    <ol class="history">
+      {% for c in e.history %}
+      <li>
+        <span class="mono muted">{{ fmt_date(c.date) }}</span>
+        <span class="history-subject" lang="en">{{ c.subject }}</span>
+        <a href="{{ c.url }}">{{ t.see_diff }}</a>
+      </li>
+      {% endfor %}
+    </ol>
+    {% else %}
+    <p class="muted">{{ t.history_empty }}</p>
+    {% endif %}
+  </div>
+</section>
+{% endmacro %}
+
+{% macro related(e) %}
+{% if e.related %}
+<section class="container section section-last" aria-labelledby="related">
+  <div class="section-head"><h2 id="related">{{ t.related }}</h2><span class="source">{{ t.related_source }}</span></div>
+  <div class="card-grid">{% for o in e.related %}{{ m.card(o) }}{% endfor %}</div>
+</section>
+{% endif %}
+{% endmacro %}

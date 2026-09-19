@@ -1,0 +1,63 @@
+title = "Balanceadores N × M"
+summary = "Balanceadores de 1 a 24 esteiras de entrada e de saída. Um livro por tipo de esteira, com 577 blueprints cada."
+category = "belts"
+tags = ["balancer", "yellow-belt", "red-belt", "blue-belt"]
+viewer = "nxm-matrix"
+credits = "Parte dos blocos vem do [livro de balanceadores do Raynquist](https://github.com/raynquist/balancer), que não declara licença; cada blueprint diz no jogo de onde veio. A verificação independente usa [tzwaan/factorio_balancers](https://github.com/tzwaan/factorio_balancers) (MIT)."
+
+[[files]]
+name = "Esteira amarela"
+name_en = "Yellow belt"
+name_es = "Cinta amarilla"
+path = "yellow-belt.txt"
+
+[[files]]
+name = "Esteira vermelha"
+name_en = "Red belt"
+name_es = "Cinta roja"
+path = "red-belt.txt"
+
+[[files]]
+name = "Esteira azul"
+name_en = "Blue belt"
+name_es = "Cinta azul"
+path = "blue-belt.txt"
+
+[test]
+status = "in-game"
+game_version = "2.0.77"
+report = "README.md"
+
+[[images]]
+path = "images/overview.webp"
+alt = "Balanceadores 8 → 8 dos três livros (esteira amarela, vermelha e azul), capturados no jogo com itens passando"
+alt_en = "8 → 8 balancers from the three books (yellow, red and blue belt), captured in the game with items flowing"
+alt_es = "Balanceadores 8 → 8 de los tres libros (cinta amarilla, roja y azul), capturados en el juego con objetos en movimiento"
+
+[[images]]
+path = "images/yellow-8x8.webp"
+alt = "Balanceador 8 → 8 do livro de esteira amarela, capturado no jogo com placas de ferro passando"
+alt_en = "8 → 8 balancer from the yellow belt book, captured in the game with iron plates flowing"
+alt_es = "Balanceador 8 → 8 del libro de cinta amarilla, capturado en el juego con placas de hierro en movimiento"
+
+[[images]]
+path = "images/red-8x8.webp"
+alt = "Balanceador 8 → 8 do livro de esteira vermelha, capturado no jogo com placas de cobre passando"
+alt_en = "8 → 8 balancer from the red belt book, captured in the game with copper plates flowing"
+alt_es = "Balanceador 8 → 8 del libro de cinta roja, capturado en el juego con placas de cobre en movimiento"
+
+[[images]]
+path = "images/blue-8x8.webp"
+alt = "Balanceador 8 → 8 do livro de esteira azul, capturado no jogo com circuitos eletrônicos passando"
+alt_en = "8 → 8 balancer from the blue belt book, captured in the game with electronic circuits flowing"
+alt_es = "Balanceador 8 → 8 del libro de cinta azul, capturado en el juego con circuitos electrónicos en movimiento"
+
+[en]
+title = "N × M belt balancers"
+summary = "Balancers from 1 to 24 input and output belts. One book per belt tier, with 577 blueprints each."
+credits = "Some of the building blocks come from [Raynquist's balancer book](https://github.com/raynquist/balancer), which states no license; every blueprint says in the game where it came from. The independent check uses [tzwaan/factorio_balancers](https://github.com/tzwaan/factorio_balancers) (MIT)."
+
+[es]
+title = "Balanceadores N × M"
+summary = "Balanceadores de 1 a 24 cintas de entrada y de salida. Un libro por tipo de cinta, con 577 blueprints cada uno."
+credits = "Parte de los bloques viene del [libro de balanceadores de Raynquist](https://github.com/raynquist/balancer), que no declara licencia; cada blueprint indica en el juego de dónde viene. La verificación independiente usa [tzwaan/factorio_balancers](https://github.com/tzwaan/factorio_balancers) (MIT)."

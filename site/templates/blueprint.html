@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as m with context %}
+{% import '_blueprint_parts.html' as parts with context %}
+{% block title %}{{ loc(e.title) }} · {{ t.site_name }}{% endblock %}
+{% block description %}{{ loc(e.summary) }}{% endblock %}
+{% block og_image %}<meta property="og:image" content="{{ site_url ~ e.images[0].variants[-1][0] }}">{% endblock %}
+{% block main %}
+{{ parts.head(e, false) }}
+<section class="container">
+  {{ parts.gallery(e) }}
+  {% if e.single %}
+  {% set s = e.single %}
+  <div class="panel stats">
+    <span class="source">{{ t.from_string }}</span>
+    <dl class="stats-grid">
+      <div><dt>{{ t.st_entities }}</dt><dd>{{ fmt_int(s.entities) }}</dd></div>
+      <div><dt>{{ t.st_tiles }}</dt><dd>{{ s.width }} × {{ s.height }}</dd></div>
+      {% for name, n in s.machines %}
+      <div><dt>{{ machine_label(name, n) }}</dt><dd>{{ fmt_int(n) }}</dd></div>
+      {% endfor %}
+    </dl>
+  </div>
+  {% endif %}
+</section>
+
+{% if e.single %}
+<section class="container section two-col">
+  {% if e.single.recipes %}
+  <div class="panel">
+    {{ m.panel_head(t.produces, t.from_string) }}
+    <ul class="rows">
+      {% for recipe, machines in e.single.recipes[:12] %}
+      <li><span class="row-name">{{ recipe_name(recipe) }}</span><span class="row-value">{% for machine, n in machines %}{{ fmt_int(n) }} {{ machine_label(machine, n) }}{{ ', ' if not loop.last }}{% endfor %}</span></li>
+      {% endfor %}
+    </ul>
+    {% if e.single.recipes|length > 12 %}
+    <details class="more-rows">
+      <summary>{{ t.more_recipes.format(n=e.single.recipes|length) }}</summary>
+      <ul class="rows">
+        {% for recipe, machines in e.single.recipes[12:] %}
+        <li><span class="row-name">{{ recipe_name(recipe) }}</span><span class="row-value">{% for machine, n in machines %}{{ fmt_int(n) }} {{ machine_label(machine, n) }}{{ ', ' if not loop.last }}{% endfor %}</span></li>
+        {% endfor %}
+      </ul>
+    </details>
+    {% endif %}
+  </div>
+  {% endif %}
+  <div class="panel">
+    {{ m.panel_head(t.materials, t.from_string) }}
+    <p class="muted small">{{ t.materials_note }}</p>
+    <ul class="rows rows-tight" lang="en">
+      {% for name, n in e.bom[:18] %}
+      <li><span class="row-name">{{ item_name_en(name) }}</span><span class="mono">{{ fmt_int(n) }}</span></li>
+      {% endfor %}
+    </ul>
+    {% if e.bom|length > 18 %}
+    <details class="more-rows">
+      <summary>{{ t.more_items.format(n=e.bom|length) }}</summary>
+      <ul class="rows rows-tight" lang="en">
+        {% for name, n in e.bom[18:] %}
+        <li><span class="row-name">{{ item_name_en(name) }}</span><span class="mono">{{ fmt_int(n) }}</span></li>
+        {% endfor %}
+      </ul>
+    </details>
+    {% endif %}
+    {% if e.requests %}
+    <h3 class="rows-title">{{ t.inserted }}</h3>
+    <ul class="rows rows-tight" lang="en">
+      {% for name, n in e.requests %}
+      <li><span class="row-name">{{ item_name_en(name) }}</span><span class="mono accent">{{ fmt_int(n) }}</span></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+</section>
+{% endif %}
+
+{{ parts.report(e) }}
+{{ parts.credits(e) }}
+{{ parts.history(e) }}
+{{ parts.related(e) }}
+{% endblock %}

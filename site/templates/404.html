@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as m with context %}
+{% block title %}{{ t.nf_title }} · {{ t.site_name }}{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block main %}
+<section class="container page-head not-found">
+  {% for code in ('pt', 'en', 'es') %}
+  {% set tt = all_t[code] %}
+  <div class="nf-block" lang="{{ languages[loop.index0].html_lang }}">
+    {% if loop.first %}<h1>{{ tt.nf_title }}</h1>{% else %}<h2>{{ tt.nf_title }}</h2>{% endif %}
+    <p class="lead">{{ tt.nf_text }}</p>
+    <a class="btn btn-primary" href="{{ languages[loop.index0].url }}catalog/">{{ tt.nf_link }}{{ m.icon('arrow') }}</a>
+  </div>
+  {% endfor %}
+</section>
+{% endblock %}

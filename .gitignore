@@ -1,0 +1,49 @@
+# --- local only -------------------------------------------------------------
+# Superseded files (original books, older refinery versions, raw screenshots).
+/archive/
+.DS_Store
+
+# Claude Code: keep only the project instructions.
+/.claude/*
+!/.claude/CLAUDE.md
+
+# --- Python / C build output ---------------------------------------------------
+__pycache__/
+*.pyc
+*.so
+*.pkl
+
+# --- tool output -----------------------------------------------------------------
+*.log
+/scripts/*.json
+/scripts/ingame_analysis*.txt
+/scripts/lib_*.txt
+
+# Third-party inputs (fetch them as described in scripts/README.md).
+/scripts/sources/
+/scripts/xcheck/venv/
+/scripts/xcheck/factorio_balancers/
+
+# --- Factorio headless harness -----------------------------------------------------
+# Generated on every run (holds an absolute path).
+/scripts/ingame/config.ini
+# The write-data dir holds player-data.json (Factorio account token), saves, logs and results.
+# Only the hand-written scenario code is tracked.
+/scripts/ingame/data/*
+!/scripts/ingame/data/scenarios/
+# Generated test data inside the scenarios.
+/scripts/ingame/data/scenarios/balancer-test/tests*.lua
+/scripts/ingame/data/scenarios/balancer-test/tier.lua
+/scripts/ingame/data/scenarios/fluid-test/tests*.lua
+/scripts/ingame/data/scenarios/fluid-test/tests*.json
+/scripts/ingame/data/scenarios/fluid-shot/bp.lua
+/scripts/ingame/data/scenarios/balancer-shot/shots.lua
+/scripts/ingame/data/scenarios/site-import/strings.lua
+
+# --- site build output ------------------------------------------------------------
+# Catalog index (scripts/catalog/validate.py --json build/catalog.json) and the site (site/build.py -> build/site/).
+/build/
+# Virtual environment for the site generator (python3 -m venv .venv).
+/.venv/
+# Snapshots written by playwright-cli while testing the site.
+.playwright-cli/

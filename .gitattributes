@@ -1,0 +1,4 @@
+# Blueprint strings are one long base64 line. With the textconv driver below, `git diff` / `git log -p`
+# show entity-level changes instead. Enable it once per clone:
+#   git config diff.factorio-blueprint.textconv "python3 scripts/bp_textconv.py"
+blueprints/**/*.txt diff=factorio-blueprint

@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as m with context %}
+{% block title %}{{ t.site_name }} · {{ t.hero }}{% endblock %}
+{% block og_image %}{% if entries %}<meta property="og:image" content="{{ site_url ~ entries[0].images[0].variants[0][0] }}">{% endif %}{% endblock %}
+{% block main %}
+<section class="container hero">
+  <div class="hero-main">
+    <div class="chips">
+      {{ m.chip(t.badge_version) }}{{ m.chip(t.badge_vanilla) }}<span class="chip chip-ok">{{ m.icon('check') }}{{ t.badge_tested }}</span>
+    </div>
+    <h1 class="hero-title">{{ t.hero }}</h1>
+    <form class="search-form" role="search" action="{{ link('catalog/') }}" method="get">
+      <label class="search-field">
+        {{ m.icon('search', 20) }}
+        <span class="sr-only">{{ t.search_label }}</span>
+        <input type="search" name="q" placeholder="{{ t.search_placeholder }}" autocomplete="off">
+      </label>
+      <button type="submit" class="btn btn-primary btn-lg">{{ t.search_button }}</button>
+    </form>
+    <div class="examples">
+      <span>{{ t.examples }}</span>
+      {% for q in t.example_queries %}<a class="chip" href="{{ link('catalog/') }}?q={{ q|urlencode }}">{{ q }}</a>{% endfor %}
+    </div>
+  </div>
+  <aside class="panel news" id="news" aria-labelledby="news-title">
+    {{ m.panel_head(t.news, t.news_source, 'news-title') }}
+    {% if news %}
+    <ul class="news-list">
+      {% for n in news %}
+      <li>
+        <span class="mono muted">{{ fmt_date(n.date) }}</span>
+        <a class="news-title" href="{{ link('blueprints/' ~ n.slug ~ '/') }}">{{ loc(n.title) }}</a>
+        <a class="news-subject" href="{{ n.url }}" lang="en">{{ n.subject }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="muted">{{ t.news_empty }}</p>
+    {% endif %}
+    <a class="more" href="{{ repo_url }}/commits/{{ branch }}/blueprints">{{ t.news_all }}</a>
+  </aside>
+</section>
+
+<section class="container section" aria-labelledby="categories-title">
+  <div class="section-head">
+    <h2 id="categories-title">{{ t.categories }}</h2>
+    <a class="arrow-link" href="{{ link('catalog/') }}">{{ t.see_all }}{{ m.icon('arrow') }}</a>
+  </div>
+  <ul class="cat-grid">
+    {% for c in categories %}
+    {% set n = entries|selectattr('category', 'equalto', c.id)|list|length %}
+    <li>
+      <a class="cat{{ ' cat-empty' if not n }}" href="{{ link('catalog/') }}?cat={{ c.id }}">
+        <span class="cat-icon">{{ m.icon(c.icon, 26) }}</span>
+        <span class="cat-name">{{ c[lang] }}</span>
+        <span class="cat-count">{% if n == 0 %}{{ t.cat_empty }}{% elif n == 1 %}{{ t.cat_count_one }}{% else %}{{ t.cat_count_many.format(n=n) }}{% endif %}</span>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+
+<section class="container section" aria-labelledby="catalog-title">
+  <div class="section-head">
+    <h2 id="catalog-title">{{ t.catalog }}</h2>
+    <a class="arrow-link" href="{{ link('catalog/') }}">{{ t.see_all_filters }}{{ m.icon('arrow') }}</a>
+  </div>
+  <div class="card-grid">
+    {% for e in entries[:6] %}{{ m.card(e) }}{% endfor %}
+    {% if entries|length < 3 %}{{ m.coming_soon() }}{% endif %}
+  </div>
+</section>
+
+<section class="container section import" id="import" aria-labelledby="import-title">
+  <h2 id="import-title">{{ t.import_title }}</h2>
+  <ol class="steps">
+    {% for title, text in t.import_steps %}
+    <li><span class="step-num" aria-hidden="true">{{ loop.index }}</span><div><strong>{{ title }}</strong><span>{{ text }}</span></div></li>
+    {% endfor %}
+  </ol>
+</section>
+
+<section class="container section section-last" aria-labelledby="seal-title">
+  <h2 id="seal-title">{{ t.seal_title }}</h2>
+  <div class="seal-grid">
+    {% for status in ('in-game', 'simulation', 'untested') %}
+    <div class="panel seal">
+      {{ m.test_badge({'status': status}, big=true) }}
+      <p>{{ t['seal_' ~ status] }}</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
