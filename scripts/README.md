@@ -46,13 +46,13 @@ Everything runs with Python 3 (standard library only) on macOS; the in-game test
 | `crop_plastic.py` | Cuts a plastic block into an isolated test. |
 | `patch_plastic_feed.py`, `patch_water_acid.py` | Historical one-off patches that produced refinery v2 and v3. |
 
-## City block (`blueprints/city-block-100x100/`)
+## City block (`blueprints/city-block-100x100-partial-concrete/` and `-full-concrete/`)
 
 | Script | Purpose |
 |---|---|
-| `export_city.py` | Writes `strings.lua` for the two scenarios below from the blueprint files, with the entity, tile and wire counts the game must find (counted from the decoded JSON). Both runners call it. |
-| `run_city_test.sh` | Headless scenario `city-test` (the server listens on 127.0.0.1 only). For both variants, with one block and with a 2 × 2 city: imports the string, builds it away from the cell's center to prove the grid snapping, checks every entity, tile and wire against the blueprint, plugs it into a power source, then checks the electric network, the roboports (status and energy), the lamps at night, the logistic network and the circuit networks, and lets the robots build four ghosts from a storage chest. Exit status 0 only when every check passed and at least one ran. |
-| `run_city_shot.sh` | Scenario `city-shot` in the normal game (screenshots need the renderer): builds the variants on a grass field, powers them, waits for the roboports to fill their buffers, takes the photos (day, night, 2 × 2, details, robots in flight) and writes `images/*.webp`. |
+| `export_city.py` | Writes `strings.lua` for the two scenarios below from the two blueprint files, with the entity, tile and wire counts the game must find (counted from the decoded JSON). It refuses a blueprint that is not mirror-symmetric (tiles and entities), because neighboring blocks only line up when each side mirrors the side facing it. Both runners call it. |
+| `run_city_test.sh` | Headless scenario `city-test` (the server listens on 127.0.0.1 only). For both variants in 1 × 1, 2 × 1, 1 × 2, 2 × 2 and 3 × 3 arrangements, and for the two variants side by side in a checkerboard: imports the string, builds it away from the cell's center to prove the grid snapping, checks every entity, tile and wire against the blueprint, compares tile by tile the two faces of every seam between blocks (the street must be paved without gaps), plugs it into a power source, then checks the electric network, the roboports (status and energy), the lamps at night, the logistic network and the circuit networks, and lets the robots build ghosts in the middle of the first block and across a seam. Exit status 0 only when every check passed and at least one ran. |
+| `run_city_shot.sh` | Scenario `city-shot` in the normal game (screenshots need the renderer): builds each variant on a grass field as one block and as a 2 × 2 city, powers them, waits for the roboports to fill their buffers, takes the photos (day, night, 2 × 2, where four blocks meet, the street between two blocks, details, robots in flight) and writes each variant's `images/*.webp`. |
 
 ## In-game harness (`ingame/`)
 
@@ -70,7 +70,8 @@ Environment variables:
 | `FBPHASES` | `ABCDEFGHI` | `export_tests.py` (measurement phases) |
 
 `config.ini` is written on every run. Never commit anything else from `ingame/data`: `player-data.json` there holds
-your Factorio account token.
+your Factorio account token. Every runner that starts the headless server passes `--bind 127.0.0.1`, so nothing outside
+your machine can connect to the game while a test runs.
 
 Screenshots of the refinery come from scenario `fluid-shot`, which needs the normal (non-headless) game
 (`ingame/config.ini` is created by any `run_*.sh`):

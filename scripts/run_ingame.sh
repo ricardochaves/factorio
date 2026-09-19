@@ -3,7 +3,7 @@
 HERE=${0:A:h}
 source "$HERE/factorio_env.sh"
 rm -f data/script-output/balancer_results_*.json(N) data/script-output/balancer_done.txt
-("$F" --config "$PWD/config.ini" --mod-directory "$PWD/mods" --start-server-load-scenario balancer-test --server-settings "$PWD/server-settings.json" --port 34987 > run.log 2>&1 &)
+("$F" --config "$PWD/config.ini" --mod-directory "$PWD/mods" --start-server-load-scenario balancer-test --server-settings "$PWD/server-settings.json" --bind 127.0.0.1 --port 34987 > run.log 2>&1 &)
 T=${1:-1800}; S=$(date +%s)
 while [ ! -f data/script-output/balancer_done.txt ]; do
   sleep 3

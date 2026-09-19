@@ -1,0 +1,65 @@
+title = "Bloco de cidade 100 × 100 só de robôs, concreto total"
+summary = "Lote de 100 × 100 tiles para uma cidade só de robôs, com 4 roboports, postes grandes, lâmpadas e baús de armazenagem, e concreto refinado no lote inteiro."
+category = "city-blocks"
+tags = ["bot-only", "100x100"]
+
+[[files]]
+name = "Concreto total"
+name_en = "Full concrete"
+name_es = "Hormigón total"
+path = "city-block-100x100-full-concrete.txt"
+
+[test]
+status = "in-game"
+game_version = "2.0.77"
+report = "README.md"
+
+[[images]]
+path = "images/overview.webp"
+alt = "Bloco de cidade de 100 × 100 tiles com concreto refinado no lote inteiro, capturado no jogo"
+alt_en = "100 × 100-tile city block with refined concrete over the whole lot, captured in-game"
+alt_es = "Bloque de ciudad de 100 × 100 casillas con hormigón refinado en todo el lote, captura del juego"
+
+[[images]]
+path = "images/city-2x2.webp"
+alt = "Quatro blocos lado a lado (200 × 200 tiles): as bordas de blocos vizinhos formam uma rua de 12 tiles entre eles, capturados no jogo"
+alt_en = "Four blocks side by side (200 × 200 tiles): the edges of neighboring blocks form a 12-tile street between them, captured in-game"
+alt_es = "Cuatro bloques uno al lado del otro (200 × 200 casillas): los bordes de bloques vecinos forman una calle de 12 casillas entre ellos, captura del juego"
+
+[[images]]
+path = "images/junction.webp"
+alt = "Encontro de quatro blocos: as quatro bases de canto ficam espelhadas, as faixas de perigo casam e há 4 tiles de concreto refinado entre as faixas dos dois lados da rua, capturado no jogo"
+alt_en = "Where four blocks meet: the four corner pads mirror each other, the hazard stripes line up and there are 4 tiles of refined concrete between the stripes on the two sides of the street, captured in-game"
+alt_es = "Encuentro de cuatro bloques: las cuatro bases de esquina son simétricas entre sí, las franjas de peligro coinciden y hay 4 casillas de hormigón refinado entre las franjas de los dos lados de la calle, captura del juego"
+
+[[images]]
+path = "images/seam.webp"
+alt = "Detalhe da rua entre dois blocos: as bases dos postes da borda ficam frente a frente, uma espelhando a outra, com as faixas de perigo dos dois lados e um fio de cobre cruzando a rua, capturado no jogo"
+alt_en = "Detail of the street between two blocks: the edge pole pads face each other, mirrored, with hazard stripes on both sides and a copper wire crossing the street, captured in-game"
+alt_es = "Detalle de la calle entre dos bloques: las bases de los postes del borde quedan frente a frente, una simétrica de la otra, con franjas de peligro a ambos lados y un cable de cobre que cruza la calle, captura del juego"
+
+[[images]]
+path = "images/roboport.webp"
+alt = "Detalhe da base de um roboport: o roboport, 14 baús de armazenagem, um poste grande e duas lâmpadas, capturado no jogo"
+alt_en = "Detail of a roboport pad: the roboport, 14 storage chests, a big electric pole and two lamps, captured in-game"
+alt_es = "Detalle de la base de un robopuerto: el robopuerto, 14 cofres de almacenamiento, un poste eléctrico grande y dos lámparas, captura del juego"
+
+[[images]]
+path = "images/night-corner.webp"
+alt = "Canto de um bloco à noite, com as lâmpadas acesas, capturado no jogo"
+alt_en = "A block corner at night, with the lamps lit, captured in-game"
+alt_es = "Esquina de un bloque de noche, con las lámparas encendidas, captura del juego"
+
+[[images]]
+path = "images/robots-at-work.webp"
+alt = "Robôs construtores em voo, colocando baús de madeira retirados de um baú de armazenagem do bloco, capturados no jogo"
+alt_en = "Construction robots in flight, placing wooden chests taken from one of the block's storage chests, captured in-game"
+alt_es = "Robots de construcción en vuelo, colocando cofres de madera sacados de un cofre de almacenamiento del bloque, captura del juego"
+
+[en]
+title = "100 × 100 robot-only city block, full concrete"
+summary = "A 100 × 100-tile lot for a robot-only city, with 4 roboports, big electric poles, lamps and storage chests, and refined concrete over the whole lot."
+
+[es]
+title = "Bloque de ciudad de 100 × 100 solo con robots, hormigón total"
+summary = "Lote de 100 × 100 casillas para una ciudad que funciona solo con robots, con 4 robopuertos, postes eléctricos grandes, lámparas y cofres de almacenamiento, y hormigón refinado en todo el lote."

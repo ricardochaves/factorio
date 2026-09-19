@@ -3,7 +3,7 @@
 HERE=${0:A:h}
 source "$HERE/factorio_env.sh"
 rm -f data/script-output/site_import.txt data/script-output/site_import_done.txt
-("$F" --config "$PWD/config.ini" --mod-directory "$PWD/mods" --start-server-load-scenario site-import --server-settings "$PWD/server-settings.json" --port 34991 > site_import.log 2>&1 &)
+("$F" --config "$PWD/config.ini" --mod-directory "$PWD/mods" --start-server-load-scenario site-import --server-settings "$PWD/server-settings.json" --bind 127.0.0.1 --port 34991 > site_import.log 2>&1 &)
 T=${1:-600}; S=$(date +%s)
 while [ ! -f data/script-output/site_import_done.txt ]; do
   sleep 2

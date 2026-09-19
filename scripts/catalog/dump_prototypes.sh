@@ -6,7 +6,7 @@ CAT=${0:A:h}
 HERE=${CAT:h}
 source "$HERE/factorio_env.sh"
 rm -f data/script-output/vanilla-prototypes.json data/script-output/dump_done.txt
-("$F" --config "$PWD/config.ini" --mod-directory "$PWD/mods" --start-server-load-scenario dump-prototypes --server-settings "$PWD/server-settings.json" --port 34989 > dump.log 2>&1 &)
+("$F" --config "$PWD/config.ini" --mod-directory "$PWD/mods" --start-server-load-scenario dump-prototypes --server-settings "$PWD/server-settings.json" --bind 127.0.0.1 --port 34989 > dump.log 2>&1 &)
 T=${1:-120}; S=$(date +%s)
 while [ ! -f data/script-output/dump_done.txt ]; do
   sleep 1

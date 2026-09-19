@@ -53,7 +53,7 @@
           <label class="search-field search-field-sm">
             {{ m.icon('search', 18) }}
             <span class="sr-only">{{ t.search_label }}</span>
-            <input type="search" name="q" placeholder="{{ t.search_label }}" autocomplete="off">
+            <input type="search" name="q" placeholder="{{ t.search_label }}" autocomplete="off" maxlength="200">
           </label>
         </form>
         {% endif %}

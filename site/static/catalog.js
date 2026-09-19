@@ -22,6 +22,7 @@
   var STOP = ['de', 'da', 'do', 'das', 'dos', 'e', 'para', 'com', 'a', 'o', 'as', 'os', 'to', 'the', 'of', 'and',
     'for', 'with', 'el', 'la', 'los', 'las', 'en', 'con', 'del', 'y', 'un', 'una', 'um', 'uma'];
   var PAIR = /(\d+)\s*(?:para|to|a|x|×|->|→)\s*(\d+)/;
+  var MAX_QUERY = 200;  /* longer searches are cut: PAIR is slow on a very long run of digits (the search boxes have maxlength too) */
 
   var state = { q: '', cat: 'all', kind: 'all', test: 'all', phase: [], city: [], uses: [], sort: 'recent', view: 'grid' };
 
@@ -30,7 +31,7 @@
   }
 
   function parseQuery(q) {
-    var text = normalize(q);
+    var text = normalize(q.slice(0, MAX_QUERY));
     var pair = null;
     var m = text.match(PAIR);
     /* "17 x 18" is a balancer pair only if some balancer book has that many belts; otherwise "100 x 100" is plain text */

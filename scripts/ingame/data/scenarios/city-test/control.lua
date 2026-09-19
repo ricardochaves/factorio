@@ -1,12 +1,17 @@
--- Checks the 100 x 100 city block blueprints in the real game (headless): the string imports, every entity and tile is
--- built where the blueprint puts it, the wires are the blueprint's, the block is one electric network that powers its
--- roboports and lamps, and the roboports and chests join into logistic networks, both for one block and for a 2 x 2 city.
+-- Checks the 100 x 100 city block blueprints in the real game (headless), alone and next to each other: 1x1, 2x1, 1x2, 2x2
+-- and 3x3 of each variant, plus partial and full concrete side by side. For every arrangement: the strings import, every
+-- entity, tile and wire is where the blueprint puts it, the two faces of every seam mirror each other tile by tile (and the
+-- street between blocks is paved without gaps), the poles form one electric network that powers the roboports and lamps,
+-- the roboports and chests join into one logistic network and, where blocks meet, robots build ghosts across the seam.
 -- Test data: scripts/export_city.py writes strings.lua (blueprint strings plus the counts to expect).
 local CASES = require("strings")
+local CELL = 100
 -- A roboport's energy buffer takes a while to fill after the power is connected, and it reads "low power" until then,
 -- so the energy is sampled at SAMPLE_TICKS and the checks that need a full buffer run at POWER_TICK (40 s).
 local SAMPLE_TICKS = {[120] = true, [300] = true, [600] = true, [900] = true, [1200] = true}
 local POWER_TICK, NIGHT_TICK, END_TICK = 2400, 2520, 2640
+local BAND = 6            -- width of the paved edge band of each block, in tiles
+local FAR = 50            -- how deep into each block the seam check looks when all blocks are alike: half a block, every tile
 
 local lines, failed, ran = {}, 0, 0
 local function check(ok, fmt, ...)
@@ -18,6 +23,15 @@ local function note(fmt, ...) lines[#lines + 1] = "     " .. string.format(fmt, 
 
 local STATUS = {}
 for k, v in pairs(defines.entity_status) do STATUS[v] = k end
+
+local BY_NAME, PAVED = {}, {}
+for _, c in ipairs(CASES) do
+  BY_NAME[c.name] = c
+  for tile in pairs(c.tiles) do PAVED[tile] = true end
+end
+-- A mirror image flips the hazard stripes.
+local SWAP = {["refined-hazard-concrete-left"] = "refined-hazard-concrete-right",
+              ["refined-hazard-concrete-right"] = "refined-hazard-concrete-left"}
 
 local function fmt_counts(t)
   local r = {}
@@ -32,11 +46,11 @@ local function same_counts(a, b)
   return true
 end
 
-local function new_surface(name)
+local function new_surface(name, cols, rows)
   local s = game.create_surface(name)
   s.generate_with_lab_tiles = true
   s.always_day = true
-  s.request_to_generate_chunks({100, 100}, 8)
+  s.request_to_generate_chunks({CELL * cols / 2, CELL * rows / 2}, math.ceil(CELL * math.max(cols, rows) / 64) + 4)
   s.force_generate_chunk_requests()
   return s
 end
@@ -44,9 +58,9 @@ end
 -- Builds the blueprint on grid cell (cx, cy) and revives every ghost (entities and tiles). Returns the ghost count.
 -- The build position is deliberately far from the cell's center: with absolute snapping the blueprint still lands on
 -- the cell that contains it, so "misplaced" below fails if the snapping is lost.
-local function build(s, stack, cx, cy, cell)
+local function build(s, stack, cx, cy)
   local ghosts = stack.build_blueprint{surface = s, force = "player", build_mode = defines.build_mode.forced,
-                                       position = {cx * cell + 13.7, cy * cell + 71.3}}
+                                       position = {cx * CELL + 13.7, cy * CELL + 71.3}}
   for _, g in pairs(ghosts) do if g.valid then g.revive() end end
   return #ghosts
 end
@@ -150,51 +164,125 @@ local function fill_robots(roboports)
   end
 end
 
--- Robot job: four ghosts of wooden chests in the middle of the first block, where the construction areas of its four
--- roboports overlap, and, to build them, four wooden chests stored in one of the block's storage chests.
+-- Robot jobs: four ghosts of wooden chests and, to build them, four wooden chests stored in one of the block's storage chests.
+--  * "middle": in the middle of the first block, where the construction areas of its four roboports overlap;
+--  * "seam": straddling the seam between the first block and its neighbor (east if there is one, else south), with the
+--    chests taken from a storage chest of the first block, so the robots must cross the street between the blocks.
 local JOB_ITEM, JOB_COUNT = "wooden-chest", 4
-local function job_area(cell) return {{cell / 2 - 3, cell / 2 - 1}, {cell / 2 + 3, cell / 2 + 1}} end
-local function queue_job(s, cell)
-  local chest = s.find_entities_filtered{name = "storage-chest", limit = 1}[1]
-  chest.insert{name = JOB_ITEM, count = JOB_COUNT}
-  for i = 0, JOB_COUNT - 1 do
-    s.create_entity{name = "entity-ghost", inner_name = JOB_ITEM, position = {cell / 2 - 1.5 + i, cell / 2 + 0.5}, force = "player"}
+local function jobs_of(arr)
+  local jobs = {{name = "middle of the first block", chest = {27.5, 24.5}, area = {{47, 49}, {53, 51}}, ghosts = {}}}
+  for i = 0, JOB_COUNT - 1 do jobs[1].ghosts[#jobs[1].ghosts + 1] = {48.5 + i, 50.5} end
+  if arr.cols >= 2 or arr.rows >= 2 then
+    local seam = {name = "seam", ghosts = {}}
+    if arr.cols >= 2 then
+      seam.chest, seam.area = {94.5, 33.5}, {{98, 50}, {102, 51}}
+      for i = 0, JOB_COUNT - 1 do seam.ghosts[#seam.ghosts + 1] = {98.5 + i, 50.5} end
+    else
+      seam.chest, seam.area = {33.5, 94.5}, {{50, 98}, {51, 102}}
+      for i = 0, JOB_COUNT - 1 do seam.ghosts[#seam.ghosts + 1] = {50.5, 98.5 + i} end
+    end
+    jobs[2] = seam
+  end
+  return jobs
+end
+local function queue_jobs(s, arr)
+  for _, job in ipairs(jobs_of(arr)) do
+    s.find_entity("storage-chest", job.chest).insert{name = JOB_ITEM, count = JOB_COUNT}
+    for _, p in ipairs(job.ghosts) do
+      s.create_entity{name = "entity-ghost", inner_name = JOB_ITEM, position = p, force = "player"}
+    end
   end
 end
 
--- Static part of a scenario "block" (one block or a 2 x 2 city): counts, positions and wires. Runs before plug(), so the
--- wire to the power source is not counted.
-local function inspect(tag, s, stack, c, cells, ghosts_built)
-  local area = {{0, 0}, {100 * cells, 100 * cells}}
-  local blocks = cells * cells
-  local counts, left = survey(s, area)
-  local want = {}
-  for k, v in pairs(c.entities) do want[k] = v * blocks end
-  note("%s: build_blueprint returned %d ghosts for %d entities and %d tiles", tag, ghosts_built, c.n_entities * blocks, c.n_tiles * blocks)
-  check(left == 0, "%s: %d ghosts left after reviving", tag, left)
-  -- the power source that plug() adds later is outside the area, so the counts below are exactly the blueprint's
-  check(same_counts(counts, want), "%s: entities built: %s", tag, fmt_counts(counts))
-  local tiles = tile_counts(s, area, c.tiles)
-  local want_tiles = {}
-  for k, v in pairs(c.tiles) do want_tiles[k] = v * blocks end
-  check(same_counts(tiles, want_tiles), "%s: tiles built: %s", tag, fmt_counts(tiles))
-  local bad = 0
-  for cy = 0, cells - 1 do
-    for cx = 0, cells - 1 do
-      local missing, wrong = misplaced(s, stack, cx * 100, cy * 100)
-      bad = bad + missing + wrong
+-- An arrangement: cols x rows blocks on a surface, each cell holding one variant.
+local function arrangement(tag, cols, rows, uniform, pick)
+  local cells = {}
+  for cy = 0, rows - 1 do
+    for cx = 0, cols - 1 do cells[#cells + 1] = {cx = cx, cy = cy, name = pick(cx, cy)} end
+  end
+  return {tag = tag, cols = cols, rows = rows, uniform = uniform, cells = cells}
+end
+
+local function shared_sides(arr) return (arr.cols - 1) * arr.rows + arr.cols * (arr.rows - 1) end
+
+-- Tile names that are not part of the blueprint (lab floor, grass) count as "no paving".
+local function paved(name) return PAVED[name] and name or "-" end
+
+-- The two faces of every seam must mirror each other: a tile at distance d before the seam is the mirror image of the
+-- tile at distance d after it (hazard stripes flip). The street (BAND tiles on each side) must be paved without gaps.
+-- Uniform arrangements are looked at FAR tiles deep (half a block, every tile); mixed ones only at the band, because
+-- the inside of the lot differs between the two variants (export_city.py asserts that every tile of the partial
+-- concrete blueprint is also in the full concrete one, so the pole pads that lie beyond the band match too).
+local function check_seams(arr, s)
+  local depth = arr.uniform and FAR or BAND
+  local seams, off, gaps = 0, 0, 0
+  local function compare(a, b, d)
+    a, b = paved(a), paved(b)
+    if (SWAP[a] or a) ~= b then off = off + 1 end
+    if d < BAND and (a == "-" or b == "-") then gaps = gaps + 1 end
+  end
+  for cy = 0, arr.rows - 1 do
+    for cx = 0, arr.cols - 1 do
+      if cx < arr.cols - 1 then       -- vertical seam between (cx, cy) and (cx + 1, cy)
+        seams = seams + 1
+        local x = (cx + 1) * CELL
+        for y = cy * CELL, cy * CELL + CELL - 1 do
+          for d = 0, depth - 1 do compare(s.get_tile(x - 1 - d, y).name, s.get_tile(x + d, y).name, d) end
+        end
+      end
+      if cy < arr.rows - 1 then       -- horizontal seam between (cx, cy) and (cx, cy + 1)
+        seams = seams + 1
+        local y = (cy + 1) * CELL
+        for x = cx * CELL, cx * CELL + CELL - 1 do
+          for d = 0, depth - 1 do compare(s.get_tile(x, y - 1 - d).name, s.get_tile(x, y + d).name, d) end
+        end
+      end
     end
   end
+  return seams, off, gaps, depth
+end
+
+-- Static part of an arrangement: counts, positions, seams and wires. Runs before plug(), so the wire to the power source
+-- is not counted.
+local function inspect(arr, s, stacks, ghosts_built)
+  local tag = arr.tag
+  local area = {{0, 0}, {CELL * arr.cols, CELL * arr.rows}}
+  local blocks = #arr.cells
+  local want, want_tiles, wires = {}, {}, {red = 0, green = 0, copper = 0}
+  local n_entities, n_tiles = 0, 0
+  for _, cell in ipairs(arr.cells) do
+    local c = BY_NAME[cell.name]
+    for k, v in pairs(c.entities) do want[k] = (want[k] or 0) + v end
+    for k, v in pairs(c.tiles) do want_tiles[k] = (want_tiles[k] or 0) + v end
+    for k, v in pairs(c.wires) do wires[k] = wires[k] + v end
+    n_entities, n_tiles = n_entities + c.n_entities, n_tiles + c.n_tiles
+  end
+  local counts, left = survey(s, area)
+  note("%s: build_blueprint returned %d ghosts for %d entities and %d tiles", tag, ghosts_built, n_entities, n_tiles)
+  check(left == 0, "%s: %d ghosts left after reviving", tag, left)
+  -- the power source that plug() adds later is outside the area, so the counts below are exactly the blueprints'
+  check(same_counts(counts, want), "%s: entities built: %s", tag, fmt_counts(counts))
+  local tiles = tile_counts(s, area, want_tiles)
+  check(same_counts(tiles, want_tiles), "%s: tiles built: %s", tag, fmt_counts(tiles))
+  local bad = 0
+  for _, cell in ipairs(arr.cells) do
+    local missing, wrong = misplaced(s, stacks[cell.name], cell.cx * CELL, cell.cy * CELL)
+    bad = bad + missing + wrong
+  end
   check(bad == 0, "%s: %d blueprint entities/tiles not at their blueprint position", tag, bad)
+  local seams, off, gaps, depth = check_seams(arr, s)
+  if seams > 0 then
+    check(off == 0 and gaps == 0, "%s: %d seams: %d tiles do not mirror the tile facing them (%d deep), %d unpaved tiles in the street",
+          tag, seams, off, depth, gaps)
+  end
   local poles = s.find_entities_filtered{area = area, name = "big-electric-pole"}
   local red, green = wire_count(poles, defines.wire_connector_id.circuit_red), wire_count(poles, defines.wire_connector_id.circuit_green)
   local cu = wire_count(poles, defines.wire_connector_id.pole_copper)
-  check(red == c.wires.red * blocks and green == c.wires.green * blocks, "%s: %d red and %d green wires (blueprint: %d and %d per block)",
-        tag, red, green, c.wires.red, c.wires.green)
-  -- neighboring blocks link their four facing edge poles on build: 4 copper wires per shared side, 2 * n * (n - 1) sides
-  local between = 4 * 2 * cells * (cells - 1)
-  check(cu == c.wires.copper * blocks + between, "%s: %d copper wires: %d from the blueprint plus %d between neighboring blocks",
-        tag, cu, c.wires.copper * blocks, between)
+  check(red == wires.red and green == wires.green, "%s: %d red and %d green wires (blueprints: %d and %d)", tag, red, green, wires.red, wires.green)
+  -- neighboring blocks link their four facing edge poles on build: 4 copper wires per shared side
+  local between = 4 * shared_sides(arr)
+  check(cu == wires.copper + between, "%s: %d copper wires: %d from the blueprints plus %d between neighboring blocks",
+        tag, cu, wires.copper, between)
 end
 
 local function status_counts(list)
@@ -206,15 +294,16 @@ local function status_counts(list)
   return states
 end
 
-local function sample(tag, s, cells, seconds)
-  local ports = s.find_entities_filtered{area = {{0, 0}, {100 * cells, 100 * cells}}, name = "roboport"}
+local function sample(tag, s, seconds)
+  local ports = s.find_entities_filtered{area = {{0, 0}, {CELL, CELL}}, name = "roboport"}
   note("%s: after %d s the roboports read %s, first one has %.1f of %.1f MJ", tag, seconds, fmt_counts(status_counts(ports)),
        ports[1].energy / 1e6, ports[1].electric_buffer_size / 1e6)
 end
 
-local function dynamic(tag, s, cells, c, source)
-  local area = {{0, 0}, {100 * cells, 100 * cells}}
-  local blocks = cells * cells
+local function dynamic(arr, s, source)
+  local tag = arr.tag
+  local area = {{0, 0}, {CELL * arr.cols, CELL * arr.rows}}
+  local blocks = #arr.cells
   local ports = s.find_entities_filtered{area = area, name = "roboport"}
   local lamps = s.find_entities_filtered{area = area, name = "small-lamp"}
   local poles = s.find_entities_filtered{area = area, name = "big-electric-pole"}
@@ -249,15 +338,18 @@ local function dynamic(tag, s, cells, c, source)
   local in_net = 0
   for _, ch in pairs(chests) do if ch.logistic_network then in_net = in_net + 1 end end
   check(in_net == #chests, "%s: %d of %d storage chests are inside a logistic network", tag, in_net, #chests)
-  local built = s.count_entities_filtered{area = job_area(c.cell), name = JOB_ITEM}
-  local ghosts = s.count_entities_filtered{area = job_area(c.cell), name = "entity-ghost"}
-  check(built == JOB_COUNT and ghosts == 0, "%s: robots built %d of %d ghosts of %s from a storage chest (%d ghosts left)", tag, built, JOB_COUNT, JOB_ITEM, ghosts)
+  for _, job in ipairs(jobs_of(arr)) do
+    local built = s.count_entities_filtered{area = job.area, name = JOB_ITEM}
+    local ghosts = s.count_entities_filtered{area = job.area, name = "entity-ghost"}
+    check(built == JOB_COUNT and ghosts == 0, "%s: robots built %d of %d ghosts of %s at the %s (%d ghosts left)",
+          tag, built, JOB_COUNT, JOB_ITEM, job.name, ghosts)
+  end
 end
 
-local function night(tag, s, cells)
-  local lamps = s.find_entities_filtered{area = {{0, 0}, {100 * cells, 100 * cells}}, name = "small-lamp"}
+local function night(arr, s)
+  local lamps = s.find_entities_filtered{area = {{0, 0}, {CELL * arr.cols, CELL * arr.rows}}, name = "small-lamp"}
   local states = status_counts(lamps)
-  check(states.working == #lamps, "%s: lamps at night: %s", tag, fmt_counts(states))
+  check(states.working == #lamps, "%s: lamps at night: %s", arr.tag, fmt_counts(states))
 end
 
 script.on_init(function()
@@ -271,10 +363,10 @@ script.on_init(function()
        try(function() return pole_proto.get_max_wire_distance() end))
   check(#CASES == 2, "%d variants under test", #CASES)
   storage.jobs = {}
-  local inv = game.create_inventory(1)
-  local stack = inv[1]
-  for _, c in ipairs(CASES) do
-    stack.clear()
+  local inv = game.create_inventory(#CASES)
+  local stacks = {}
+  for i, c in ipairs(CASES) do
+    local stack = inv[i]
     local result = stack.import_stack(c.bp)
     check(result == 0 and stack.is_blueprint and stack.is_blueprint_setup(), "%s: import_stack result %d", c.name, result)
     check(stack.get_blueprint_entity_count() == c.n_entities, "%s: %d entities in the blueprint", c.name, stack.get_blueprint_entity_count())
@@ -283,19 +375,31 @@ script.on_init(function()
     check(stack.blueprint_absolute_snapping and snap and snap.x == c.cell and snap.y == c.cell,
           "%s: absolute snapping to a %dx%d grid", c.name, snap and snap.x or 0, snap and snap.y or 0)
     check(stack.label == c.label, "%s: label \"%s\"", c.name, tostring(stack.label))
-    for _, cells in ipairs({1, 2}) do
-      local tag = string.format("%s %dx%d", c.name, cells, cells)
-      local s = new_surface(c.name .. "-" .. cells)
-      local ghosts = 0
-      for cy = 0, cells - 1 do for cx = 0, cells - 1 do ghosts = ghosts + build(s, stack, cx, cy, c.cell) end end
-      inspect(tag, s, stack, c, cells, ghosts)
-      local _, source = plug(s, tag, 0, 0)
-      local ports = s.find_entities_filtered{name = "roboport"}
-      note("%s: a new roboport holds %.1f of %.1f MJ", tag, ports[1].energy / 1e6, ports[1].electric_buffer_size / 1e6)
-      fill_robots(ports)
-      queue_job(s, c.cell)
-      storage.jobs[#storage.jobs + 1] = {tag = tag, surface = s, cells = cells, c = c, source = source}
+    stacks[c.name] = stack
+  end
+  local arrangements = {}
+  for _, c in ipairs(CASES) do
+    for _, size in ipairs({{1, 1}, {2, 1}, {1, 2}, {2, 2}, {3, 3}}) do
+      arrangements[#arrangements + 1] = arrangement(string.format("%s %dx%d", c.name, size[1], size[2]), size[1], size[2], true,
+                                                    function() return c.name end)
     end
+  end
+  -- partial and full concrete side by side, in a checkerboard so that every seam joins one of each
+  for _, size in ipairs({{2, 1}, {2, 2}, {3, 3}}) do
+    arrangements[#arrangements + 1] = arrangement(string.format("mixed %dx%d", size[1], size[2]), size[1], size[2], false,
+      function(cx, cy) return (cx + cy) % 2 == 0 and "partial-concrete" or "full-concrete" end)
+  end
+  for _, arr in ipairs(arrangements) do
+    local s = new_surface(arr.tag, arr.cols, arr.rows)
+    local ghosts = 0
+    for _, cell in ipairs(arr.cells) do ghosts = ghosts + build(s, stacks[cell.name], cell.cx, cell.cy) end
+    inspect(arr, s, stacks, ghosts)
+    local _, source = plug(s, arr.tag, 0, 0)
+    local ports = s.find_entities_filtered{name = "roboport"}
+    if #arr.cells == 1 then note("%s: a new roboport holds %.1f of %.1f MJ", arr.tag, ports[1].energy / 1e6, ports[1].electric_buffer_size / 1e6) end
+    fill_robots(ports)
+    queue_jobs(s, arr)
+    storage.jobs[#storage.jobs + 1] = {arr = arr, surface = s, source = source}
   end
   inv.destroy()
   storage.t0 = game.tick
@@ -305,14 +409,14 @@ script.on_event(defines.events.on_tick, function(e)
   if not storage.t0 or storage.done then return end
   local rel = e.tick - storage.t0
   if SAMPLE_TICKS[rel] then
-    for _, j in ipairs(storage.jobs) do if j.cells == 1 then sample(j.tag, j.surface, j.cells, rel / 60) end end
+    for _, j in ipairs(storage.jobs) do if #j.arr.cells == 1 then sample(j.arr.tag, j.surface, rel / 60) end end
   end
   if rel == POWER_TICK then
-    for _, j in ipairs(storage.jobs) do dynamic(j.tag, j.surface, j.cells, j.c, j.source) end
+    for _, j in ipairs(storage.jobs) do dynamic(j.arr, j.surface, j.source) end
   elseif rel == NIGHT_TICK - 1 then
     for _, j in ipairs(storage.jobs) do j.surface.always_day = false; j.surface.freeze_daytime = true; j.surface.daytime = 0.5 end
   elseif rel == NIGHT_TICK then
-    for _, j in ipairs(storage.jobs) do night(j.tag, j.surface, j.cells) end
+    for _, j in ipairs(storage.jobs) do night(j.arr, j.surface) end
   elseif rel == END_TICK then
     lines[#lines + 1] = string.format("checked failed=%d ran=%d", failed, ran)
     helpers.write_file("city_test.txt", table.concat(lines, "\n") .. "\n", false)

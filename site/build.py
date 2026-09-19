@@ -128,6 +128,9 @@ class Readme:
         target = posixpath.normpath(posixpath.join('blueprints', slug, path))
         if target.startswith('..'):
             return href
+        if posixpath.dirname(target) == 'blueprints' and (ROOT / target / 'blueprint.toml').is_file():
+            # another catalog entry: its page, in the same language (pages live at <language>/blueprints/<slug>/)
+            return f'../{posixpath.basename(target)}/' + (f'#{anchor}' if anchor else '')
         kind = 'blob' if posixpath.splitext(target)[1] else 'tree'
         return f'{REPO_URL}/{kind}/{BRANCH}/{target}' + (f'#{anchor}' if anchor else '')
 

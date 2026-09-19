@@ -16,7 +16,7 @@
     <label class="search-field">
       {{ m.icon('search', 20) }}
       <span class="sr-only">{{ t.catalog_search }}</span>
-      <input type="search" id="q" name="q" placeholder="{{ t.search_placeholder }}" autocomplete="off">
+      <input type="search" id="q" name="q" placeholder="{{ t.search_placeholder }}" autocomplete="off" maxlength="200">
     </label>
     <label class="select-label">{{ t.sort }}
       <select id="sort">
