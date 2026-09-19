@@ -1,0 +1,88 @@
+{# Stroke icons from the design (24x24 grid, currentColor). #}
+{% set ICONS = {
+  'copy': '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>',
+  'download': '<path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/>',
+  'code': '<path d="M8 6l-6 6 6 6"/><path d="M16 6l6 6-6 6"/>',
+  'search': '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+  'arrow': '<path d="M5 12h14"/><path d="M13 6l6 6-6 6"/>',
+  'check': '<path d="M5 12l5 5 9-10"/>',
+  'menu': '<path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/>',
+  'close': '<path d="M6 6l12 12"/><path d="M18 6L6 18"/>',
+  'link': '<path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/>',
+  'book': '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/><path d="M8 7h7"/>',
+  'view-grid': '<rect x="4" y="4" width="7" height="7" rx="1"/><rect x="13" y="4" width="7" height="7" rx="1"/><rect x="4" y="13" width="7" height="7" rx="1"/><rect x="13" y="13" width="7" height="7" rx="1"/>',
+  'view-list': '<path d="M9 6h11"/><path d="M9 12h11"/><path d="M9 18h11"/><circle cx="5" cy="6" r="1"/><circle cx="5" cy="12" r="1"/><circle cx="5" cy="18" r="1"/>',
+  'filter': '<path d="M4 6h16"/><path d="M7 12h10"/><path d="M10 18h4"/>',
+  'expand': '<path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/>',
+  'belts': '<path d="M4 7h13"/><path d="M14 4l3 3-3 3"/><path d="M20 17H7"/><path d="M10 14l-3 3 3 3"/>',
+  'flame': '<path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-3 2-4 2-6 1 1 2 2 2 3 1-2 1-4 1-7z"/>',
+  'drop': '<path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/>',
+  'gear': '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+  'flask': '<path d="M9 3h6"/><path d="M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M7.5 15h9"/>',
+  'bolt': '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+  'train': '<rect x="5" y="3" width="14" height="13" rx="3"/><path d="M5 10h14"/><path d="M8 20l-2 2M16 20l2 2"/>',
+  'bot': '<rect x="7" y="9" width="10" height="8" rx="2"/><path d="M3 7h6M15 7h6M12 9V7"/>',
+  'grid': '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 12h18M12 3v18"/><circle cx="7.5" cy="7.5" r="1.2"/><circle cx="16.5" cy="16.5" r="1.2"/>',
+  'chip': '<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/>',
+  'shield': '<path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z"/>',
+  'rocket': '<path d="M12 2c4 3 5 8 4 13H8C7 10 8 5 12 2z"/><path d="M8 15l-3 4h4M16 15l3 4h-4"/>',
+} %}
+
+{% macro icon(name, size=18) -%}
+<svg class="icon" width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">{{ ICONS[name]|safe }}</svg>
+{%- endmacro %}
+
+{% macro logo() -%}
+<svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true" focusable="false"><rect x="1" y="1" width="26" height="26" rx="4" stroke="#f2a531" stroke-width="2"/><path d="M9 21V9M9 9l-3 3M9 9l3 3M19 21V9M19 9l-3 3M19 9l3 3" stroke="#efe9df" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="15" width="18" height="3" rx="1" fill="#f2a531"/></svg>
+{%- endmacro %}
+
+{% macro test_badge(test, big=false) -%}
+{% set status = test.get('status', 'untested') %}
+<span class="test test-{{ status }}{{ ' test-big' if big }}">{% if status == 'in-game' %}{{ icon('check') }}{% else %}<span class="test-dot" aria-hidden="true"></span>{% endif %}{{ t['test_' ~ status] }}</span>
+{%- endmacro %}
+
+{# A button that copies a text file (a blueprint string) to the clipboard. #}
+{% macro copy_button(url, text=none, aria=none, cls='btn') -%}
+<button type="button" class="{{ cls }}" data-copy="{{ root ~ url }}"{% if aria %} aria-label="{{ aria }}"{% endif %}>{{ icon('copy') }}{% if text %}<span data-copy-label>{{ text }}</span>{% endif %}</button>
+{%- endmacro %}
+
+{% macro chip(text) -%}<span class="chip">{{ text }}</span>{%- endmacro %}
+
+{% macro card_image(e, sizes) -%}
+{% set img = e.images[0] %}
+<img src="{{ root ~ img.small }}" srcset="{{ srcset(img) }}" sizes="{{ sizes }}" width="{{ img.variants[0][1] }}" height="{{ img.variants[0][2] }}" alt="" loading="lazy" decoding="async">
+{%- endmacro %}
+
+{# One catalog card. Cards on the catalog page carry data-slug so catalog.js can filter them. #}
+{% macro card(e, heading='h3') -%}
+{% set f = e.files[e.default_file] %}
+<article class="card" data-slug="{{ e.slug }}">
+  <div class="card-media">{{ card_image(e, '(max-width: 767px) 72px, (max-width: 1100px) 45vw, 400px') }}</div>
+  <div class="card-body">
+    <div class="card-meta"><span>{{ cat_label(e.category) }}</span><span>{{ kind_label(e) }}</span></div>
+    <{{ heading }} class="card-title"><a href="{{ link('blueprints/' ~ e.slug ~ '/') }}">{{ loc(e.title) }}</a></{{ heading }}>
+    <p class="card-summary">{{ loc(e.summary) }}</p>
+    <span class="card-facts mono">{{ facts(e) }}</span>
+    <div class="chips">{% for tag in e.tags %}{{ chip(tag_label(tag)) }}{% endfor %}</div>
+    <div class="card-foot">
+      {{ test_badge(e.test) }}
+      <span class="card-actions">{% if e.date %}<span class="card-date">{{ fmt_date(e.date) }}</span>{% endif %}{{ copy_button(f.url, aria=t.copy_aria.format(title=loc(e.title) ~ (' · ' ~ loc(f.name) if e.files|length > 1 else '')), cls='btn-icon') }}</span>
+    </div>
+  </div>
+</article>
+{%- endmacro %}
+
+{% macro coming_soon() -%}
+<article class="card card-ghost">
+  <div class="card-body">
+    <span class="card-ghost-icon">{{ icon('book', 26) }}</span>
+    <h3 class="card-title">{{ t.soon_title }}</h3>
+    <p class="card-summary">{{ t.soon_text }}</p>
+    <a class="arrow-link" href="{{ repo_url }}/commits/{{ branch }}/blueprints">{{ t.soon_link }}{{ icon('arrow') }}</a>
+  </div>
+</article>
+{%- endmacro %}
+
+{% macro panel_head(title, source, id=none, level='h2') -%}
+<div class="panel-head"><{{ level }}{% if id %} id="{{ id }}"{% endif %}>{{ title }}</{{ level }}>{% if source %}<span class="source">{{ source }}</span>{% endif %}</div>
+{%- endmacro %}

@@ -1,0 +1,25 @@
+name: Validate blueprints
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Check metadata, decode every blueprint, reject non-vanilla content
+        run: python3 scripts/catalog/validate.py --json build/catalog.json
+      - name: Catalog table in README.md is up to date
+        run: |
+          python3 scripts/catalog/validate.py --readme > /dev/null
+          git diff --exit-code README.md || { echo "Run: python3 scripts/catalog/validate.py --readme"; exit 1; }

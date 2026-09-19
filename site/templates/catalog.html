@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% import 'macros.html' as m with context %}
+{% block title %}{{ t.catalog }} · {{ t.site_name }}{% endblock %}
+{% block description %}{{ t.catalog_intro }}{% endblock %}
+{% macro fbtn(group, value, text, pressed=false, n=none) -%}
+<button type="button" class="fbtn" data-filter="{{ group }}" data-value="{{ value }}" aria-pressed="{{ 'true' if pressed else 'false' }}"><span>{{ text }}</span><span class="fcount" data-count>{{ n if n is not none }}</span></button>
+{%- endmacro %}
+{% macro fchip(group, value, text) -%}
+<button type="button" class="fchip" data-filter="{{ group }}" data-value="{{ value }}" data-multi aria-pressed="false">{{ text }} <span class="fcount" data-count></span></button>
+{%- endmacro %}
+{% block main %}
+<section class="container page-head">
+  <h1>{{ t.catalog }}</h1>
+  <p class="lead">{{ t.catalog_intro }}</p>
+  <div class="toolbar">
+    <label class="search-field">
+      {{ m.icon('search', 20) }}
+      <span class="sr-only">{{ t.catalog_search }}</span>
+      <input type="search" id="q" name="q" placeholder="{{ t.search_placeholder }}" autocomplete="off">
+    </label>
+    <label class="select-label">{{ t.sort }}
+      <select id="sort">
+        <option value="recent">{{ t.sort_recent }}</option>
+        <option value="name">{{ t.sort_name }}</option>
+        <option value="size">{{ t.sort_size }}</option>
+      </select>
+    </label>
+    <div class="view-toggle" role="group" aria-label="{{ t.view_group }}">
+      <button type="button" class="btn-icon" data-view="grid" aria-pressed="true" aria-label="{{ t.view_grid }}">{{ m.icon('view-grid') }}</button>
+      <button type="button" class="btn-icon" data-view="list" aria-pressed="false" aria-label="{{ t.view_list }}">{{ m.icon('view-list') }}</button>
+    </div>
+  </div>
+  <div class="cat-chips" role="group" aria-label="{{ t.f_category }}">
+    <button type="button" class="fchip" data-filter="cat" data-value="all" aria-pressed="true">{{ t.all_f }}</button>
+    {% for c in categories %}<button type="button" class="fchip" data-filter="cat" data-value="{{ c.id }}" aria-pressed="false">{{ c[lang] }}</button>{% endfor %}
+  </div>
+</section>
+<section class="container catalog">
+  <aside class="filters" id="filters" aria-label="{{ t.filters }}">
+    <button type="button" class="btn filters-toggle" aria-expanded="false" aria-controls="filters-body">{{ m.icon('filter') }}<span>{{ t.filters }}</span></button>
+    <div class="filters-body" id="filters-body">
+      <fieldset class="fgroup fgroup-cat">
+        <legend>{{ t.f_category }}</legend>
+        {{ fbtn('cat', 'all', t.all_f, true) }}
+        {% for c in categories %}{{ fbtn('cat', c.id, c[lang]) }}{% endfor %}
+      </fieldset>
+      <fieldset class="fgroup">
+        <legend>{{ t.f_kind }}</legend>
+        {{ fbtn('kind', 'all', t.all_m, true) }}{{ fbtn('kind', 'blueprint', t.kind_blueprint) }}{{ fbtn('kind', 'book', t.kind_book) }}
+      </fieldset>
+      <fieldset class="fgroup">
+        <legend>{{ t.f_test }}</legend>
+        {{ fbtn('test', 'all', t.all_m, true) }}
+        {% for s in ('in-game', 'simulation', 'untested') %}{{ fbtn('test', s, t['test_' ~ s]) }}{% endfor %}
+      </fieldset>
+      <fieldset class="fgroup">
+        <legend>{{ t.f_phase }}</legend>
+        <div class="fchips">{% for p in phases %}{{ fchip('phase', p.id, p[lang]) }}{% endfor %}</div>
+      </fieldset>
+      <fieldset class="fgroup">
+        <legend>{{ t.f_city }}</legend>
+        <div class="fchips">{% for c in city %}{{ fchip('city', c.id, c[lang]) }}{% endfor %}</div>
+      </fieldset>
+      <fieldset class="fgroup">
+        <legend>{{ t.f_uses }}</legend>
+        <div class="fchips">{% for u in uses %}{{ fchip('uses', u.id, u[lang]) }}{% endfor %}</div>
+      </fieldset>
+    </div>
+  </aside>
+  <div class="results">
+    <div class="results-head">
+      <span class="results-count" aria-live="polite"><strong id="count">{{ entries|length }}</strong> <span id="count-label">{{ t.result_one if entries|length == 1 else t.result_many }}</span></span>
+      <button type="button" class="btn btn-ghost" id="clear" hidden>{{ t.clear_filters }}</button>
+    </div>
+    <noscript><p class="muted">{{ t.noscript_filters }}</p></noscript>
+    <div class="card-grid card-grid-2" id="results" data-view="grid">
+      {% for e in entries %}{{ m.card(e, 'h2') }}{% endfor %}
+    </div>
+    <div class="empty" id="empty" hidden>
+      <p id="empty-text"></p>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script type="application/json" id="catalog-data">{{ {
+  'items': index,
+  'labels': {'one': t.result_one, 'many': t.result_many, 'empty': t.empty, 'empty_category': t.empty_category},
+  'cats': categories|map(attribute='id')|list,
+  'cat_names': categories|map(attribute=lang)|list,
+}|tojson }}</script>
+<script src="{{ asset('catalog.js') }}" defer></script>
+{% endblock %}
