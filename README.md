@@ -103,6 +103,7 @@ from elsewhere and keep their own terms:
 - The item, fluid, recipe and entity names in [`scripts/catalog/vanilla-locale.json`](scripts/catalog/vanilla-locale.json)
   and the prototype data in [`scripts/catalog/vanilla-prototypes.json`](scripts/catalog/vanilla-prototypes.json), both
   extracted from the game: Factorio's own data, © Wube Software.
+- The in-game screenshots in `blueprints/*/images/`: they show Factorio's graphics, © Wube Software.
 
 ## Credits
 
