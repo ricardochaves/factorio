@@ -66,7 +66,8 @@ code { font-family: var(--mono); font-size: 0.9em; background: var(--inset); bor
 /* without JavaScript nothing can be copied and the viewer cannot draw: show only what works (downloads, lists) */
 html:not(.js) [data-copy], html:not(.js) .tabs, html:not(.js) .variants, html:not(.js) .matrix-controls,
 html:not(.js) .matrix-axes, html:not(.js) .legend, html:not(.js) .selected, html:not(.js) .filters,
-html:not(.js) .cat-chips, html:not(.js) .toolbar .select-label, html:not(.js) .view-toggle { display: none; }
+html:not(.js) .cat-chips, html:not(.js) .toolbar .select-label, html:not(.js) .view-toggle,
+html:not(.js) .matrix-hint, html:not(.js) .toolbar .search-field { display: none; }
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { display: inline-flex; align-items: center; gap: 6px; min-height: 26px; padding: 0 9px; border-radius: 3px; background: var(--chip); border: 1px solid var(--line-chip); font-size: 13px; font-weight: 600; color: var(--text-2); white-space: nowrap; text-decoration: none; }
 a.chip:hover { border-color: var(--line-strong); color: var(--text); }
@@ -106,6 +107,7 @@ select { min-height: 44px; padding: 0 12px; background: var(--chip); color: var(
 .nav a { color: var(--text-3); text-decoration: none; padding: 6px 0; border-bottom: 2px solid transparent; }
 .nav a:hover { color: var(--text); }
 .nav a[aria-current="page"], .nav a.is-active { color: var(--text); border-bottom-color: var(--accent); }
+.brand span, .nav a { white-space: nowrap; }
 .top-search .search-field-sm { min-height: 40px; width: 220px; padding: 0 12px; }
 .top-search .search-field-sm input { font-size: 15px; padding: 8px 0; }
 .news-titles { display: flex; flex-wrap: wrap; gap: 0 6px; font-weight: 700; }
@@ -233,7 +235,7 @@ select { min-height: 44px; padding: 0 12px; background: var(--chip); color: var(
 .empty { background: var(--ghost); border: 1px dashed var(--dash); border-radius: var(--radius); padding: 40px; text-align: center; font-size: 17px; color: var(--text-3); }
 
 /* ---------- blueprint page ---------- */
-.breadcrumb { display: flex; flex-wrap: wrap; gap: 8px; font-size: 15px; color: var(--muted); }
+.breadcrumb { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 15px; color: var(--muted); }
 .breadcrumb a { color: var(--muted); }
 .breadcrumb [aria-current] { color: var(--text); }
 .bp-head { flex-direction: row; justify-content: space-between; align-items: flex-end; gap: 32px 40px; }
@@ -382,7 +384,7 @@ select { min-height: 44px; padding: 0 12px; background: var(--chip); color: var(
 }
 
 /* ---------- header: search only where it fits, compact menu below 900px ---------- */
-@media (min-width: 901px) and (max-width: 1100px) {
+@media (min-width: 901px) and (max-width: 1140px) {
   .top-search { display: none; }
 }
 @media (max-width: 900px) {
@@ -454,7 +456,8 @@ select { min-height: 44px; padding: 0 12px; background: var(--chip); color: var(
   .matrix .lbl:not([data-major]) { visibility: hidden; }
   /* touch targets of at least 44px (WCAG 2.5.8) */
   a.chip, .breadcrumb a, .test-banner a, .gallery-caption a, .history a, .more, .arrow-link { display: inline-flex; align-items: center; min-height: 44px; }
-  .variants button, .mode-toggle button, .fbtn, .fchip, .sel-variant-buttons button { min-height: 44px; }
+  .variants button, .mode-toggle button, .fbtn, .fchip, .cat-chips .fchip, .sel-variant-buttons button { min-height: 44px; }
+  .more-rows summary, .big-section summary, .footer-links a { display: flex; align-items: center; min-height: 44px; }
   .matrix button { border-radius: 2px; }
   .matrix-wrap { padding: 12px; }
   .pair-select { width: 100%; justify-content: space-between; }

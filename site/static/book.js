@@ -44,6 +44,14 @@
   function decodedHash() {
     try { return decodeURIComponent(window.location.hash.slice(1)); } catch (e) { return window.location.hash.slice(1); }
   }
+  /* a link to the anchor that is already the page's hash fires no hashchange: reveal it by hand */
+  document.addEventListener('click', function (ev) {
+    var a = ev.target.closest('a[href^="#"]');
+    if (!a || a.getAttribute('href') !== window.location.hash) return;
+    var id;
+    try { id = decodeURIComponent(a.getAttribute('href').slice(1)); } catch (e) { id = a.getAttribute('href').slice(1); }
+    if (document.getElementById(id)) { ev.preventDefault(); revealAnchor(id); }
+  });
 
   /* ---------- variant (one file of the book) ---------- */
   var variantButtons = Array.prototype.slice.call(document.querySelectorAll('.variants [data-file]'));
@@ -426,7 +434,10 @@
     b.addEventListener('click', function () { state.mode = b.dataset.mode; colorMatrix(); });
   });
   $('sel-link').addEventListener('click', function () {
-    FB.runCopy($('sel-link'), FB.copyText(window.location.href), FB.i18n.link_copied, FB.i18n.link_failed);
+    // built from what the panel shows, not from the address bar (which may still say #report)
+    var link = window.location.origin + window.location.pathname + '#' + file().id + '/' + state.n + '/' + state.m +
+      (state.variant ? '/' + state.variant : '');
+    FB.runCopy($('sel-link'), FB.copyText(link), FB.i18n.link_copied, FB.i18n.link_failed);
   });
   onFileChange.push(function () {
     fillSelects();
