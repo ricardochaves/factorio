@@ -23,7 +23,7 @@
 
 ## Deploy
 Every time you merge into `main`, monitor the deployment and validate it:
-- open the website and check that everything in the diff really works
+- Open the website and check that everything in the diff really works
 - It is not enough for a change to exist in the code: if the CSS changes, check transparency, positioning, and the mobile and desktop layouts. Be careful.
 
 ## Blueprints

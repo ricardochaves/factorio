@@ -13,8 +13,8 @@ as diferenças dos livros vermelho e amarelo estão em [Livros vermelho e amarel
 
 ## Estrutura
 
-- Livro raiz `Blue Belt balancer` com **24 sub-livros** (`1` … `24`), um por quantidade de esteiras de entrada.
-- Cada sub-livro tem `N to 1` … `N to 24` (o sub-livro `2` tem 25 itens porque mantém as duas variantes `2 to 3 (Long)` e `2 to 3 (Wide)`).
+- Livro raiz `Blue Belt balancer` com **24 sublivros** (`1` … `24`), um por quantidade de esteiras de entrada.
+- Cada sublivro tem `N to 1` … `N to 24` (o sublivro `2` tem 25 itens porque mantém as duas variantes `2 to 3 (Long)` e `2 to 3 (Wide)`).
 - Total: **577 blueprints**, cobrindo os 576 pares N×M.
 
 ## Origem de cada blueprint
@@ -47,7 +47,7 @@ Blocos de biblioteca (os originais aprovados + livro do Raynquist, https://githu
 1. **Simulação de fluxo com contrapressão** (`scripts/deep_verify.py`): 6,8 milhões de padrões de entrada/saída no total; 577/577 aprovados (saída balanceada com qualquer entrada, entrada balanceada com qualquer saída, vazão total = min(N,M) esteiras, portas contíguas, 0 avisos de sideload/subterrâneo sem par).
 2. **Teste automatizado dentro do jogo** (Factorio 2.0.77 headless, dados isolados em `scripts/ingame/`): cada blueprint é importado, construído, alimentado por loaders e medido em 9 fases (tudo ligado; metade/um terço/aleatório/uma só entrada; metade/um terço/aleatório/uma só saída). Resultado: 577/577 construídos sem colisão e sem subterrâneo sem par; pior diferença entre saídas (ou entre entradas) = **4 itens em 2700**; déficit de vazão máximo 0,15 %.
 3. **Verificador de terceiros** (`tzwaan/factorio_balancers`, em `scripts/xcheck/xcheck.py`): 576 PASS, 0 FAIL (`1 to 1` não tem splitter e a ferramenta não o analisa). A mesma ferramenta confirma os 16 originais defeituosos e aprova 143/143 do Raynquist.
-4. A string completa do livro foi importada no jogo: 24 sub-livros, 577 blueprints com entidades.
+4. A string completa do livro foi importada no jogo: 24 sublivros, 577 blueprints com entidades.
 
 ## Tamanhos dos gerados
 
@@ -69,7 +69,7 @@ O gerador lê as entradas de `scripts/sources/` (fora do git; ver [`scripts/READ
 
 ## Livros vermelho e amarelo
 
-Mesma estrutura (24 sub-livros × `N to 1..24`), gerados pelo mesmo pipeline com `FBTIER=red` / `FBTIER=yellow`:
+Mesma estrutura (24 sublivros × `N to 1..24`), gerados pelo mesmo pipeline com `FBTIER=red` / `FBTIER=yellow`:
 
 - [`red-belt.txt`](red-belt.txt) — esteira vermelha (fast), subterrâneo até 7 tiles.
 - [`yellow-belt.txt`](yellow-belt.txt) — esteira amarela, subterrâneo até 5 tiles.

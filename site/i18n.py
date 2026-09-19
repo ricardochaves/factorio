@@ -50,7 +50,7 @@ TAGS = {
 PHASES = [
     {'id': 'early-game', 'pt': 'Início', 'en': 'Early', 'es': 'Inicial'},
     {'id': 'mid-game', 'pt': 'Meio', 'en': 'Mid', 'es': 'Intermedia'},
-    {'id': 'late-game', 'pt': 'Fim', 'en': 'Late', 'es': 'Final'},
+    {'id': 'late-game', 'pt': 'Final', 'en': 'Late', 'es': 'Final'},
 ]
 CITY = [
     {'id': 'rail', 'pt': 'Com trilhos', 'en': 'With rails', 'es': 'Con vías'},
@@ -205,7 +205,7 @@ T = {
         'inserted': 'Módulos e itens inseridos',
         'report': 'Relatório', 'report_source': 'README do blueprint', 'report_lang_note': '',
         'overview': 'Visão geral', 'expand': 'Mostrar',
-        'history': 'Histórico no git', 'history_source': 'commits do git', 'see_diff': 'Ver mudanças',
+        'history': 'Histórico no git', 'history_source': 'a partir dos commits', 'see_diff': 'Ver mudanças',
         'history_empty': 'O histórico aparece aqui a partir do primeiro commit.',
         'related': 'Relacionados', 'related_source': 'mesma categoria ou tags',
         'credits': 'Créditos',
@@ -268,7 +268,7 @@ T = {
         'import_title': 'How to import',
         'import_steps': [
             ('Copy the string', "Use the Copy button on the card or on the blueprint's page."),
-            ('Open Import string', 'In the game, click Import string on the shortcut bar.'),
+            ('Open Import string', 'In the game, click Import string on the shortcut bar (or in the blueprint library).'),
             ('Paste and confirm', 'The blueprint, or the whole book, lands in your hand.'),
         ],
         'seal_title': 'A test badge on every blueprint',
@@ -307,7 +307,7 @@ T = {
         'report': 'Report', 'report_source': "blueprint's README",
         'report_lang_note': 'The report is written in Portuguese.',
         'overview': 'Overview', 'expand': 'Show',
-        'history': 'Git history', 'history_source': 'git commits', 'see_diff': 'See diff',
+        'history': 'Git history', 'history_source': 'from the commits', 'see_diff': 'See diff',
         'history_empty': 'History shows up here from the first commit on.',
         'related': 'Related', 'related_source': 'same category or tags',
         'credits': 'Credits',
@@ -370,8 +370,9 @@ T = {
         'import_title': 'Cómo importar',
         'import_steps': [
             ('Copia la cadena', 'Con el botón Copiar de la tarjeta o de la página del blueprint.'),
-            ('Haz clic en Importar desde texto',
-             'En el juego, haz clic en Importar desde texto (Import string), en la barra de acceso directo.'),
+            ('Abre la importación',
+             'En el juego, haz clic en Importar desde texto (Import string), en la barra de acceso directo '
+             '(o en Importar cadena de texto, en la biblioteca de planos).'),
             ('Pega y confirma', 'El blueprint, o el libro entero, queda en tu cursor.'),
         ],
         'seal_title': 'Sello de prueba en cada blueprint',
@@ -410,7 +411,7 @@ T = {
         'report': 'Informe', 'report_source': 'README del blueprint',
         'report_lang_note': 'El informe está escrito en portugués.',
         'overview': 'Resumen', 'expand': 'Mostrar',
-        'history': 'Historial en git', 'history_source': 'commits de git', 'see_diff': 'Ver diferencias',
+        'history': 'Historial en git', 'history_source': 'a partir de los commits', 'see_diff': 'Ver diferencias',
         'history_empty': 'El historial aparece aquí a partir del primer commit.',
         'related': 'Relacionados', 'related_source': 'misma categoría o mismas etiquetas',
         'credits': 'Créditos',
