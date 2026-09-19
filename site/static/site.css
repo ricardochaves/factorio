@@ -381,6 +381,8 @@ select { min-height: 44px; padding: 0 12px; background: var(--chip); color: var(
   .import h2, .import .steps { grid-column: span 12; }
   .bp-head { flex-direction: column; align-items: stretch; }
   .bp-actions { flex-direction: row; flex-wrap: wrap; min-width: 0; }
+  /* the links drop under the text once the footer wraps: align them with it */
+  .footer-links { align-items: flex-start; text-align: left; }
 }
 
 /* ---------- header: search only where it fits, compact menu below 900px ---------- */
@@ -444,7 +446,6 @@ select { min-height: 44px; padding: 0 12px; background: var(--chip); color: var(
   .report { columns: 1; }
   .bp-actions .btn { flex-grow: 1; }
   .gallery-main img { max-height: 70vh; }
-  .footer-links { align-items: flex-start; text-align: left; }
   .book-bar { align-items: stretch; }
   .tabs { overflow-x: auto; }
   .tabs [role="tab"] { padding: 0 12px; font-size: 16px; white-space: nowrap; }
