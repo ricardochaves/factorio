@@ -1,0 +1,108 @@
+# Contributing
+
+This repository holds vanilla Factorio 2.0 blueprints and the website that publishes them
+(<https://ricardochaves.github.io/factorio/>). Write pull requests, commit messages and code comments in English; the
+metadata of each blueprint (with optional English and Spanish translations) and its report are in Portuguese.
+
+## How a change reaches `main`
+
+1. Work on a branch created from `main`. Without write access to this repository, fork it and work on your fork.
+2. Open a pull request against `main`. Two workflows run on it (on a pull request from a first-time contributor's
+   fork, they start only after a maintainer approves the run):
+   - **Validate blueprints**, job `validate` ([`validate.yml`](.github/workflows/validate.yml)): checks the metadata,
+     decodes every blueprint string, rejects anything that is not vanilla Factorio 2.0 and fails if the catalog table
+     in [`README.md`](README.md) is out of date. It must pass before the pull request can be merged.
+   - **Site**, job `build` ([`pages.yml`](.github/workflows/pages.yml)): builds the website, to catch errors. It is
+     not a required check, but keep it green: after the merge, the same build must pass before the site is published.
+3. A maintainer (today, [@ricardochaves](https://github.com/ricardochaves)) reviews it. One approving review is
+   required, and it must come after the most recent push: new commits that change the pull request need a new
+   approval.
+4. The pull request is merged with **squash**, the only merge method enabled, so it lands on `main` as a single
+   commit. If its branch is in this repository, GitHub deletes it after the merge.
+
+`main` cannot be deleted or force-pushed, and it only takes changes through pull requests. The repository owner is
+the only one who can bypass these rules, which is how they merge their own pull requests: GitHub does not let authors
+approve their own.
+
+### The pull request title is what players read
+
+The website shows the title of each commit on `main` that changed a blueprint's `.txt` file: in the **Git history** of
+that blueprint's page and, for the four most recent, in **What's new** on the home page. With squash merges, that
+title is the pull request title when the pull request has more than one commit, and the commit title when it has only
+one (GitHub's default, which can be edited in the merge dialog). GitHub adds ` (#N)` at the end; the website hides it.
+
+So write the pull request title for players, and the commit title too in single-commit pull requests. For example:
+`Oil refinery: double the water feed of the sulfuric acid block`.
+
+## Adding a blueprint
+
+1. Create one folder per catalog entry, `blueprints/<slug>/` (lower-case words joined by `-`). Variants of the same
+   design share the folder and become one page on the site. The folder holds:
+   - one `.txt` file per variant, each a single blueprint or a book. For example, `belt-balancers/` holds one book per
+     belt tier;
+   - `blueprint.toml`, the hand-written metadata (copy one from another folder);
+   - `README.md`, in Portuguese: what it does, inputs and outputs, how it was tested, known limits (the website shows
+     it as the blueprint's report, one card per `##` section);
+   - `images/` (WebP) with at least one real screenshot taken in the game, listed in `blueprint.toml`. The machines
+     in the shot must be working (powered, fed), so no "not working" icon shows up.
+2. Run `python3 scripts/catalog/validate.py --readme` (Python 3.11 or newer, standard library only). It checks the
+   metadata, decodes every string, rejects anything that is not vanilla Factorio 2.0 (Space Age entities, quality
+   other than normal, other game versions) and refreshes the catalog table in [`README.md`](README.md). Commit the
+   refreshed table with the blueprint: the `validate` check fails when it is out of date. Entity counts, size,
+   materials and recipes are computed from the string, never typed by hand.
+3. Optionally test it in the game with the harness in [`scripts/`](scripts/).
+4. Open a pull request, as described [above](#how-a-change-reaches-main). A new version overwrites the same `.txt`
+   file and git keeps the history, so never add `-v2` copies.
+
+A blueprint string is one long base64 line. To see its changes entity by entity in `git diff` and `git log -p`,
+enable the diff driver once per clone:
+
+```
+git config diff.factorio-blueprint.textconv "python3 scripts/bp_textconv.py"
+```
+
+The driver runs `scripts/bp_textconv.py` from your working tree, so after checking out a branch you do not trust, read
+any change to that script before running `git diff` or `git log -p`.
+
+### `blueprint.toml` fields
+
+| Field | Required | Meaning |
+|---|---|---|
+| `title`, `summary` | yes | Name and one-sentence description, in Portuguese. |
+| `category` | yes | One of `belts`, `mining-smelting`, `oil`, `production`, `science`, `power`, `trains`, `bots`, `city-blocks`, `circuits`, `defense`, `rocket`. |
+| `tags` | yes | Lower-case words, e.g. `["early-game", "blue-belt"]`. |
+| `[[files]]` | yes, 1+ | One entry per variant: `name` shown to players (optional `name_en`, `name_es`) and `path` of its `.txt` file. Every `.txt` in the folder must be listed, from the simplest variant to the most advanced; the website opens on the last one. |
+| `[[images]]` | yes, 1+ | `path` and `alt` text (optional `alt_en`, `alt_es`). The first image is the card cover. |
+| `[test]` | no | `status` = `in-game`, `simulation` or `untested`; `game_version`; `report` (usually `README.md`). |
+| `credits` | no | Where the design came from, in Markdown (links allowed). |
+| `[en]`, `[es]` | no | English and Spanish `title`, `summary` and `credits`. Anything missing falls back to Portuguese. |
+| `viewer` | no | Special page layout; today only `nxm-matrix` (balancer books labeled `N to M`). Its panel states, for every balancer, that it passed the flow simulation, the 9-phase in-game test and (with a splitter) the independent checker, so use it only for books that passed all three, as the belt balancers did. |
+
+### Choosing the category of a city block
+
+A roboport grid becomes a city block when it defines the terrain of the whole base: a fixed lot size, standard edges
+and the same lot repeated across the map. Every city block has a roboport grid, but not every roboport grid is a city
+block.
+
+- `city-blocks`: the lot template itself, with its edges, intersections and standard station. Tag the kind (`rail` or
+  `bot-only`) and the lot size (for example `100x100`).
+- `bots`: standalone pieces, such as a loose roboport grid, a recharge station or a storage hub.
+- A production block built to fit a lot (for example green circuits for a 100x100 city) goes in its product's
+  category with the tag `city-block`.
+
+## The website
+
+The site is generated by [`site/build.py`](site/build.py) (Python, Jinja2, no JavaScript framework) and published to
+GitHub Pages by [`.github/workflows/pages.yml`](.github/workflows/pages.yml) on every push to `main`. Pull requests
+build it too, to catch errors. To preview it locally (Python 3.11 or newer):
+
+```
+python3 -m venv .venv && .venv/bin/pip install -r site/requirements.txt
+.venv/bin/python site/build.py
+python3 -m http.server -d build/site 8000     # http://localhost:8000/
+```
+
+It supports three languages, always kept in sync: Brazilian Portuguese at `/`, US English at `/en/` and Spanish at
+`/es/`. Interface text lives in [`site/i18n.py`](site/i18n.py); names of items and recipes come from the game's own
+translations ([`scripts/catalog/vanilla-locale.json`](scripts/catalog/vanilla-locale.json), refreshed by
+`scripts/catalog/dump_locale.py`). Each blueprint's README is shown in Portuguese in every language, with a note.
