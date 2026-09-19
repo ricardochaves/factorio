@@ -457,7 +457,8 @@ select { min-height: 44px; padding: 0 12px; background: var(--chip); color: var(
   /* touch targets of at least 44px (WCAG 2.5.8) */
   a.chip, .breadcrumb a, .test-banner a, .gallery-caption a, .history a, .more, .arrow-link { display: inline-flex; align-items: center; min-height: 44px; }
   .variants button, .mode-toggle button, .fbtn, .fchip, .cat-chips .fchip, .sel-variant-buttons button { min-height: 44px; }
-  .more-rows summary, .big-section summary, .footer-links a { display: flex; align-items: center; min-height: 44px; }
+  .big-section summary, .footer-links a { display: flex; align-items: center; min-height: 44px; }
+  .more-rows summary { padding: 11px 0; }  /* stays display: list-item so the ▸ marker is drawn; 22px text + 22px = 44px */
   .matrix button { border-radius: 2px; }
   .matrix-wrap { padding: 12px; }
   .pair-select { width: 100%; justify-content: space-between; }
