@@ -93,6 +93,16 @@ block.
 - A production block built to fit a lot (for example green circuits for a 100x100 city) goes in its product's
   category with the tag `city-block`.
 
+## License
+
+The code and the blueprints made in this repository are released under the [MIT License](LICENSE). Some parts come
+from elsewhere and keep their own terms:
+
+- Balancer designs taken from Raynquist's balancer book: that book states no license (see Credits below).
+- The fonts in [`site/static/fonts/`](site/static/fonts/): SIL Open Font License, with the license files next to them.
+- The item, recipe and entity names in [`scripts/catalog/vanilla-locale.json`](scripts/catalog/vanilla-locale.json):
+  Factorio's own text, © Wube Software.
+
 ## Credits
 
 - Several balancers come from, or are built from blocks of, **Raynquist's balancer book**
