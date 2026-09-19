@@ -9,7 +9,7 @@ Blueprint única de uma refinaria completa para o Factorio 2.0.77, jogo base (se
 
 ## O que tem dentro
 
-| Item | Quantidade |
+| Item | Valor |
 |---|---|
 | Entidades | 9 899 |
 | Área | 193 × 129 tiles |

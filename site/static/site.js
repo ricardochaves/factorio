@@ -95,15 +95,16 @@
     }
   }
 
-  function runCopy(button, promise, doneMessage) {
+  function runCopy(button, promise, doneMessage, failMessage) {
+    var failed = failMessage || I18N.copy_failed;
     setFeedback(button, I18N.copying, null);
     button.setAttribute('aria-busy', 'true');
     return promise.then(function () {
       setFeedback(button, doneMessage, 'done');
       announce(doneMessage, false);
     }, function () {
-      setFeedback(button, I18N.copy_failed, 'error');
-      announce(I18N.copy_failed, true);
+      setFeedback(button, I18N.copy_failed_short, 'error');  // short in the button; the full sentence in the toast
+      announce(failed, true);
     }).then(function () { button.removeAttribute('aria-busy'); });
   }
 

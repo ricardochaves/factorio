@@ -62,7 +62,7 @@ git log -p -- blueprints/oil-refinery/oil-refinery.txt
 | `[test]` | no | `status` = `in-game`, `simulation` or `untested`; `game_version`; `report` (usually `README.md`). |
 | `credits` | no | Where the design came from, in Markdown (links allowed). |
 | `[en]`, `[es]` | no | English and Spanish `title`, `summary` and `credits`. Anything missing falls back to Portuguese. |
-| `viewer` | no | Special page layout; today only `nxm-matrix` (balancer books labelled `N to M`). Its panel states, for every balancer, that it passed the flow simulation, the 9-phase in-game test and (with a splitter) the independent checker, so use it only for books that passed all three, as the belt balancers did. |
+| `viewer` | no | Special page layout; today only `nxm-matrix` (balancer books labeled `N to M`). Its panel states, for every balancer, that it passed the flow simulation, the 9-phase in-game test and (with a splitter) the independent checker, so use it only for books that passed all three, as the belt balancers did. |
 
 ## The website
 

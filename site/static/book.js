@@ -426,7 +426,7 @@
     b.addEventListener('click', function () { state.mode = b.dataset.mode; colorMatrix(); });
   });
   $('sel-link').addEventListener('click', function () {
-    FB.runCopy($('sel-link'), FB.copyText(window.location.href), FB.i18n.link_copied);
+    FB.runCopy($('sel-link'), FB.copyText(window.location.href), FB.i18n.link_copied, FB.i18n.link_failed);
   });
   onFileChange.push(function () {
     fillSelects();
