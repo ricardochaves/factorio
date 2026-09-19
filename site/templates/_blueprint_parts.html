@@ -38,7 +38,7 @@
 {% set first = e.images[0] %}
 <figure class="panel gallery" data-gallery>
   <a class="gallery-main" href="{{ root ~ first.full }}" data-gallery-link>
-    <img src="{{ root ~ first.variants[-1][0] }}" srcset="{{ srcset(first) }}" sizes="(min-width: 1280px) 1184px, calc(100vw - 32px)"
+    <img src="{{ root ~ first.variants[-1][0] }}" srcset="{{ srcset(first) }}" sizes="(min-width: 1280px) {{ first.shown }}px, calc(100vw - 52px)"
          width="{{ first.variants[-1][1] }}" height="{{ first.variants[-1][2] }}" alt="{{ loc(first.alt) }}" fetchpriority="high" data-gallery-img>
   </a>
   <figcaption class="gallery-caption">
@@ -48,8 +48,8 @@
       {% for img in e.images %}
       <a href="{{ root ~ img.full }}" class="thumb" data-thumb{% if loop.first %} aria-current="true"{% endif %}
          data-src="{{ root ~ img.variants[-1][0] }}" data-srcset="{{ srcset(img) }}" data-alt="{{ loc(img.alt) }}"
-         data-w="{{ img.variants[-1][1] }}" data-h="{{ img.variants[-1][2] }}">
-        <img src="{{ root ~ img.small }}" alt="{{ loc(img.alt) }}" width="110" height="82" loading="lazy" decoding="async">
+         data-w="{{ img.variants[-1][1] }}" data-h="{{ img.variants[-1][2] }}" data-sizes="(min-width: 1280px) {{ img.shown }}px, calc(100vw - 52px)">
+        <img src="{{ root ~ img.small }}" srcset="{{ srcset(img) }}" sizes="100px" alt="{{ loc(img.alt) }}" width="110" height="82" loading="lazy" decoding="async">
       </a>
       {% endfor %}
     </span>

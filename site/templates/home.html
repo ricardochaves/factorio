@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% import 'macros.html' as m with context %}
 {% block title %}{{ t.site_name }} · {{ t.hero }}{% endblock %}
-{% block og_image %}{% if entries %}<meta property="og:image" content="{{ site_url ~ entries[0].images[0].variants[0][0] }}">{% endif %}{% endblock %}
 {% block main %}
 <section class="container hero">
   <div class="hero-main">
@@ -29,7 +28,7 @@
       {% for n in news %}
       <li>
         <span class="mono muted">{{ fmt_date(n.date) }}</span>
-        <a class="news-title" href="{{ link('blueprints/' ~ n.slug ~ '/') }}">{{ loc(n.title) }}</a>
+        <span class="news-titles">{% for b in n.blueprints %}<a class="news-title" href="{{ link('blueprints/' ~ b.slug ~ '/') }}">{{ loc(b.title) }}</a>{{ ' · ' if not loop.last }}{% endfor %}</span>
         <a class="news-subject" href="{{ n.url }}" lang="en">{{ n.subject }}</a>
       </li>
       {% endfor %}

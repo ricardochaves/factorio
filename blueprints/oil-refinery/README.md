@@ -9,7 +9,7 @@ Blueprint única de uma refinaria completa para o Factorio 2.0.77, jogo base (se
 
 ## O que tem dentro
 
-| | |
+| Item | Quantidade |
 |---|---|
 | Entidades | 9 899 |
 | Área | 193 × 129 tiles |
@@ -42,7 +42,7 @@ A blueprint tem 9 entradas externas, todas na borda sul (coordenadas da blueprin
 Teste automatizado no Factorio 2.0.77 headless, com fontes infinitas só nas 9 entradas externas (as bombas internas
 de entrada são exercitadas), todas as saídas escoando e todos os itens alimentados:
 
-| | resultado |
+| Indicador | Resultado |
 |---|---|
 | Refinarias | 100,0 % (36/36) |
 | Ácido sulfúrico | 89 %, 0 % do tempo sem água (9 % com saída cheia) |

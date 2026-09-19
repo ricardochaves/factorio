@@ -3,7 +3,6 @@
 {% import '_blueprint_parts.html' as parts with context %}
 {% block title %}{{ loc(e.title) }} · {{ t.site_name }}{% endblock %}
 {% block description %}{{ loc(e.summary) }}{% endblock %}
-{% block og_image %}<meta property="og:image" content="{{ site_url ~ e.images[0].variants[-1][0] }}">{% endblock %}
 {% block main %}
 {% set nxm = e.viewer == 'nxm-matrix' %}
 {{ parts.head(e, true) }}
@@ -52,10 +51,11 @@
         {% for o in origins %}<li><span class="swatch" style="background:{{ o.color }}" aria-hidden="true"></span>{{ o[lang] }}</li>{% endfor %}
       </ul>
       <ul class="legend" data-legend="size" hidden>
-        {% for color in ('#3a342c', '#6b4f22', '#a36c1c', '#d98f1e', '#f7b84a') %}<li><span class="swatch" style="background:{{ color }}" aria-hidden="true"></span>{{ t.size_legend[loop.index0] }}</li>{% endfor %}
+        {% for color in ('#756d63', '#8f7446', '#b3812f', '#d99a33', '#f8c86a') %}<li><span class="swatch" style="background:{{ color }}" aria-hidden="true"></span>{{ t.size_legend[loop.index0] }}</li>{% endfor %}
       </ul>
     </div>
-    <aside class="panel selected" aria-labelledby="sel-title" aria-live="polite">
+    <aside class="panel selected" aria-labelledby="sel-title">
+      <p class="sr-only" aria-live="polite" id="sel-live"></p>
       <div class="selected-head">
         <div>
           <span class="muted" id="sel-book"></span>
@@ -141,14 +141,13 @@
 {% block scripts %}
 {% if e.viewer == 'nxm-matrix' %}
 <script type="application/json" id="book-data">{{ {
-  'slug': e.slug, 'files': book_data, 'default': e.default_file, 'lang': lang, 'root': root,
+  'slug': e.slug, 'files': book_data, 'lang': lang, 'root': root,
   'origins': origins,
-  'names': e.files|map(attribute='name')|map(attribute=lang)|list,
   't': {'book_tier': t.book_tier, 'cell_label': t.cell_label, 'pair_label': t.pair_label,
-        'belts_one': t.belts_one, 'belts_many': t.belts_many, 'tiles_suffix': t.tiles_suffix,
+        'belts_one': t.belts_one, 'belts_many': t.belts_many,
         'verif_splitter': t.verif_splitter, 'verif_plain': t.verif_plain, 'variants_note': t.variants_note,
         'preview_loading': t.preview_loading, 'preview_error': t.preview_error, 'preview_label': t.preview_label,
-        'copy_blueprint': t.copy_blueprint, 'download_txt': t.download_txt, 'in_game': e.test.get('status') == 'in-game'},
+        'in_game': e.test.get('status') == 'in-game'},
 }|tojson }}</script>
 {% endif %}
 <script src="{{ asset('book.js') }}" defer></script>

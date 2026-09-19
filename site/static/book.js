@@ -4,6 +4,7 @@
   'use strict';
 
   var FB = window.FB;
+  var MATRIX_HASH = /^([\w-]+)\/(\d+)\/(\d+)(?:\/([\w-]+))?$/;  // #<file>/<inputs>/<outputs>[/<variant>]
 
   /* ---------- tabs ---------- */
   var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
@@ -27,6 +28,22 @@
   });
   var first = tabs.filter(function (t) { return t.getAttribute('aria-selected') === 'true'; })[0] || tabs[0];
   if (first) selectTab(first, false);
+
+  /* An anchor such as #report or a README heading may sit in a hidden tab panel: open that tab, then scroll. */
+  function revealAnchor(id) {
+    var target = id && document.getElementById(id);
+    if (!target) return false;
+    var panel = target.closest('[role="tabpanel"]');
+    if (panel && panel.hidden) {
+      var tab = tabs.filter(function (t) { return t.getAttribute('aria-controls') === panel.id; })[0];
+      if (tab) selectTab(tab, false);
+    }
+    target.scrollIntoView();
+    return true;
+  }
+  function decodedHash() {
+    try { return decodeURIComponent(window.location.hash.slice(1)); } catch (e) { return window.location.hash.slice(1); }
+  }
 
   /* ---------- variant (one file of the book) ---------- */
   var variantButtons = Array.prototype.slice.call(document.querySelectorAll('.variants [data-file]'));
@@ -55,11 +72,19 @@
   }
   variantButtons.forEach(function (b) { b.addEventListener('click', function () { setFile(+b.dataset.file, true); }); });
 
+  function savedFile() {
+    try {
+      var saved = window.localStorage.getItem(storeKey);
+      return saved !== null && variantButtons[+saved] ? +saved : null;
+    } catch (e) { return null; }
+  }
+
   var dataEl = document.getElementById('book-data');
   if (!dataEl) {
-    var saved = null;
-    try { saved = window.localStorage.getItem(storeKey); } catch (e) { saved = null; }
-    setFile(saved !== null && variantButtons[+saved] ? +saved : fileIndex, false);
+    var s = savedFile();
+    setFile(s !== null ? s : fileIndex, false);
+    revealAnchor(decodedHash());
+    window.addEventListener('hashchange', function () { revealAnchor(decodedHash()); });
     return;
   }
 
@@ -68,8 +93,9 @@
   var T = D.t;
   var ORIGIN = {};
   D.origins.forEach(function (o) { ORIGIN[o.code] = { name: o[D.lang], color: o.color }; });
-  ORIGIN.u = { name: '—', color: '#5d564d' };
-  var SIZE_COLORS = [[50, '#3a342c'], [150, '#6b4f22'], [400, '#a36c1c'], [1000, '#d98f1e'], [Infinity, '#f7b84a']];
+  ORIGIN.u = { name: '—', color: '#8a8175' };
+  // entity count thresholds; every color keeps 3:1 contrast against the panel (WCAG 1.4.11)
+  var SIZE_COLORS = [[50, '#756d63'], [150, '#8f7446'], [400, '#b3812f'], [1000, '#d99a33'], [Infinity, '#f8c86a']];
   var matrix = document.getElementById('matrix');
   var selN = document.getElementById('sel-n');
   var selM = document.getElementById('sel-m');
@@ -77,8 +103,10 @@
   var state = { mode: 'origin', n: 8, m: 8, variant: null };
   var cache = {};
   var renderToken = 0;
+  var variantsShown = '';  // file/pair whose variant buttons are on screen (they are kept to keep the focus)
+  var ready = false;       // until the first selection, the page's own hash (#report...) is left alone
 
-  function fmt(n) { return n.toLocaleString(document.documentElement.lang); }
+  function fmt(n) { return n === null || n === undefined ? '—' : n.toLocaleString(document.documentElement.lang); }
   function fill(template, values) {
     return template.replace(/\{(\w+)\}/g, function (_, k) { return values[k] !== undefined ? values[k] : ''; });
   }
@@ -102,10 +130,12 @@
     var corner = document.createElement('span');
     corner.className = 'lbl';
     head.appendChild(corner);
+    function major(k) { return k === 1 || k % 4 === 0; }  // phones only show these numbers
     for (var m = 1; m <= g.size; m++) {
       var col = document.createElement('span');
       col.className = 'lbl';
       col.setAttribute('role', 'columnheader');
+      if (major(m)) col.dataset.major = '';
       col.textContent = m;
       head.appendChild(col);
     }
@@ -116,6 +146,7 @@
       var rl = document.createElement('span');
       rl.className = 'lbl lbl-row';
       rl.setAttribute('role', 'rowheader');
+      if (major(n)) rl.dataset.major = '';
       rl.textContent = n;
       row.appendChild(rl);
       for (var k = 1; k <= g.size; k++) {
@@ -125,8 +156,7 @@
         b.dataset.n = n;
         b.dataset.m = k;
         b.tabIndex = -1;
-        var code = g.o[idx(n, k)];
-        if (code === '-') { b.disabled = true; b.setAttribute('aria-disabled', 'true'); }
+        if (g.o[idx(n, k)] === '-') { b.disabled = true; b.setAttribute('aria-disabled', 'true'); }
         row.appendChild(b);
       }
       matrix.appendChild(row);
@@ -178,8 +208,11 @@
     }
     selN.value = String(n); selM.value = String(m);
     showSelected();
-    var hash = '#' + file().id + '/' + n + '/' + m + (state.variant ? '/' + state.variant : '');
-    window.history.replaceState(null, '', window.location.pathname + window.location.search + hash);
+    var hash = decodedHash();
+    if (ready || !hash || MATRIX_HASH.test(hash)) {
+      var next = '#' + file().id + '/' + n + '/' + m + (state.variant ? '/' + state.variant : '');
+      window.history.replaceState(null, '', window.location.pathname + window.location.search + next);
+    }
   }
 
   function showSelected() {
@@ -192,28 +225,23 @@
     var badge = $('sel-origin');
     badge.textContent = origin.name;
     badge.style.setProperty('--c', origin.color);
-    setStats(g.e[i], g.w[i], g.h[i]);
+    var variants = variantsOf(n, m);
+    var chosen = variants && variants.filter(function (v) { return v[0] === state.variant; })[0];
+    // each variant has its own numbers; the drawing replaces them with the decoded blueprint's
+    setStats(chosen ? chosen[2] : g.e[i], chosen ? chosen[3] : g.w[i], chosen ? chosen[4] : g.h[i]);
     var thr = g.t[i];
     $('sel-thr').textContent = thr ? fill(thr === 1 ? T.belts_one : T.belts_many, { n: thr }) : '—';
-    var variants = variantsOf(n, m);
-    var box = $('sel-variants');
-    box.hidden = !variants;
-    if (variants) {
-      $('sel-variants-note').textContent = fill(T.variants_note, { n: variants.length });
-      var holder = box.querySelector('.sel-variant-buttons');
-      holder.textContent = '';
-      variants.forEach(function (v) {
-        var b = document.createElement('button');
-        b.type = 'button';
-        b.textContent = v[1];
-        b.setAttribute('aria-pressed', String(v[0] === state.variant));
-        b.addEventListener('click', function () { select(n, m, v[0], false); });
-        holder.appendChild(b);
-      });
+    showVariants(n, m, variants);
+    $('sel-live').textContent = fill(T.cell_label, { n: n, m: m, origin: origin.name,
+      e: fmt(chosen ? chosen[2] : g.e[i]) });
+    if (code === '-') {
+      $('preview').replaceChildren();
+      $('sel-desc').textContent = '—';
+      $('sel-verif').hidden = true;
+      return;
     }
     var url = stringUrl(n, m, state.variant);
-    var copy = $('sel-copy');
-    copy.dataset.copy = url;
+    $('sel-copy').dataset.copy = url;
     var dl = $('sel-download');
     dl.href = url;
     dl.setAttribute('download', f.id + '-' + n + '-' + m + (state.variant ? '-' + state.variant : '') + '.txt');
@@ -221,9 +249,32 @@
     drawSelected(url);
   }
 
+  function showVariants(n, m, variants) {
+    var box = $('sel-variants');
+    var holder = box.querySelector('.sel-variant-buttons');
+    box.hidden = !variants;
+    var key = file().id + '/' + n + '/' + m;
+    if (variants && key !== variantsShown) {  // rebuild only for a new pair, so a pressed button keeps the focus
+      $('sel-variants-note').textContent = fill(T.variants_note, { n: variants.length });
+      holder.textContent = '';
+      variants.forEach(function (v) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = v[1];
+        b.dataset.variant = v[0];
+        b.addEventListener('click', function () { select(state.n, state.m, v[0], false); });
+        holder.appendChild(b);
+      });
+    }
+    variantsShown = variants ? key : '';
+    holder.querySelectorAll('button').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.dataset.variant === state.variant));
+    });
+  }
+
   function setStats(entities, w, h) {
     $('sel-ent').textContent = fmt(entities);
-    $('sel-dim').textContent = w + ' × ' + h;
+    $('sel-dim').textContent = w ? w + ' × ' + h : '—';
   }
 
   /* ---------- decode + draw ---------- */
@@ -380,24 +431,35 @@
   onFileChange.push(function () {
     fillSelects();
     buildMatrix();
+    variantsShown = '';
     select(state.n, state.m, state.variant, false);
   });
 
-  /* ---------- start: #<file>/<n>/<m>[/<variant>] wins over the remembered variant ---------- */
-  var hash = window.location.hash.slice(1).split('/');
-  var start = fileIndex;
-  var fromHash = D.files.map(function (f) { return f.id; }).indexOf(hash[0]);
-  if (fromHash >= 0) {
-    start = fromHash;
-    var hn = parseInt(hash[1], 10), hm = parseInt(hash[2], 10);
-    if (hn > 0) state.n = hn;
-    if (hm > 0) state.m = hm;
-    state.variant = hash[3] || null;  // select() keeps it only if the pair has that variant
-  } else {
-    try {
-      var saved2 = window.localStorage.getItem(storeKey);
-      if (saved2 !== null && D.files[+saved2]) start = +saved2;
-    } catch (e) { /* private mode */ }
+  /* #<file>/<n>/<m>[/<variant>] selects a balancer; any other hash is an anchor (maybe in a hidden tab) */
+  function applyHash(initial) {
+    var hash = decodedHash();
+    var m = hash.match(MATRIX_HASH);
+    var target = m ? D.files.map(function (f) { return f.id; }).indexOf(m[1]) : -1;
+    if (target >= 0) {
+      var matrixTab = document.getElementById('tab-matrix');
+      if (matrixTab && matrixTab.getAttribute('aria-selected') !== 'true') selectTab(matrixTab, false);
+      state.n = parseInt(m[2], 10) || state.n;
+      state.m = parseInt(m[3], 10) || state.m;
+      state.variant = m[4] || null;  // select() keeps it only if the pair has that variant
+      if (target !== fileIndex || initial) setFile(target, false);
+      else select(state.n, state.m, state.variant, false);
+      return true;
+    }
+    return false;
   }
-  setFile(start, false);
+
+  if (!applyHash(true)) {
+    var saved = savedFile();
+    setFile(saved !== null ? saved : fileIndex, false);
+    revealAnchor(decodedHash());
+  }
+  ready = true;
+  window.addEventListener('hashchange', function () {
+    if (!applyHash(false)) revealAnchor(decodedHash());
+  });
 })();

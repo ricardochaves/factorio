@@ -3,12 +3,23 @@
   'use strict';
 
   var I18N = JSON.parse(document.getElementById('i18n').textContent);
-  var live = document.getElementById('live');
+  var live = document.getElementById('live');  // a visible toast that is also a polite live region
 
-  function announce(message) {
+  function announce(message, isError) {
     live.textContent = '';
+    live.hidden = false;
+    live.classList.toggle('toast-error', !!isError);
     window.setTimeout(function () { live.textContent = message; }, 60);
+    window.clearTimeout(live._hide);
+    live._hide = window.setTimeout(function () { live.hidden = true; }, isError ? 6000 : 2600);
   }
+
+  /* ---------- language switch keeps the catalog filters and the selected balancer ---------- */
+  document.querySelectorAll('.lang a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      a.href = a.href.split(/[?#]/)[0] + window.location.search + window.location.hash;
+    });
+  });
 
   /* ---------- phone menu ---------- */
   var bar = document.querySelector('[data-menu]');
@@ -89,10 +100,10 @@
     button.setAttribute('aria-busy', 'true');
     return promise.then(function () {
       setFeedback(button, doneMessage, 'done');
-      announce(doneMessage);
+      announce(doneMessage, false);
     }, function () {
       setFeedback(button, I18N.copy_failed, 'error');
-      announce(I18N.copy_failed);
+      announce(I18N.copy_failed, true);
     }).then(function () { button.removeAttribute('aria-busy'); });
   }
 
@@ -114,6 +125,7 @@
       ev.preventDefault();
       img.width = +thumb.dataset.w;
       img.height = +thumb.dataset.h;
+      img.sizes = thumb.dataset.sizes;
       img.srcset = thumb.dataset.srcset;
       img.src = thumb.dataset.src;
       img.alt = thumb.dataset.alt;

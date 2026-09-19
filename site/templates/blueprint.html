@@ -3,7 +3,6 @@
 {% import '_blueprint_parts.html' as parts with context %}
 {% block title %}{{ loc(e.title) }} · {{ t.site_name }}{% endblock %}
 {% block description %}{{ loc(e.summary) }}{% endblock %}
-{% block og_image %}<meta property="og:image" content="{{ site_url ~ e.images[0].variants[-1][0] }}">{% endblock %}
 {% block main %}
 {{ parts.head(e, false) }}
 <section class="container">

@@ -25,6 +25,7 @@ import subprocess
 import sys
 from collections import Counter
 from pathlib import Path
+from urllib.parse import urlparse
 
 from jinja2 import Environment, FileSystemLoader, StrictUndefined, select_autoescape
 from markdown_it import MarkdownIt
@@ -41,7 +42,10 @@ REPO = os.environ.get('GITHUB_REPOSITORY') or 'ricardochaves/factorio'
 REPO_URL = f'https://github.com/{REPO}'
 BRANCH = 'main'
 SITE_URL = (os.environ.get('SITE_URL') or 'https://ricardochaves.github.io/factorio/').rstrip('/') + '/'
-IMAGE_WIDTHS = (640, 1280, 1920)
+SITE_PATH = urlparse(SITE_URL).path  # '/factorio/' on GitHub Pages
+IMAGE_WIDTHS = (320, 640, 1280, 1920)
+IMAGE_QUALITY = {1920: 72}  # WebP quality per width (default 80); the largest one is the page's LCP image
+CACHE_VERSION = 2  # bump when the image or string output changes, so build/.cache is not reused
 CACHE = ROOT / 'build' / '.cache'
 NXM_LABEL = re.compile(r'^(\d+) to (\d+)(?: \(([^)]+)\))?$')
 THROUGHPUT = re.compile(r'full throughput \((\d+) belts?\)')
@@ -169,7 +173,9 @@ class Readme:
             if not body:
                 continue
             rows = body.count('<tr>')
-            body = body.replace('<table>', '<div class="table-wrap"><table>').replace('</table>', '</table></div>')
+            # scrollable regions must be reachable with the keyboard (WCAG 2.1.1)
+            body = body.replace('<table>', '<div class="table-wrap" tabindex="0"><table>').replace('</table>', '</table></div>')
+            body = body.replace('<pre>', '<pre tabindex="0">')
             out.append({'title': g['title'] and self.inline(g['title']), 'id': g['id'], 'html': body,
                         'big': rows > BIG_TABLE_ROWS + 1})
         return out
@@ -183,6 +189,7 @@ def build_images(entry, out):
         stem = Path(img['path']).stem
         dest = out / 'img' / entry['slug']
         dest.mkdir(parents=True, exist_ok=True)
+        digest = sha256(src)[:16]
         with Image.open(src) as im:
             w, h = im.size
             full = dest / src.name
@@ -193,18 +200,23 @@ def build_images(entry, out):
                     break
                 height = round(h * width / w)
                 name = f'{stem}-{width}.webp'
-                cached = CACHE / 'img' / f'{sha256(src)[:16]}-{width}.webp'
+                quality = IMAGE_QUALITY.get(width, 80)
+                cached = CACHE / 'img' / f'v{CACHE_VERSION}-{digest}-{width}-q{quality}.webp'
                 if not cached.exists():
                     cached.parent.mkdir(parents=True, exist_ok=True)
-                    im.convert('RGB').resize((width, height), Image.LANCZOS).save(cached, 'WEBP', quality=80, method=6)
+                    im.convert('RGB').resize((width, height), Image.LANCZOS).save(cached, 'WEBP', quality=quality,
+                                                                                   method=6)
                 shutil.copyfile(cached, dest / name)
                 variants.append((f'img/{entry["slug"]}/{name}', width, height))
             if w <= IMAGE_WIDTHS[-1]:
                 variants.append((f'img/{entry["slug"]}/{src.name}', w, h))
+        # the hero is at most 1164 px wide and 640 px tall (object-fit: contain), so it rarely needs its full width
+        shown = min(1164, round(640 * w / h))
         result.append({
             'alt': translated_key(img, 'alt'),
-            'full': f'img/{entry["slug"]}/{src.name}', 'width': w, 'height': h,
+            'full': f'img/{entry["slug"]}/{src.name}', 'width': w, 'height': h, 'shown': shown,
             'variants': variants, 'small': variants[0][0],
+            'og': next((v for v in variants if v[1] >= 1200), variants[-1]),
         })
     return result
 
@@ -223,7 +235,7 @@ def split_book(entry, f, out):
     src = ROOT / 'blueprints' / entry['slug'] / f['path']
     stem = Path(f['path']).stem
     rel = f'files/{entry["slug"]}/{stem}'
-    cached = CACHE / 'strings' / f'{sha256(src)[:16]}-{entry.get("viewer") or "book"}'
+    cached = CACHE / 'strings' / f'v{CACHE_VERSION}-{sha256(src)[:16]}-{entry.get("viewer") or "book"}'
     data = bp.decode(src.read_text(encoding='utf-8'))
     book = data['blueprint_book']
     children = []
@@ -237,16 +249,23 @@ def split_book(entry, f, out):
                          'url': f'{rel}/{slugify(label) or "item"}.txt', 'obj': {kind: inner},
                          # "N to 1 ... N to 24": the page writes it in its own language
                          'range': pairs if all(pairs) else None})
+    names = [Path(c['url']).name for c in children]
+    if len(set(names)) != len(names):
+        raise SystemExit(f'{src}: two top-level items of the book have the same label, rename one')
     if not cached.exists():
         tmp = cached.with_suffix('.tmp')
         shutil.rmtree(tmp, ignore_errors=True)
         for c in children:
             write_string(tmp / (Path(c['url']).name), c['obj'])
         if entry.get('viewer') == 'nxm-matrix':
+            seen = set()
             for labels, b in bp.walk(data):
                 m = NXM_LABEL.match(b.get('label') or '')
                 if m:
                     name = f'{m[1]}-{m[2]}' + (f'-{slugify(m[3])}' if m[3] else '')
+                    if name in seen:
+                        raise SystemExit(f'{src}: two blueprints are labelled "{b.get("label")}"')
+                    seen.add(name)
                     write_string(tmp / f'{name}.txt', {'blueprint': b})
         shutil.rmtree(cached, ignore_errors=True)
         tmp.rename(cached)
@@ -290,11 +309,12 @@ def nxm_grid(entry, f, data):
         n, k, variant = int(m[1]), int(m[2]), m[3]
         sizes.update((n, k))
         key = f'{n}-{k}'
-        if variant:
-            variants.setdefault(key, []).append([slugify(variant), variant])
+        stats = next(s for s in f['blueprints'] if s['label'] == b['label'])
+        if variant:  # the panel shows each variant's own numbers; the cell shows the first variant's
+            variants.setdefault(key, []).append([slugify(variant), variant, stats['entities'], stats['width'],
+                                                 stats['height']])
         if key in cells:
             continue
-        stats = next(s for s in f['blueprints'] if s['label'] == b['label'])
         thr = THROUGHPUT.search(b.get('description', ''))
         cells[key] = (origin_code(b.get('description')), stats['entities'], stats['width'], stats['height'],
                       int(thr[1]) if thr else 0, labels[-2] if len(labels) > 1 else '')
@@ -442,25 +462,30 @@ def build_model(out):
             m = re.match(r'^blueprints/([^/]+)/[^/]+\.txt$', f)
             if m and m[1] in titles and m[1] not in slugs:
                 slugs.append(m[1])
-        for s in slugs:
-            news.append({'date': cmt['date'], 'title': titles[s], 'subject': cmt['subject'], 'url': cmt['url'],
-                         'slug': s})
+        if slugs:  # one entry per commit, naming every blueprint it changed
+            news.append({'date': cmt['date'], 'subject': cmt['subject'], 'url': cmt['url'],
+                         'blueprints': [{'slug': s, 'title': titles[s]} for s in slugs]})
     return entries, news[:4], locale
 
 
 # ---------------------------------------------------------------- rendering
+class DataEnvironment(Environment):
+    """In templates, d.key reads the dict key first. Plain Jinja tries the attribute first, so t.clear printed the
+    method dict.clear instead of the text of the key "clear"."""
+
+    def getattr(self, obj, attribute):
+        if isinstance(obj, dict) and attribute in obj:
+            return obj[attribute]
+        return super().getattr(obj, attribute)
+
+
 class Site:
     def __init__(self, out, entries, news, locale):
         self.out, self.entries, self.news, self.locale = out, entries, news, locale
-        self.env = Environment(loader=FileSystemLoader(SITE / 'templates'), autoescape=select_autoescape(['html']),
-                               undefined=StrictUndefined, trim_blocks=True, lstrip_blocks=True)
+        self.env = DataEnvironment(loader=FileSystemLoader(SITE / 'templates'), autoescape=select_autoescape(['html']),
+                                   undefined=StrictUndefined, trim_blocks=True, lstrip_blocks=True)
         self.assets = {}
         self.pages = []
-        # Jinja resolves t.clear to dict.clear before the key "clear": no text key may shadow a dict method.
-        for lang, strings in i18n.T.items():
-            clash = set(strings) & set(dir(dict))
-            if clash:
-                raise SystemExit(f'site/i18n.py: T[{lang!r}] keys {sorted(clash)} shadow dict methods; rename them')
 
     def copy_static(self):
         dest = self.out / 'assets'
@@ -565,7 +590,7 @@ class Site:
 
     def render_404(self):
         """GitHub Pages serves /404.html for any missing path, so its links are absolute and it speaks every language."""
-        ctx = self.context(i18n.DEFAULT, '', '404', root=SITE_URL)
+        ctx = self.context(i18n.DEFAULT, '', '404', root=SITE_PATH)  # root-relative: works on any missing path
         self.write(self.out / '404.html', self.env.get_template('404.html').render(**ctx))
 
     def catalog_index(self, lang):
@@ -585,22 +610,25 @@ class Site:
 
     def book_data(self, e, lang):
         def localized(grid):
-            variants = {key: [[slug, i18n.VARIANTS[slug][lang] if slug in i18n.VARIANTS else name]
-                              for slug, name in vs] for key, vs in grid['v'].items()}
+            variants = {key: [[slug, i18n.VARIANTS[slug][lang] if slug in i18n.VARIANTS else name, *numbers]
+                              for slug, name, *numbers in vs] for key, vs in grid['v'].items()}
             return dict(grid, v=variants)
-        return [{
-            'id': f['id'], 'color': f['color'], 'url': f['url'], 'size': i18n.fmt_bytes(f['bytes'], lang),
-            'name': i18n.label(f['name'], lang), 'grid': localized(f['grid']),
-        } for f in e['files']]
+        return [{'id': f['id'], 'name': i18n.label(f['name'], lang), 'grid': localized(f['grid'])} for f in e['files']]
+
+    def og_image(self, e, lang):
+        img = e['images'][0] if e else None
+        return {'variant': img['og'], 'alt': i18n.label(img['alt'], lang)} if img else None
 
     def build(self):
         self.copy_static()
+        first = self.entries[0] if self.entries else None
         for lang in i18n.LANGS:
-            self.render('home.html', lang, '', 'home')
-            self.render('catalog.html', lang, 'catalog/', 'catalog', index=self.catalog_index(lang))
+            self.render('home.html', lang, '', 'home', og_image=self.og_image(first, lang))
+            self.render('catalog.html', lang, 'catalog/', 'catalog', index=self.catalog_index(lang),
+                        og_image=self.og_image(first, lang))
             for e in self.entries:
                 template = 'book.html' if e['kind'] == 'book' else 'blueprint.html'
-                extra = {'e': e}
+                extra = {'e': e, 'og_image': self.og_image(e, lang)}
                 if e['viewer'] == 'nxm-matrix':
                     extra['book_data'] = self.book_data(e, lang)
                 self.render(template, lang, f'blueprints/{e["slug"]}/', 'blueprint', **extra)
@@ -609,7 +637,7 @@ class Site:
         (self.out / 'sitemap.xml').write_text(
             '<?xml version="1.0" encoding="UTF-8"?>\n'
             f'<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{urls}\n</urlset>\n', encoding='utf-8')
-        (self.out / 'robots.txt').write_text(f'User-agent: *\nAllow: /\nSitemap: {SITE_URL}sitemap.xml\n')
+        # No robots.txt: a project site lives under /factorio/ and crawlers only read /robots.txt at the host's root.
 
 
 def main():

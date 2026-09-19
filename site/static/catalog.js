@@ -26,7 +26,7 @@
   var state = { q: '', cat: 'all', kind: 'all', test: 'all', phase: [], city: [], uses: [], sort: 'recent', view: 'grid' };
 
   function normalize(s) {
-    return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+    return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   }
 
   function parseQuery(q) {
@@ -123,13 +123,22 @@
   }
 
   /* ---------- URL <-> state ---------- */
+  /* only values that exist as filter buttons or sort options are accepted from the URL */
+  function allowed(group) {
+    return Array.prototype.map.call(document.querySelectorAll('[data-filter="' + group + '"]'),
+      function (b) { return b.dataset.value; });
+  }
+
   function readUrl() {
     var p = new URLSearchParams(window.location.search);
     state.q = p.get('q') || '';
-    SINGLE.forEach(function (g) { if (p.get(g)) state[g] = p.get(g); });
-    MULTI.forEach(function (g) { state[g] = p.get(g) ? p.get(g).split(',') : []; });
-    if (p.get('sort')) state.sort = p.get('sort');
-    if (state.cat !== 'all' && !has(DATA.cats, state.cat)) state.cat = 'all';
+    SINGLE.forEach(function (g) { if (has(allowed(g), p.get(g))) state[g] = p.get(g); });
+    MULTI.forEach(function (g) {
+      var ok = allowed(g);
+      state[g] = (p.get(g) || '').split(',').filter(function (v) { return has(ok, v); });
+    });
+    var sorts = Array.prototype.map.call(sortSelect.options, function (o) { return o.value; });
+    if (has(sorts, p.get('sort'))) state.sort = p.get('sort');
   }
 
   function writeUrl() {
