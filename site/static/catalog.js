@@ -33,7 +33,10 @@
     var text = normalize(q);
     var pair = null;
     var m = text.match(PAIR);
-    if (m) { pair = [+m[1], +m[2]]; text = text.replace(m[0], ' '); }
+    /* "17 x 18" is a balancer pair only if some balancer book has that many belts; otherwise "100 x 100" is plain text */
+    if (m && ITEMS.some(function (it) { return it.nxm && +m[1] <= it.nxm.size && +m[2] <= it.nxm.size; })) {
+      pair = [+m[1], +m[2]]; text = text.replace(m[0], ' ');
+    }
     var tokens = text.split(/[\s,.;:/()!?"']+/).filter(function (t) { return t && STOP.indexOf(t) < 0; });
     return { pair: pair, tokens: tokens };
   }

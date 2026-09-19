@@ -46,11 +46,19 @@ Everything runs with Python 3 (standard library only) on macOS; the in-game test
 | `crop_plastic.py` | Cuts a plastic block into an isolated test. |
 | `patch_plastic_feed.py`, `patch_water_acid.py` | Historical one-off patches that produced refinery v2 and v3. |
 
+## City block (`blueprints/city-block-100x100/`)
+
+| Script | Purpose |
+|---|---|
+| `export_city.py` | Writes `strings.lua` for the two scenarios below from the blueprint files, with the entity, tile and wire counts the game must find (counted from the decoded JSON). Both runners call it. |
+| `run_city_test.sh` | Headless scenario `city-test` (the server listens on 127.0.0.1 only). For both variants, with one block and with a 2 × 2 city: imports the string, builds it away from the cell's center to prove the grid snapping, checks every entity, tile and wire against the blueprint, plugs it into a power source, then checks the electric network, the roboports (status and energy), the lamps at night, the logistic network and the circuit networks, and lets the robots build four ghosts from a storage chest. Exit status 0 only when every check passed and at least one ran. |
+| `run_city_shot.sh` | Scenario `city-shot` in the normal game (screenshots need the renderer): builds the variants on a grass field, powers them, waits for the roboports to fill their buffers, takes the photos (day, night, 2 × 2, details, robots in flight) and writes `images/*.webp`. |
+
 ## In-game harness (`ingame/`)
 
 Factorio runs headless with an isolated write-data dir (`ingame/data`), vanilla only (`ingame/mods/mod-list.json`
 enables just `base`). Scenarios live in `ingame/data/scenarios/`; their `control.lua` files are tracked, the test data
-they read (`tests*.lua`, `tier.lua`, `bp.lua`) is generated.
+they read (`tests*.lua`, `tier.lua`, `bp.lua`, `strings.lua`) is generated.
 
 Environment variables:
 
@@ -86,6 +94,11 @@ python3 export_shots.py
 
 If Steam is open but not logged in, the game asks to restart through Steam and loses the arguments; run
 `SteamAppId=427520 ./run_balancer_shot.sh` instead.
+
+Photos of the city block come from scenario `city-shot` the same way (`./run_city_shot.sh`, with the `SteamAppId=427520`
+prefix when Steam is open but not logged in). Its shots are listed at the top of
+`ingame/data/scenarios/city-shot/control.lua` (center, size in tiles, zoom, daytime); the power source sits 20 tiles west
+of the block, outside every frame except its copper wire.
 
 ## Setup after a fresh clone
 

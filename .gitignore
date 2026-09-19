@@ -42,6 +42,8 @@ __pycache__/
 /scripts/ingame/data/scenarios/fluid-shot/bp.lua
 /scripts/ingame/data/scenarios/balancer-shot/shots.lua
 /scripts/ingame/data/scenarios/site-import/strings.lua
+/scripts/ingame/data/scenarios/city-test/strings.lua
+/scripts/ingame/data/scenarios/city-shot/strings.lua
 
 # --- site build output ------------------------------------------------------------
 # Catalog index (scripts/catalog/validate.py --json build/catalog.json) and the site (site/build.py -> build/site/).
