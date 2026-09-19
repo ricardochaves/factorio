@@ -98,10 +98,11 @@ block.
 The code and the blueprints made in this repository are released under the [MIT License](LICENSE). Some parts come
 from elsewhere and keep their own terms:
 
-- Balancer designs taken from Raynquist's balancer book: that book states no license (see Credits below).
+- Balancer designs taken from Raynquist's balancer book: that repository does not state a license (see Credits below).
 - The fonts in [`site/static/fonts/`](site/static/fonts/): SIL Open Font License, with the license files next to them.
-- The item, recipe and entity names in [`scripts/catalog/vanilla-locale.json`](scripts/catalog/vanilla-locale.json):
-  Factorio's own text, © Wube Software.
+- The item, fluid, recipe and entity names in [`scripts/catalog/vanilla-locale.json`](scripts/catalog/vanilla-locale.json)
+  and the prototype data in [`scripts/catalog/vanilla-prototypes.json`](scripts/catalog/vanilla-prototypes.json), both
+  extracted from the game: Factorio's own data, © Wube Software.
 
 ## Credits
 
