@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}{{ t.privacy_title }} · {{ t.site_name }}{% endblock %}
+{% block description %}{{ t.privacy_lead }}{% endblock %}
+{% block main %}
+<section class="container page-head">
+  <h1>{{ t.privacy_title }}</h1>
+  <p class="lead">{{ t.privacy_lead }}</p>
+  <p><button type="button" class="btn" data-consent-open hidden>{{ t.consent_manage }}</button></p>
+</section>
+<section class="container prose privacy">
+  {% for s in sections %}
+  {% if s.title %}<h2 id="{{ s.id }}">{{ s.title|safe }}</h2>{% endif %}
+  {{ s.html|safe }}
+  {% endfor %}
+</section>
+{% endblock %}

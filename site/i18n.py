@@ -240,6 +240,15 @@ T = {
         'nf_title': 'Página não encontrada',
         'nf_text': 'Esse endereço não existe. O catálogo tem tudo o que já foi publicado.',
         'nf_link': 'Ir para o catálogo',
+        'consent_title': 'Estatísticas de uso',
+        'consent_text': 'Este site usa o Google Analytics para contar visitas e saber quais blueprints são mais copiados. '
+                        'O Google Analytics grava cookies no seu navegador e só é carregado se você aceitar. '
+                        'O site funciona igual nos dois casos.',
+        'consent_more': 'Como os dados são usados', 'consent_accept': 'Aceitar', 'consent_deny': 'Recusar',
+        'consent_manage': 'Alterar minha escolha',
+        'footer_privacy': 'Privacidade', 'footer_cookies': 'Preferências de cookies',
+        'privacy_title': 'Privacidade e cookies',
+        'privacy_lead': 'O que este site mede, só com a sua permissão, e como mudar de ideia.',
     },
     'en': {
         'site_name': 'factorio-blueprints',
@@ -344,6 +353,15 @@ T = {
         'nf_title': 'Page not found',
         'nf_text': 'This address does not exist. The catalog has everything published so far.',
         'nf_link': 'Go to the catalog',
+        'consent_title': 'Usage statistics',
+        'consent_text': 'This site uses Google Analytics to count visits and see which blueprints are copied most. '
+                        'Google Analytics sets cookies in your browser and only loads if you accept. '
+                        'The site works the same either way.',
+        'consent_more': 'How the data is used', 'consent_accept': 'Accept', 'consent_deny': 'Decline',
+        'consent_manage': 'Change my choice',
+        'footer_privacy': 'Privacy', 'footer_cookies': 'Cookie settings',
+        'privacy_title': 'Privacy and cookies',
+        'privacy_lead': 'What this site measures, only with your permission, and how to change your mind.',
     },
     'es': {
         'site_name': 'factorio-blueprints',
@@ -450,6 +468,15 @@ T = {
         'nf_title': 'Página no encontrada',
         'nf_text': 'Esta dirección no existe. El catálogo tiene todo lo publicado hasta ahora.',
         'nf_link': 'Ir al catálogo',
+        'consent_title': 'Estadísticas de uso',
+        'consent_text': 'Este sitio usa Google Analytics para contar visitas y saber qué blueprints se copian más. '
+                        'Google Analytics guarda cookies en tu navegador y solo se carga si aceptas. '
+                        'El sitio funciona igual en ambos casos.',
+        'consent_more': 'Cómo se usan los datos', 'consent_accept': 'Aceptar', 'consent_deny': 'Rechazar',
+        'consent_manage': 'Cambiar mi elección',
+        'footer_privacy': 'Privacidad', 'footer_cookies': 'Preferencias de cookies',
+        'privacy_title': 'Privacidad y cookies',
+        'privacy_lead': 'Qué mide este sitio, solo con tu permiso, y cómo cambiar de opinión.',
     },
 }
 

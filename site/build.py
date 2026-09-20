@@ -10,7 +10,9 @@ usage (from the repository root, inside the virtual environment with site/requir
   python3 site/build.py --out DIR          build somewhere else
   python3 -m http.server -d build/site     preview at http://localhost:8000/
 Environment: SITE_URL (absolute URL of the site, for canonical links and the sitemap) and GITHUB_REPOSITORY
-(owner/name, for links to the code); both default to this project's values.
+(owner/name, for links to the code); both default to this project's values. GA_MEASUREMENT_ID is the Google
+Analytics 4 id ("G-..."); it defaults to this project's own id only when building this repository, so a fork gets no
+analytics (and no privacy page) unless it sets its own. An empty value turns analytics off.
 """
 import argparse
 import datetime as dt
@@ -43,6 +45,9 @@ REPO_URL = f'https://github.com/{REPO}'
 BRANCH = 'main'
 SITE_URL = (os.environ.get('SITE_URL') or 'https://ricardochaves.github.io/factorio/').rstrip('/') + '/'
 SITE_PATH = urlparse(SITE_URL).path  # '/factorio/' on GitHub Pages
+GA_ID = os.environ.get('GA_MEASUREMENT_ID', 'G-4RJVJBEXXY' if REPO == 'ricardochaves/factorio' else '')
+if GA_ID and not re.fullmatch(r'G-[A-Z0-9]{4,12}', GA_ID):
+    raise SystemExit(f'GA_MEASUREMENT_ID must look like G-XXXXXXXXXX, got {GA_ID!r}')
 IMAGE_WIDTHS = (320, 640, 1280, 1920)
 IMAGE_QUALITY = {1920: 72}  # WebP quality per width (default 80); the largest one is the page's LCP image
 CACHE_VERSION = 2  # bump when the image or string output changes, so build/.cache is not reused
@@ -493,7 +498,7 @@ class Site:
     def copy_static(self):
         dest = self.out / 'assets'
         shutil.copytree(SITE / 'static' / 'fonts', dest / 'fonts')
-        for name in ('site.css', 'site.js', 'catalog.js', 'book.js'):
+        for name in ('site.css', 'site.js', 'catalog.js', 'book.js') + (('analytics.js',) if GA_ID else ()):
             src = SITE / 'static' / name
             digest = hashlib.sha256(src.read_bytes()).hexdigest()[:10]
             stem, ext = name.rsplit('.', 1)
@@ -566,6 +571,7 @@ class Site:
                           for code in i18n.LANGS],
             'canonical': SITE_URL + prefix + path, 'site_url': SITE_URL,
             'repo_url': REPO_URL, 'branch': BRANCH, 'all_t': i18n.T,
+            'ga_id': GA_ID, 'ga_host': urlparse(SITE_URL).hostname, 'ga_path': SITE_PATH.rstrip('/'),
             'fmt_int': lambda n: i18n.fmt_int(n, lang), 'fmt_bytes': lambda n: i18n.fmt_bytes(n, lang),
             'fmt_date': lambda d: i18n.fmt_date(d, lang) if d else '',
             'tag_label': tag_label, 'cat_label': cat_label, 'machine_label': machine_label,
@@ -618,6 +624,12 @@ class Site:
             return dict(grid, v=variants)
         return [{'id': f['id'], 'name': i18n.label(f['name'], lang), 'grid': localized(f['grid'])} for f in e['files']]
 
+    def privacy(self, lang):
+        """The privacy page is plain Markdown per language (site/content/privacy.<lang>.md), rendered like a README."""
+        text = (SITE / 'content' / f'privacy.{lang}.md').read_text(encoding='utf-8')
+        # the name of the per-property cookie comes from the id, so the text cannot drift from the tag
+        return Readme().sections(text.replace('%GA_COOKIE%', '_ga_' + GA_ID[2:]), '')
+
     def og_image(self, e, lang):
         img = e['images'][0] if e else None
         return {'variant': img['og'], 'alt': i18n.label(img['alt'], lang)} if img else None
@@ -635,6 +647,8 @@ class Site:
                 if e['viewer'] == 'nxm-matrix':
                     extra['book_data'] = self.book_data(e, lang)
                 self.render(template, lang, f'blueprints/{e["slug"]}/', 'blueprint', **extra)
+            if GA_ID:  # the page that explains the analytics only exists when there are analytics
+                self.render('privacy.html', lang, 'privacy/', 'privacy', sections=self.privacy(lang))
         self.render_404()
         urls = '\n'.join(f'  <url><loc>{u}</loc></url>' for u in self.pages)
         (self.out / 'sitemap.xml').write_text(
