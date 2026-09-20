@@ -1,7 +1,8 @@
 #!/bin/zsh
 # usage: run_city_test.sh [timeout-seconds]  -- runs scenario city-test headless (see export_city.py): imports both city
-# block blueprints, builds one block and a 2 x 2 city of each, and checks entities, tiles, wires, power and logistic
-# networks. Exit status is 0 only when every check passed and at least one check ran.
+# block blueprints, builds each in 1 x 1, 2 x 1, 1 x 2, 2 x 2 and 3 x 3 arrangements (and both side by side in a
+# checkerboard), and checks entities, tiles, wires, the seams between blocks, power, logistic networks and robots.
+# Exit status is 0 only when every check passed and at least one check ran.
 HERE=${0:A:h}
 python3 "$HERE/export_city.py" > /dev/null || exit 1
 source "$HERE/factorio_env.sh"

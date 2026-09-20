@@ -12,7 +12,7 @@
       <label class="search-field">
         {{ m.icon('search', 20) }}
         <span class="sr-only">{{ t.search_label }}</span>
-        <input type="search" name="q" placeholder="{{ t.search_placeholder }}" autocomplete="off">
+        <input type="search" name="q" placeholder="{{ t.search_placeholder }}" autocomplete="off" maxlength="200">
       </label>
       <button type="submit" class="btn btn-primary btn-lg">{{ t.search_button }}</button>
     </form>

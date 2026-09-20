@@ -36,10 +36,12 @@ So write the pull request title for players, and the commit title too in single-
 
 ## Adding a blueprint
 
-1. Create one folder per catalog entry, `blueprints/<slug>/` (lower-case words joined by `-`). Variants of the same
-   design share the folder and become one page on the site. The folder holds:
-   - one `.txt` file per variant, each a single blueprint or a book. For example, `belt-balancers/` holds one book per
-     belt tier;
+1. Create one folder per catalog entry, `blueprints/<slug>/` (lower-case words joined by `-`). One entry is one page on
+   the site. Files share a folder only when they are parts of one book-like entry, such as the three belt-tier books of
+   `belt-balancers/`; a blueprint that differs from another in what it builds (for example, the partial and full
+   concrete versions of the city block) gets its own folder and its own page, and the two READMEs point to each other.
+   The folder holds:
+   - the `.txt` file: a single blueprint or a book (several files only for the book-like entries above);
    - `blueprint.toml`, the hand-written metadata (copy one from another folder);
    - `README.md`, in Portuguese: what it does, inputs and outputs, how it was tested, known limits (the website shows
      it as the blueprint's report, one card per `##` section);
@@ -71,7 +73,7 @@ any change to that script before running `git diff` or `git log -p`.
 | `title`, `summary` | yes | Name and one-sentence description, in Portuguese. |
 | `category` | yes | One of `belts`, `mining-smelting`, `oil`, `production`, `science`, `power`, `trains`, `bots`, `city-blocks`, `circuits`, `defense`, `rocket`. |
 | `tags` | yes | Lower-case words, e.g. `["early-game", "blue-belt"]`. |
-| `[[files]]` | yes, 1+ | One entry per variant: `name` shown to players (optional `name_en`, `name_es`) and `path` of its `.txt` file. Every `.txt` in the folder must be listed, from the simplest variant to the most advanced; the website opens on the last one. |
+| `[[files]]` | yes, 1+ | One entry per `.txt` file (usually one): `name` shown to players (optional `name_en`, `name_es`) and `path` of its `.txt` file. Every `.txt` in the folder must be listed, from the simplest variant to the most advanced; the website opens on the last one. |
 | `[[images]]` | yes, 1+ | `path` and `alt` text (optional `alt_en`, `alt_es`). The first image is the card cover. |
 | `[test]` | no | `status` = `in-game`, `simulation` or `untested`; `game_version`; `report` (usually `README.md`). |
 | `credits` | no | Where the design came from, in Markdown (links allowed). |

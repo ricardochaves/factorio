@@ -3,7 +3,7 @@
 HERE=${0:A:h}
 source "$HERE/factorio_env.sh"
 rm -f data/script-output/fluid_results.json data/script-output/fluid_done.txt
-("$F" --config "$PWD/config.ini" --mod-directory "$PWD/mods" --start-server-load-scenario fluid-test --server-settings "$PWD/server-settings.json" --port 34988 > fluid_run.log 2>&1 &)
+("$F" --config "$PWD/config.ini" --mod-directory "$PWD/mods" --start-server-load-scenario fluid-test --server-settings "$PWD/server-settings.json" --bind 127.0.0.1 --port 34988 > fluid_run.log 2>&1 &)
 T=${1:-600}; S=$(date +%s)
 while [ ! -f data/script-output/fluid_done.txt ]; do
   sleep 2
