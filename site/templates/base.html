@@ -32,10 +32,23 @@
 <link rel="stylesheet" href="{{ asset('site.css') }}">
 <script>document.documentElement.classList.add('js')</script>
 <script src="{{ asset('site.js') }}" defer></script>
+{% if ga_id %}<script src="{{ asset('analytics.js') }}" defer data-id="{{ ga_id }}" data-host="{{ ga_host }}" data-path="{{ ga_path }}"></script>{% endif %}
 {% block head %}{% endblock %}
 </head>
 <body>
 <a class="skip" href="#main">{{ t.skip }}</a>
+{% if ga_id and page != '404' %}
+<section class="consent" id="consent" aria-label="{{ t.consent_title }}" tabindex="-1" hidden>
+  <div class="consent-body">
+    <p class="consent-title">{{ t.consent_title }}</p>
+    <p>{{ t.consent_text }} <a href="{{ link('privacy/') }}">{{ t.consent_more }}</a></p>
+  </div>
+  <div class="consent-actions">
+    <button type="button" class="btn" data-consent="denied">{{ t.consent_deny }}</button>
+    <button type="button" class="btn" data-consent="granted">{{ t.consent_accept }}</button>
+  </div>
+</section>
+{% endif %}
 <header class="topbar" data-menu>
   <div class="container topbar-inner">
     <a class="brand" href="{{ link() }}">{{ m.logo() }}<span>{{ t.site_name }}</span></a>
@@ -80,6 +93,10 @@
     <div class="footer-links">
       <a href="{{ repo_url }}">{{ t.footer_code }}</a>
       <a href="{{ repo_url }}#license">{{ t.footer_license }}</a>
+      {% if ga_id %}
+      <a href="{{ link('privacy/') }}">{{ t.footer_privacy }}</a>
+      {% if page != '404' %}<button type="button" class="link-btn" data-consent-open hidden>{{ t.footer_cookies }}</button>{% endif %}
+      {% endif %}
       <span>{{ t.footer_fonts }}</span>
     </div>
   </div>

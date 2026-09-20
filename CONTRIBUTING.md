@@ -108,3 +108,12 @@ It supports three languages, always kept in sync: Brazilian Portuguese at `/`, U
 `/es/`. Interface text lives in [`site/i18n.py`](site/i18n.py); names of items and recipes come from the game's own
 translations ([`scripts/catalog/vanilla-locale.json`](scripts/catalog/vanilla-locale.json), refreshed by
 `scripts/catalog/dump_locale.py`). Each blueprint's README is shown in Portuguese in every language, with a note.
+
+Visits are measured with Google Analytics 4, but only after the visitor accepts the banner
+([`site/static/analytics.js`](site/static/analytics.js)): nothing from Google loads before that, or on any host other
+than `ricardochaves.github.io`. The measurement id is public, not a secret. A fork's CI build has no analytics and no
+privacy page unless it sets `GA_MEASUREMENT_ID` (a build in a clone falls back to this project's id, and stays silent
+because of the host check). What the tag collects, the cookies, the retention time and the account's data-sharing
+settings are described in `site/content/privacy.<language>.md`: change those three files whenever the tag or the
+Analytics settings change. The event `copy_blueprint` (parameter `blueprint_file`) only appears in reports because
+"Blueprint file" is registered as an event-scoped custom dimension in the property.
