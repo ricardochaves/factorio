@@ -53,6 +53,7 @@ Every time you merge into `main`, run `deploy-validator` to monitor the deployme
 
 - Always add images to the blueprint: take real in-game screenshots so that every page of a blueprint has a realistic image. The blueprint must have power and everything else it needs, to avoid the "not working" icon (a red circle with a bar across it) shown when it does not work. Check the image before pushing
 - The rules live in the system's code: follow the business rules in the code
+- When it is a blueprint where the output is only a single product, always calculate everything it consumes and everything it produces, and document this in both the blueprint and the website. The unit of measurement is items per second.
 - Run `blueprint-reviewer` on every blueprint change
 - `/add-blueprint <file.txt | file.json | url | pasted text>` adds a new entry from a blueprint string (`.claude/commands/add-blueprint.md`); it stops before any commit or push, `--allow-duplicate` adds a second copy of a design the catalog already holds, and Claude Code needs a restart after `.claude/commands/add-blueprint.md` is created or edited, because live reload is documented for `.claude/skills/` only
 
