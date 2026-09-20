@@ -15,23 +15,48 @@
 - Always follow front-end best practices
 - The website must load fast
 - Always use stable technologies
-- Before finishing development, create an isolated expert agent to review what you did
-- Before pushing anything to GitHub, have an autonomous agent review it for security: passwords and tokens must never be pushed, and nothing is pushed unless that agent approves the changes
+- Before finishing development and before pushing anything to GitHub, run the review agents below that match the change: their approval is a gate. Passwords and tokens must never be pushed, and nothing is pushed unless `security-reviewer` approves the final tree
 - Always fix the problems the review brings up; discuss them with the reviewer and reach a conclusion together
 - Create a virtual environment to install libraries; never install them on the host. Always use the virtual environment if it exists
 - You have access to the game: use it to validate the blueprints whenever possible
 
+## Review agents
+
+The reviewers live in `.claude/agents/`. None of them has Edit, Write or Agent, and each prompt forbids changing the repository and running the code under review, but all of them have Bash, so the guarantee is the prompt plus your own check, not the tool list. Each one runs on Sonnet with the effort set in its own file and ends its English report with `VERDICT: APPROVE` or `VERDICT: REQUEST CHANGES`.
+
+| Agent | Run it when | Its approval is needed before |
+|---|---|---|
+| `security-reviewer` | on the final tree, before every push or PR update | every push |
+| `frontend-reviewer` | anything under `site/`, or anything the site shows, changes | pushing |
+| `language-reviewer` | visible text changes: one instance per language (pt-BR, en-US, es), in parallel; for a new blueprint entry, pt-BR always and en-US or es only when the entry has `[en]` or `[es]` text | pushing |
+| `docs-reviewer` | the README, CONTRIBUTING, `.claude/CLAUDE.md`, `.claude/agents/`, workflows or repository settings change | pushing |
+| `blueprint-reviewer` | a blueprint, its images or its report changes | pushing |
+| `code-reviewer` | scripts, the test harness or CI code change and no reviewer above covers it | finishing |
+| `deploy-validator` | after every merge into `main` | calling the deploy done |
+
+How to use them:
+- Start each reviewer with the Agent tool, using its file name as `subagent_type`. Do not pass `model`, `name` or `isolation`: with agent teams enabled (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`), a named Agent call launches a teammate, and a teammate ignores `effort` and `omitClaudeMd` and appends the body to the default system prompt instead of replacing it. A teammate spawn shows in the Agent tool's result: it says `Spawned successfully`, names a mailbox and gives an `agent_id` of the form `<name>@session-...`, where an ordinary subagent's result says `Async agent launched successfully` and gives a bare hexadecimal `agentId`. If you see the first form, stop that agent and start it again without a name. A change can need several reviewers: run every one that matches, in parallel.
+- Tell each reviewer the worktree path, the commit range (`origin/main..HEAD`; uncommitted work counts), the built site (`build/site`) when it matters, and the deliberate decisions that are not defects. Reviewers cannot ask questions, and given an empty range and a clean tree they answer `REQUEST CHANGES`.
+- Fix what they report. Discuss a finding you dispute with the same reviewer, resumed with SendMessage addressed to the agent ID the Agent tool returned, until you agree; a finding is withdrawn only with evidence. With several `language-reviewer` instances, note which agent ID took which language.
+- Every change made after a review, even a small optional one, goes back to the reviewer that asked for it. Push only when the latest state has `VERDICT: APPROVE`, and run `security-reviewer` again on the final tree right before the push.
+- A reviewer must leave the tree untouched: check `git status --short --ignored` after each review, and again before you push.
+- When a report comes back marked partial, or cut off by an API error, resume that reviewer with SendMessage to finish it.
+- Reviewers do not load this file (`omitClaudeMd: true`): when a rule here changes, update the agent files to match.
+- When you test these agents, plant only inert defects in a scratch copy: a reviewer that runs a seeded script runs it on the real machine, so a seed never deletes, overwrites or downloads anything.
+
 ## Deploy
-Every time you merge into `main`, monitor the deployment and validate it:
-- Open the website and check that everything in the diff really works
-- It is not enough for a change to exist in the code: if the CSS changes, check transparency, positioning, and the mobile and desktop layouts. Be careful.
+Every time you merge into `main`, run `deploy-validator` to monitor the deployment and validate it:
+- It opens the website and checks that everything in the diff really works
+- It is not enough for a change to exist in the code: if the CSS changes, check transparency, positioning, and the mobile and desktop layouts. Be careful, and look at the validator's screenshots yourself when the CSS changed.
 
 ## Blueprints
 
 - Always add images to the blueprint: take real in-game screenshots so that every page of a blueprint has a realistic image. The blueprint must have power and everything else it needs, to avoid the "not working" icon (a red circle with a bar across it) shown when it does not work. Check the image before pushing
 - The rules live in the system's code: follow the business rules in the code
+- Run `blueprint-reviewer` on every blueprint change
+- `/add-blueprint <file.txt | file.json | url | pasted text>` adds a new entry from a blueprint string (`.claude/commands/add-blueprint.md`); it stops before any commit or push, `--allow-duplicate` adds a second copy of a design the catalog already holds, and Claude Code needs a restart after `.claude/commands/add-blueprint.md` is created or edited, because live reload is documented for `.claude/skills/` only
 
 ## Website
 
 - Always support 3 languages: pt-BR, en-US and es
-- Before pushing anything to GitHub, create an autonomous expert agent for each language and validate what was done
+- Before pushing anything to GitHub, run `language-reviewer` as the table above defines it for the change, and fix what it reports

@@ -6,9 +6,12 @@
 .env
 .env.*
 
-# Claude Code: keep only the project instructions.
+# Claude Code: keep only the project instructions, the shared subagents and commands. A project settings.json or a hook
+# script under .claude/ would need its own `!` line here.
 /.claude/*
 !/.claude/CLAUDE.md
+!/.claude/agents/
+!/.claude/commands/
 
 # --- Python / C build output ---------------------------------------------------
 __pycache__/
