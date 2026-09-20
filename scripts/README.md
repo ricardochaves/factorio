@@ -57,8 +57,18 @@ Everything runs with Python 3 (standard library only) on macOS; the in-game test
 ## In-game harness (`ingame/`)
 
 Factorio runs headless with an isolated write-data dir (`ingame/data`), vanilla only (`ingame/mods/mod-list.json`
-enables just `base`). Scenarios live in `ingame/data/scenarios/`; their `control.lua` files are tracked, the test data
-they read (`tests*.lua`, `tier.lua`, `bp.lua`, `strings.lua`) is generated.
+enables just `base`). Scenarios live in `ingame/data/scenarios/`; their `control.lua` files are tracked; the rest is
+generated and git-ignored: the test data they read (`tests*.lua`, `tier.lua`, `bp.lua`, `shots.lua`, `strings.lua`,
+`book.lua`) and the `tests*.json` that `fluid/crop_plastic.py` writes next to `tests.lua`.
+
+Scenario `bookimport` checks that a whole book imports in the game (sub-books, blueprints with entities). Write its
+input, run it headless and stop the server once `ingame/data/script-output/bookimport.txt` appears (needs
+`ingame/config.ini` from any `run_*.sh` and `FACTORIO_BIN` exported):
+
+```
+printf 'return "%s"\n' "$(cat ../blueprints/belt-balancers/blue-belt.txt)" > ingame/data/scenarios/bookimport/book.lua
+"$FACTORIO_BIN" --config "$PWD/ingame/config.ini" --mod-directory "$PWD/ingame/mods" --start-server-load-scenario bookimport --server-settings "$PWD/ingame/server-settings.json"
+```
 
 Environment variables:
 

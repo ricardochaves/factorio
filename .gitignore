@@ -44,9 +44,14 @@ __pycache__/
 /scripts/ingame/data/scenarios/site-import/strings.lua
 /scripts/ingame/data/scenarios/city-test/strings.lua
 /scripts/ingame/data/scenarios/city-shot/strings.lua
+/scripts/ingame/data/scenarios/bookimport/book.lua
+# The game keeps mod-settings.dat (and any mod zip) in the mod directory; only the vanilla mod list is tracked.
+/scripts/ingame/mods/*
+!/scripts/ingame/mods/mod-list.json
 
 # --- site build output ------------------------------------------------------------
-# Catalog index (scripts/catalog/validate.py --json build/catalog.json) and the site (site/build.py -> build/site/).
+# Catalog index (scripts/catalog/validate.py --json build/catalog.json), the site (site/build.py -> build/site/)
+# and its cache of resized images and split strings (build/.cache/).
 /build/
 # Virtual environment for the site generator (python3 -m venv .venv).
 /.venv/
