@@ -17,6 +17,7 @@ Everything runs with Python 3 (standard library only) on macOS; the in-game test
 | File | Purpose |
 |---|---|
 | `validate.py` | Checks every `blueprints/*/blueprint.toml`, decodes each string, rejects non-vanilla names, non-normal quality and game versions other than 2.0, and computes entities, size, materials and recipes. `--json build/catalog.json` writes the index for the site; `--readme` refreshes the table in the root README. Runs in CI (`.github/workflows/validate.yml`). |
+| `extract_blueprint.py` | Takes a blueprint string out of a file (`.txt`, `.json`, HTML), an http(s) URL, stdin or Claude Code's paste cache, proves that it decodes (zlib checksum, size limits, public addresses only) and writes it to a new file with a JSON summary that also says whether the catalog already holds that string or the same design under another label. It is the first step of the `/add-blueprint` command (`.claude/commands/add-blueprint.md`). |
 | `vanilla-prototypes.json` | Every prototype name of the base game (entities with tile size and the item that places them, items, recipes, fluids, tiles, signals, quality). |
 | `dump_prototypes.sh` | Regenerates the file above from the local game with scenario `ingame/data/scenarios/dump-prototypes`; it refuses to save if any mod other than `base` is active. Re-run after a Factorio update. |
 | `vanilla-locale.json` | In-game names of items, entities, recipes and fluids in English, Brazilian Portuguese and Spanish, used by the website. |
