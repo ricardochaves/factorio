@@ -62,6 +62,8 @@ from elsewhere and keep their own terms:
   and the prototype data in [`scripts/catalog/vanilla-prototypes.json`](scripts/catalog/vanilla-prototypes.json), both
   extracted from the game: Factorio's own data, © Wube Software.
 - The in-game screenshots in `blueprints/*/images/`: they show Factorio's graphics, © Wube Software.
+- The item, fluid and recipe icons in [`scripts/catalog/vanilla-icons/`](scripts/catalog/vanilla-icons/) (shown next to
+  the materials and recipes on the site), dumped from the game: Factorio's own graphics, © Wube Software.
 
 ## Credits
 

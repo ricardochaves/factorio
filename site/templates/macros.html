@@ -32,6 +32,12 @@
 <svg class="icon" width="{{ size }}" height="{{ size }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">{{ ICONS[name]|safe }}</svg>
 {%- endmacro %}
 
+{# A game icon (item, fluid or recipe) cut out of the sprite that build.py packs. Decorative: the name follows it. #}
+{% macro ic(kind, name) -%}
+{% set cell = icon_cell(kind, name) %}
+<span class="ic{{ '' if cell else ' ic-none' }}"{% if cell %} style="--x:{{ cell[0] }};--y:{{ cell[1] }}"{% endif %} aria-hidden="true"></span>
+{%- endmacro %}
+
 {% macro logo() -%}
 <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true" focusable="false"><rect x="1" y="1" width="26" height="26" rx="4" stroke="#f2a531" stroke-width="2"/><path d="M9 21V9M9 9l-3 3M9 9l3 3M19 21V9M19 9l-3 3M19 9l3 3" stroke="#efe9df" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="15" width="18" height="3" rx="1" fill="#f2a531"/></svg>
 {%- endmacro %}
