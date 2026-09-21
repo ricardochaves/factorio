@@ -28,7 +28,8 @@ README (in Portuguese) with what was measured, how it was built and known limits
    open it). The balancer books are 3 to 6 MB of text, too large to select by hand; on the website each balancer and
    each sub-book can also be copied on its own.
 2. In the game, press **Import string** in the shortcut bar (or in the blueprint library) and paste. That shortcut
-   requires the Construction robotics technology.
+   requires the Construction robotics technology, unless you have researched it in another save (a shortcut that is
+   unlocked in one save stays unlocked in later ones).
 
 Each file is always the latest version. Older versions live in the git history:
 

@@ -6,15 +6,16 @@
 The way back is scripts/catalog/extract_blueprint.py: given the edited JSON file it encodes the string, proves that it decodes
 and reports what it holds. `decode` never overwrites --out. `diff` prints `<path>: <before> -> <after>` for each difference
 (`-` stands for a value that is missing on that side), then `N difference(s)` or `identical`, and exits 0 whenever both strings
-decode. It pairs the items of a list by `entity_number` (entities), by `index` (icons and the blueprints of a book) or by
-`position` (tiles) when every item has that key and no two share it, so that removing an entity does not shift the paths of the
-others, and it compares a list of number lists (the wires) as a set of rows, whatever their order. Any other list is compared by
-position, and a `note:` line says when a list of entities had to be compared that way because an `entity_number` is missing or
-repeated. Numbers compare by value, so 1 and 1.0 are the same, in wire rows and in positions too, and paired items are listed in
-natural order (entity_number 2 before 10; a minus sign is part of the text). A value is cut to 80 characters (two long strings
-that differ show a window around their first difference) and a path to 300, keeping its end; at most 200 lines are printed and
-the rest is counted as `... and N more`. Invisible characters are written as \\u escapes. A file that is missing, or a string
-that does not decode, exits 2 with the reason. Standard library only (Python 3.11+).
+decode. It pairs the items of a list by the first of `entity_number` (entities), `index` (icons and the blueprints of a book) and
+`position` (tiles, and entities that have no usable entity_number) that every item has and no two share, so that removing an
+entity does not shift the paths of the others, and it compares a list of number lists (the wires) as rows, whatever their order,
+counting a repeated row. Any other list is compared by position, and a `note:` line says when a list of entities had to be
+compared that way because an `entity_number` is missing or repeated and no other key pairs them. Numbers compare by value, so 1
+and 1.0 are the same, in wire rows and in positions too, and paired items are listed in natural order (entity_number 2 before 10;
+a minus sign is part of the text). A value is cut to 80 characters (two long strings that differ show a window around their first
+difference) and a path to 300, keeping its end; at most 200 difference lines and 200 note lines are printed, and the rest is
+counted as `... and N more`. Invisible characters are written as \\u escapes. A file that is missing, or a string that does not
+decode, exits 2 with the reason. Standard library only (Python 3.11+).
 """
 import argparse
 import json
@@ -51,8 +52,8 @@ def is_number(v):
     return isinstance(v, (int, float)) and not isinstance(v, bool)
 
 
-def is_scalar(v):
-    return v is None or isinstance(v, str) or isinstance(v, bool) or is_number(v)
+def is_nan(v):
+    return isinstance(v, float) and v != v
 
 
 def canon(v):
@@ -93,7 +94,8 @@ def keyed(items):
 
 
 def pair(a, b):
-    """(kind, {label: item} of a, {label: item} of b) when both lists pair by the same kind of key; an empty list pairs with any."""
+    """(kind, {label: item} of a, {label: item} of b) when both lists pair by the same kind of key; an empty list pairs with
+    any."""
     ka, kb = keyed(a), keyed(b)
     if ka and kb and ka[0] == kb[0]:
         return ka[0], ka[1], kb[1]
@@ -105,8 +107,8 @@ def pair(a, b):
 
 
 def rows(items):
-    """True for a list whose items are all lists of scalars, like the wires of a blueprint (an empty list counts)."""
-    return all(isinstance(i, list) and all(is_scalar(x) for x in i) for i in items)
+    """True for a list whose items are all lists of numbers, like the wires of a blueprint (an empty list counts)."""
+    return all(isinstance(i, list) and all(is_number(x) for x in i) for i in items)
 
 
 def key_text(k):
@@ -148,7 +150,8 @@ def compare(a, b, path, out, notes):
                     out.append((f'{path}[{row}]', MISSING, json.loads(row)))
         else:
             if a and b and any(isinstance(i, dict) and 'entity_number' in i for i in a + b):
-                notes.append(f'{path or "(top level)"}: an entity_number is missing or repeated, so the list is compared by position')
+                where = path or '(top level)'
+                notes.append(f'{where}: an entity_number is missing or repeated, so the list is compared by position')
             for i in range(max(len(a), len(b))):
                 p = f'{path}[{i}]'
                 if i >= len(b):
@@ -158,7 +161,7 @@ def compare(a, b, path, out, notes):
                 else:
                     compare(a[i], b[i], p, out, notes)
     elif is_number(a) and is_number(b):
-        if a != b:
+        if a != b and not (is_nan(a) and is_nan(b)):
             out.append((path, a, b))
     elif type(a) is not type(b) or a != b:
         out.append((path, a, b))
@@ -183,7 +186,8 @@ def excerpts(a, b):
     start, width = max(0, first - 20), MAX_VALUE - 20
 
     def window(s):
-        return ('...' if start else '') + json.dumps(s[start:start + width], ensure_ascii=False) + ('...' if start + width < len(s) else '')
+        text = json.dumps(s[start:start + width], ensure_ascii=False)
+        return ('...' if start else '') + text + ('...' if start + width < len(s) else '')
     return window(a), window(b)
 
 
@@ -197,9 +201,9 @@ def line(path, a, b):
 
 
 def cmd_decode(args):
-    obj = load(args.string)
+    obj = load(args.file)
     if not args.out.parent.is_dir():
-        raise ex.Refuse(f'{args.out.parent} does not exist')
+        raise ex.Refuse(f'{args.out.parent} is not a directory')
     # Built before the file exists, so that a failure while building leaves nothing behind.
     data = (ex.make_visible(json.dumps(obj, indent=2, ensure_ascii=False)) + '\n').encode('utf-8')
     try:
@@ -220,6 +224,8 @@ def cmd_diff(args):
         raise ex.Refuse('the blueprints are nested too deeply to compare') from None
     for note in notes[:MAX_LINES]:
         print(ex.make_visible('note: ' + clip_path(note)))
+    if len(notes) > MAX_LINES:
+        print(f'... and {len(notes) - MAX_LINES} more notes')
     for path, a, b in found[:MAX_LINES]:
         print(line(path, a, b))
     if len(found) > MAX_LINES:
@@ -232,7 +238,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     sub = ap.add_subparsers(dest='command', required=True)
     dec = sub.add_parser('decode', help='write the decoded JSON of a string')
-    dec.add_argument('string', help='a file that holds one blueprint string')
+    dec.add_argument('file', metavar='bp.txt', help='a file that holds one blueprint string')
     dec.add_argument('--out', type=Path, required=True, help='where to write the JSON (must not exist)')
     dec.set_defaults(run=cmd_decode)
     dif = sub.add_parser('diff', help='list what differs between two strings')

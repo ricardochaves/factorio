@@ -59,7 +59,7 @@ while [ ! -f data/script-output/blueprint_shot_done.txt ]; do
 done
 echo "elapsed $(( $(date +%s) - S ))s"
 cat data/script-output/blueprint_shot_done.txt 2> /dev/null
-grep -iE "error|exception|traceback" blueprint_shot.log | cut -c1-200 | head -10
+grep -iE "error|exception|traceback" blueprint_shot.log | LC_ALL=C cut -c1-200 | head -10
 want=$(sed -n 's/^shots=\([0-9][0-9]*\) total=.*/\1/p' data/script-output/blueprint_shot_done.txt 2> /dev/null)
 # The game writes the photos after the report: wait until they all exist and stop growing, then stop the game.
 for (( k = 0; k < 30; k++ )); do

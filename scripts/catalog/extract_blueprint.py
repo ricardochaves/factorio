@@ -53,7 +53,8 @@ ALL_KINDS = KINDS + ('upgrade_planner', 'deconstruction_planner')
 WHOLE = re.compile(r'0[A-Za-z0-9+/]{40,}={0,2}')
 SCAN = re.compile(r'0[A-Za-z0-9+/]{60,}={0,2}')
 # Unicode categories that draw nothing: control, format, private-use, surrogate, unassigned, line and paragraph separators and
-# spaces (only U+007F and above are tested: JSON already escapes the control characters below U+0020, and U+0020 is the ordinary space).
+# spaces (only U+007F and above are tested: JSON already escapes the control characters below U+0020, and U+0020 is the
+# ordinary space).
 INVISIBLE = ('Cc', 'Cf', 'Co', 'Cs', 'Cn', 'Zl', 'Zp', 'Zs')
 # Letters, marks and symbols that draw nothing although their category is not in INVISIBLE, by code point.
 BLANK_RANGES = ((0x034F, 0x034F), (0x115F, 0x1160), (0x17B4, 0x17B5), (0x180B, 0x180F), (0x2800, 0x2800),

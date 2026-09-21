@@ -45,12 +45,12 @@ So write the pull request title for players, and the commit title too in single-
    - `blueprint.toml`, the hand-written metadata (copy one from another folder);
    - `README.md`, in Portuguese: what it does, inputs and outputs, how it was tested, known limits (the website shows
      it as the blueprint's report, one card per `##` section);
-   - `images/` (WebP) with at least one real screenshot taken in the game, listed in `blueprint.toml`. The machines
-     in the shot must be working (powered, fed), so no "not working" icon shows up. A photo of the build placed is also
-     accepted: it shows the build powered where a power source reaches its poles, with no ingredients fed to the machines, and
-     is taken without alt mode, so that it carries no status icon. The maintainer's Claude Code command `/add-blueprint`
-     (`.claude/commands/add-blueprint.md`) takes such a photo. The maintainer's review expects one image per new entry,
-     showing the whole build.
+   - `images/` (WebP): one real screenshot taken in the game per new entry, listed in `blueprint.toml` (the validator
+     requires at least one, and the maintainer's review asks to remove a second). The machines in the shot must be
+     working (powered, fed), so no "not working" icon shows up. The exception is the photos taken by this repository's
+     Claude Code command `/add-blueprint` (`.claude/commands/add-blueprint.md`): they show the build placed and, where
+     the power source reaches its poles, powered, with no ingredients fed to the machines, and are taken without alt
+     mode, so they carry no status icon.
 2. Run `python3 scripts/catalog/validate.py --readme` (Python 3.11 or newer, standard library only). It checks the
    metadata, decodes every string, rejects anything that is not vanilla Factorio 2.0 (Space Age entities, quality
    other than normal, other game versions) and refreshes the catalog table in [`README.md`](README.md). Commit the

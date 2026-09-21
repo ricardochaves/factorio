@@ -18,7 +18,7 @@ Everything runs with Python 3 (standard library only) on macOS; the in-game test
 |---|---|
 | `validate.py` | Checks every `blueprints/*/blueprint.toml`, decodes each string, rejects non-vanilla names, non-normal quality and game versions other than 2.0, and computes entities, size, materials and recipes. `--json build/catalog.json` writes the index for the site; `--readme` refreshes the table in the root README. Runs in CI (`.github/workflows/validate.yml`). |
 | `extract_blueprint.py` | Takes a blueprint string out of a file (`.txt`, `.json`, HTML), an http(s) URL, stdin or Claude Code's paste cache, proves that it decodes (zlib checksum, size limits, public addresses only) and writes it to a new file with a JSON summary that also says whether the catalog already holds that string or the same design under another label. It is the first step of the `/add-blueprint` command (`.claude/commands/add-blueprint.md`). |
-| `edit_blueprint.py` | The correction step of `/add-blueprint`: `decode <bp.txt> --out <bp.json>` writes the decoded JSON to edit (`extract_blueprint.py` turns the edited JSON back into a string), and `diff <before.txt> <after.txt>` lists every path whose value differs, so that a correction can be proved to change only what was meant. It pairs entities by `entity_number`, compares the wires as a set of rows and writes invisible characters as `\u` escapes. Standard library only. |
+| `edit_blueprint.py` | The correction step of `/add-blueprint`: `decode <bp.txt> --out <bp.json>` writes the decoded JSON to edit (`extract_blueprint.py` turns the edited JSON back into a string), and `diff <before.txt> <after.txt>` lists every path whose value differs, so that a correction can be proved to change only what was meant. It pairs entities by `entity_number`, compares the wires as rows (whatever their order, counting a repeated row) and writes invisible characters as `\u` escapes. Standard library only. |
 | `run_blueprint_shot.sh` | The photo step of `/add-blueprint`: `./run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]` builds a blueprint, or the first four of a book, in the game (scenario `blueprint-shot`, see "In-game harness"), powers it where its source reaches the poles, photographs its whole extent and, only after a successful run, writes `<out-dir>/shot-<n>.webp`, replacing any already there. Needs the game and `cwebp`. |
 | `vanilla-prototypes.json` | Every prototype name of the base game (entities with tile size and the item that places them, items, recipes, fluids, tiles, signals, quality). |
 | `dump_prototypes.sh` | Regenerates the file above from the local game with scenario `ingame/data/scenarios/dump-prototypes`; it refuses to save if any mod other than `base` is active. Re-run after a Factorio update. |
@@ -94,7 +94,7 @@ Environment variables:
 | `FBTIER` | `blue` | balancer scripts |
 | `FBWARM` | depends on tier | `export_tests.py` (warm-up ticks) |
 | `FBPHASES` | `ABCDEFGHI` | `export_tests.py` (measurement phases) |
-| `WEBP_Q` | `82` | `run_blueprint_shot.sh` (quality of the WebP photos) |
+| `WEBP_Q` | `82` | `run_*_shot.sh` (quality of the WebP photos) |
 
 `config.ini` is written on every run. Never commit anything else from `ingame/data`: `player-data.json` there holds
 your Factorio account token. Every runner that starts the headless server passes `--bind 127.0.0.1`, so nothing outside
