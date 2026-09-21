@@ -16,7 +16,8 @@ description, icons or game version (nothing is refused for either). Exit 2: noth
 (the reason is on stderr). Exit 3: several different blueprints were found (the list is printed; nothing was written;
 choose with --pick N). It never runs anything it reads. Limits: 50 MB of input, 256 MiB once decompressed, 50 candidate
 strings. Fetching a URL needs EXTRACT_BLUEPRINT_ALLOW_URL=1 in the environment: the address of a request can carry data out,
-and a command that starts with the assignment is not matched by an allow rule for this script, so a person is asked first. A
+and a command that starts with the assignment is not matched by an allow rule for this script, so in Claude Code's default
+permission mode a person is asked first. A
 URL must be http(s) and must resolve to a public address, also after each redirect (a DNS rebinding between the check and the
 request is not prevented); --allow-private lifts that for a service you run yourself, and only together with
 EXTRACT_BLUEPRINT_ALLOW_PRIVATE=1 in the environment, so a command line alone cannot switch the check off. --out is accepted
@@ -336,8 +337,8 @@ def run(args):
     elif re.match(r'^[A-Za-z][A-Za-z0-9+.-]*://', args.source):
         if os.environ.get('EXTRACT_BLUEPRINT_ALLOW_URL') != '1':
             raise Refuse('fetching a URL needs EXTRACT_BLUEPRINT_ALLOW_URL=1 in the environment (a command that starts with the '
-                         'assignment is not matched by an allow rule for this script, so the person who runs Claude Code '
-                         'approves the address first)')
+                         'assignment is not matched by an allow rule for this script, so in the default permission mode the '
+                         'person who runs Claude Code approves the address first)')
         text = read_url(args.source, args.max_bytes, args.allow_private)
         source = {'type': 'url', 'where': args.source}
     else:
