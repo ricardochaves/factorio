@@ -397,7 +397,7 @@ T = {
             ('Copia la cadena', 'Con el botón Copiar de la tarjeta o de la página del blueprint.'),
             ('Abre la importación',
              'En el juego, haz clic en Importar desde texto, en la barra de acceso directo (o en Importar cadena de texto, '
-             'en la biblioteca de planos). Este atajo requiere la tecnología Robots de construcción.'),
+             'en la biblioteca de planos). El atajo de la barra requiere la tecnología Robots de construcción.'),
             ('Pega y confirma', 'El blueprint, o el libro entero, queda en tu cursor.'),
         ],
         'seal_title': 'Sello de prueba en cada blueprint',
