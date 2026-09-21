@@ -62,21 +62,24 @@ MARKDOWN_SPECIAL = re.compile(r'([\\|\[\]<>`])')
 
 
 EMOJI_SELECTORS = (0xFE0E, 0xFE0F)
+# Characters that take an emoji selector although their category is not a symbol: U+203C, U+2049, U+2139, U+3030, U+303D.
+EMOJI_TEXT_BASES = tuple(chr(cp) for cp in (0x203C, 0x2049, 0x2139, 0x3030, 0x303D))
 
 
 def bad_chars(text):
     """The characters of `text` that draw nothing or reorder text, as U+XXXX: control characters other than tab and line
     breaks, format ones (bidirectional controls, zero-width characters, tags), private-use and surrogate ones, and the fillers
     and selectors that the extractor lists as blank. The emoji selectors U+FE0E and U+FE0F are allowed only right after a
-    symbol, or after `#`, `*` or a digit that a keycap (U+20E3) follows: after any other character they could carry a bit that
-    nobody sees. Unassigned characters are tested only through the extractor's list of reserved ones that draw nothing: which
-    characters are unassigned depends on the Unicode version of the Python that runs the check."""
+    symbol above ASCII (category So, or one of the few emoji that are not), or after `#`, `*` or a digit that a keycap
+    (U+20E3) follows: after any other character they could carry a bit that nobody sees. Unassigned characters are tested
+    only through the extractor's list of reserved ones that draw nothing: which characters are unassigned depends on the
+    Unicode version of the Python that runs the check."""
     found = set()
     for i, c in enumerate(text):
         if ord(c) in EMOJI_SELECTORS:
             before = text[i - 1] if i else ' '
-            symbol = unicodedata.category(before) in ('So', 'Sm', 'Sk')
-            keycap = before in '#*0123456789' and text[i + 1:i + 2] == '⃣'
+            symbol = (ord(before) > 0x7F and unicodedata.category(before) == 'So') or before in EMOJI_TEXT_BASES
+            keycap = before in '#*0123456789' and text[i + 1:i + 2] == chr(0x20E3)
             bad = not (symbol or keycap)
         else:
             category = unicodedata.category(c)
@@ -164,7 +167,8 @@ class Checker:
             found = bad_chars(text)
             if found:
                 self.err(where, f'{path!r} holds characters that draw nothing or reorder text (a zero-width joiner and a '
-                                f'byte-order mark included): {", ".join(found)}')
+                                'byte-order mark included; an emoji selector is allowed only right after a symbol): '
+                                f'{", ".join(found)}')
         self.check_fields(where, meta, SCHEMA)
         # Keep going after a schema error so one run reports every problem; wrong types count as absent.
         for key, (_, typ) in SCHEMA.items():
@@ -326,7 +330,8 @@ class Checker:
             else:
                 if found:
                     self.err(where, 'README.md holds characters that draw nothing or reorder text (a zero-width joiner and a '
-                                    f'byte-order mark included): {", ".join(found)}')
+                                    'byte-order mark included; an emoji selector is allowed only right after a symbol): '
+                                    f'{", ".join(found)}')
         meta = self.load_meta(folder)
         if meta is None:
             return None

@@ -88,8 +88,7 @@ def run_validator(root):
     tool = REPO / 'scripts' / 'catalog' / 'validate.py'
     done = subprocess.run([sys.executable, '-B', str(tool), '--root', str(root)], capture_output=True, text=True)
     if done.returncode != 0:
-        # ascii(): the messages can quote text from the entry, and an escape or a bidirectional control must not reach a terminal
-        raise Refuse('the validator rejects the entry: ' + ascii(' '.join(done.stderr.split())[:300]))
+        raise Refuse('the validator rejects the entry: ' + ' '.join(done.stderr.split())[:300])
 
 
 def copy_regular(source, target):
@@ -125,9 +124,10 @@ def main():
         print(f'installed blueprints/{args.slug} ({len(files)} files)')
         return 0
     except Refuse as e:
-        print(f'refused: {e}', file=sys.stderr)
+        # ascii(): a name in the entry can hold an escape or a bidirectional control, and it must not reach a terminal
+        print(f'refused: {ascii(str(e))[1:-1]}', file=sys.stderr)
     except OSError as e:
-        print(f'failed: {type(e).__name__}: {e}', file=sys.stderr)
+        print(f'failed: {ascii(f"{type(e).__name__}: {e}")[1:-1]}', file=sys.stderr)
     finally:
         if stage is not None:
             shutil.rmtree(stage, ignore_errors=True)  # the tool's own temporary folder, whatever happened
