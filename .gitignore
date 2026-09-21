@@ -5,6 +5,12 @@
 # Local secrets, never committed.
 .env
 .env.*
+# Browser captures and keys: they carry cookies, tokens or session data.
+*.har
+storage-state*.json
+playwright/.auth/
+*.pem
+*.key
 
 # Claude Code: keep only the project instructions and the shared subagents and commands (Markdown files only). A project
 # settings.json or a hook script under .claude/ would need its own `!` line here.
@@ -47,6 +53,7 @@ __pycache__/
 /scripts/ingame/data/scenarios/fluid-test/tests*.lua
 /scripts/ingame/data/scenarios/fluid-test/tests*.json
 /scripts/ingame/data/scenarios/fluid-shot/bp.lua
+/scripts/ingame/data/scenarios/blueprint-shot/bp.lua
 /scripts/ingame/data/scenarios/balancer-shot/shots.lua
 /scripts/ingame/data/scenarios/site-import/strings.lua
 /scripts/ingame/data/scenarios/city-test/strings.lua

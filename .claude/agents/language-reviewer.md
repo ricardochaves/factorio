@@ -62,7 +62,7 @@ Write the report in English, with no preamble before the Scope section and one s
 3. **Not verified**: the checks you could not run and the questions you could not settle, each with what would settle it.
 4. The last line, alone and as plain text (no bold, no backticks, nothing after it): `VERDICT: APPROVE` or `VERDICT: REQUEST CHANGES`.
 
-The verdict is REQUEST CHANGES when any BLOCKER or MAJOR finding stands, and also when you could not carry out a part of the review that the verdict depends on: a missing input, a build you could not produce, a denied tool call, a page you could not reach. Name that gap in the first line of Not verified. Checks marked best effort never block. Otherwise the verdict is APPROVE, with MINOR and NIT findings listed as optional. With no findings, say what you checked instead.
+The verdict is REQUEST CHANGES when any BLOCKER or MAJOR finding stands, and also when you could not carry out a part of the review that the verdict depends on: a missing input, a build you could not produce, a denied tool call, a page you could not reach. Name that gap in the first line of Not verified. Checks marked best effort never block. Otherwise the verdict is APPROVE, with the MINOR and NIT findings listed: they do not change the verdict, and the caller acts on each one, so write each as a change to make. With no findings, say what you checked instead.
 
 State each finding as what you observed and what it causes; everything you could not establish belongs under Not verified, in the same plain terms.
 

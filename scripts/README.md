@@ -18,6 +18,8 @@ Everything runs with Python 3 (standard library only) on macOS; the in-game test
 |---|---|
 | `validate.py` | Checks every `blueprints/*/blueprint.toml`, decodes each string, rejects non-vanilla names, non-normal quality and game versions other than 2.0, and computes entities, size, materials and recipes. `--json build/catalog.json` writes the index for the site; `--readme` refreshes the table in the root README. Runs in CI (`.github/workflows/validate.yml`). |
 | `extract_blueprint.py` | Takes a blueprint string out of a file (`.txt`, `.json`, HTML), an http(s) URL, stdin or Claude Code's paste cache, proves that it decodes (zlib checksum, size limits, public addresses only) and writes it to a new file with a JSON summary that also says whether the catalog already holds that string or the same design under another label. It is the first step of the `/add-blueprint` command (`.claude/commands/add-blueprint.md`). |
+| `edit_blueprint.py` | The correction step of `/add-blueprint`: `decode <bp.txt> --out <bp.json>` writes the decoded JSON to edit (`extract_blueprint.py` turns the edited JSON back into a string), and `diff <before.txt> <after.txt>` lists every path whose value differs, so that a correction can be proved to change only what was meant. Standard library only. |
+| `run_blueprint_shot.sh` | The photo step of `/add-blueprint`: `./run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]` builds a blueprint, or the first four of a book, in the game (scenario `blueprint-shot`, see "In-game harness"), powers it, photographs its whole extent and writes `<out-dir>/shot-<n>.webp`, replacing any already there. Needs the game and `cwebp`. |
 | `vanilla-prototypes.json` | Every prototype name of the base game (entities with tile size and the item that places them, items, recipes, fluids, tiles, signals, quality). |
 | `dump_prototypes.sh` | Regenerates the file above from the local game with scenario `ingame/data/scenarios/dump-prototypes`; it refuses to save if any mod other than `base` is active. Re-run after a Factorio update. |
 | `vanilla-locale.json` | In-game names of items, entities, recipes and fluids in English, Brazilian Portuguese and Spanish, used by the website. |
@@ -54,7 +56,6 @@ Everything runs with Python 3 (standard library only) on macOS; the in-game test
 | `export_city.py` | Writes `strings.lua` for the two scenarios below from the two blueprint files, with the entity, tile and wire counts the game must find (counted from the decoded JSON). It refuses a blueprint that is not mirror-symmetric (tiles and entities), because neighboring blocks only line up when each side mirrors the side facing it. Both runners call it. |
 | `run_city_test.sh` | Headless scenario `city-test` (the server listens on 127.0.0.1 only). For both variants in 1 × 1, 2 × 1, 1 × 2, 2 × 2 and 3 × 3 arrangements, and for the two variants side by side in a checkerboard: imports the string, builds it away from the cell's center to prove the grid snapping, checks every entity, tile and wire against the blueprint, compares tile by tile the two faces of every seam between blocks (the street must be paved without gaps), plugs it into a power source, then checks the electric network, the roboports (status and energy), the lamps at night, the logistic network and the circuit networks, and lets the robots build ghosts in the middle of the first block and across a seam. Exit status 0 only when every check passed and at least one ran. |
 | `run_city_shot.sh` | Scenario `city-shot` in the normal game (screenshots need the renderer): builds each variant on a grass field as one block and as a 2 × 2 city, powers them, waits for the roboports to fill their buffers, takes the photos (day, night, 2 × 2, where four blocks meet, the street between two blocks, details, robots in flight) and writes each variant's `images/*.webp`. |
-
 ## In-game harness (`ingame/`)
 
 Factorio runs headless with an isolated write-data dir (`ingame/data`), vanilla only (`ingame/mods/mod-list.json`
@@ -111,6 +112,20 @@ Photos of the city block come from scenario `city-shot` the same way (`./run_cit
 prefix when Steam is open but not logged in). Its shots are listed at the top of
 `ingame/data/scenarios/city-shot/control.lua` (center, size in tiles, zoom, daytime); the power source sits 20 tiles west
 of the block, outside every frame except its copper wire.
+
+Photos of any blueprint or blueprint book come from scenario `blueprint-shot`: `./run_blueprint_shot.sh <blueprint.txt>
+<out-dir> [timeout-seconds]`, where the file holds one bare blueprint string on one line (anything else exits 2, as do a usage
+error, a missing file and a timeout that is not a whole number). `cwebp` must be installed (`brew install webp`); without it the
+script exits 1. The script sets `SteamAppId=427520` itself. It deletes every `shot-<n>.webp` already in `<out-dir>` right before
+it converts the new photos, so a failed run leaves that folder without them, and it exits 0 only when every photo that the
+report announces was written and the report has no failure line (one that says `could not`, `error`, `built nothing` or
+`holds no blueprint`). The report has a `shots=<n> total=<m>` line (photos taken, blueprints found) and, for each blueprint,
+`<built> of <all> entities built` followed by the names of those not built, and one of three power notes: `N pole groups
+without power` (with `, first at (x, y)` for the first three), `no poles in the build`, or `the power source could not be
+placed`, which is a failure line. The game builds what can stand on grass and skips the rest without leaving a ghost, so a
+pumpjack (needs oil) or an offshore pump (needs water) is missing from the photo and named in the report. A pole joins the
+source only within its wire reach of the source pole, which stands 5 tiles east of the build, so poles deeper inside can stay
+unpowered. The photos are taken without alt mode (`show_entity_info = false`), so they carry no status icon.
 
 ## Setup after a fresh clone
 
