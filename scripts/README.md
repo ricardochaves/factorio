@@ -11,7 +11,6 @@ Everything runs with Python 3 (standard library only) on macOS; the in-game test
 | `bp.py` | Decode / encode blueprint strings, walk books. |
 | `bp_textconv.py` | `git diff` driver that shows blueprint changes entity by entity (see below). |
 | `render.py` | ASCII view of one balancer: `python3 render.py <book.txt> "4 to 4"`. |
-| `run_blueprint_shot.sh` | The photo step of `/add-blueprint`: `./run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]` builds a blueprint, or the first four of a book, in the game (scenario `blueprint-shot`, see "In-game harness"), connects a power source to it, photographs its whole extent and writes `<out-dir>/shot-<n>.webp`, replacing any already there. Needs the game and `cwebp`. |
 
 ## Catalog (`catalog/`)
 
@@ -19,7 +18,8 @@ Everything runs with Python 3 (standard library only) on macOS; the in-game test
 |---|---|
 | `validate.py` | Checks every `blueprints/*/blueprint.toml`, decodes each string, rejects non-vanilla names, non-normal quality and game versions other than 2.0, and computes entities, size, materials and recipes. `--json build/catalog.json` writes the index for the site; `--readme` refreshes the table in the root README. Runs in CI (`.github/workflows/validate.yml`). |
 | `extract_blueprint.py` | Takes a blueprint string out of a file (`.txt`, `.json`, HTML), an http(s) URL, stdin or Claude Code's paste cache, proves that it decodes (zlib checksum, size limits, public addresses only) and writes it to a new file with a JSON summary that also says whether the catalog already holds that string or the same design under another label. It is the first step of the `/add-blueprint` command (`.claude/commands/add-blueprint.md`). |
-| `edit_blueprint.py` | The correction step of `/add-blueprint`: `decode <bp.txt> --out <bp.json>` writes the decoded JSON to edit (`extract_blueprint.py` turns the edited JSON back into a string), and `diff <before.txt> <after.txt>` lists every path whose value differs, so that a correction can be proved to change only what was meant. Standard library only. |
+| `edit_blueprint.py` | The correction step of `/add-blueprint`: `decode <bp.txt> --out <bp.json>` writes the decoded JSON to edit (`extract_blueprint.py` turns the edited JSON back into a string), and `diff <before.txt> <after.txt>` lists every path whose value differs, so that a correction can be proved to change only what was meant. It pairs entities by `entity_number`, compares the wires as a set of rows and writes invisible characters as `\u` escapes. Standard library only. |
+| `run_blueprint_shot.sh` | The photo step of `/add-blueprint`: `./run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]` builds a blueprint, or the first four of a book, in the game (scenario `blueprint-shot`, see "In-game harness"), powers it where its source reaches the poles, photographs its whole extent and, only after a successful run, writes `<out-dir>/shot-<n>.webp`, replacing any already there. Needs the game and `cwebp`. |
 | `vanilla-prototypes.json` | Every prototype name of the base game (entities with tile size and the item that places them, items, recipes, fluids, tiles, signals, quality). |
 | `dump_prototypes.sh` | Regenerates the file above from the local game with scenario `ingame/data/scenarios/dump-prototypes`; it refuses to save if any mod other than `base` is active. Re-run after a Factorio update. |
 | `vanilla-locale.json` | In-game names of items, entities, recipes and fluids in English, Brazilian Portuguese and Spanish, used by the website. |
@@ -122,24 +122,34 @@ prefix when Steam is open but not logged in). Its shots are listed at the top of
 `ingame/data/scenarios/city-shot/control.lua` (center, size in tiles, zoom, daytime); the power source sits 20 tiles west
 of the block, outside every frame except its copper wire.
 
-Photos of any blueprint or blueprint book come from scenario `blueprint-shot`: `./run_blueprint_shot.sh <blueprint.txt>
-<out-dir> [timeout-seconds]`, where the file holds one bare blueprint string on one line (anything else exits 2, as do a usage
-error, a missing file and a timeout that is not a whole number). `cwebp` must be installed (`brew install webp`); without it the
-script exits 1. The script sets `SteamAppId=427520` itself. It deletes every `shot-<n>.webp` already in `<out-dir>` right before
-it converts the new photos, so a failed run leaves that folder without them, and it exits 0 only when every photo that the
-report announces was written and the report has no failure line (one that says `could not`, `error`, `built nothing` or
-`holds no blueprint`). The report has a `shots=<n> total=<m>` line (photos taken, blueprints found) and, for each blueprint,
-`<built> of <all> entities built` followed by the names of those not built, and one of three power notes: `N of M pole groups
-without power` (with `, first at (x, y)` for the first three), `no poles in the build`, or `the power source could not be
-placed`, which is a failure line. M counts the groups of the build's poles, and the groups that the source reaches count as
-one, so N equal to M means that the source reaches none of the build's poles. The game builds what can stand on grass and
-skips the rest without leaving a ghost, so a pumpjack (needs oil) or an offshore pump (needs water) is missing from the photo
-and named in the report. A pole joins the source only within its wire reach of the source pole, which stands 5 tiles east of
-the build, so poles deeper inside can stay unpowered: that is a limit of the test, not a defect of the design. A build that
-reaches more than 512 tiles from its center (the largest |x| or |y| of any entity or tile, plus the snapping grid) is refused
-with a `could not be built` line, because the game would otherwise generate an enormous area first. The photos are taken
-without alt mode (`show_entity_info = false`), so they carry no status icon: a photo of two assembling machines with no
-power, one with a recipe and one without, checked on 2.0.77, shows neither the no-power icon nor the no-recipe icon.
+Photos of any blueprint or blueprint book come from scenario `blueprint-shot`, through `./run_blueprint_shot.sh <blueprint.txt>
+<out-dir> [timeout-seconds]`. It needs the normal (non-headless) game, whose window opens for about half a minute, and `cwebp`
+(`brew install webp`).
+
+- **Input and exit status.** The file holds one bare blueprint string on one line. The script exits 2 for anything else, for a
+  usage error, a missing file, a timeout that is not a whole number and a second run in the same checkout (which would share
+  `ingame/data`). It exits 1 for every other failure: no `cwebp` or game binary, a folder or file it cannot create, or a
+  failed run. It exits 0 only when every photo that the report announces was written and the report has no line that starts
+  with `FAIL`. It sets `SteamAppId=427520` itself.
+- **Output.** Each photo is converted into a staging folder first. Only a successful run moves the new `shot-<n>.webp` into
+  `<out-dir>`, replacing the file of the same number, and removes the higher-numbered ones that an older run left; a failed run
+  leaves the files there as they were (a new `<out-dir>` is still created, empty).
+- **Report.** A `shots=<n> total=<m>` line (photos taken, blueprints found) and, for each blueprint, `<built> of <all> entities
+  built` followed by the names of those not built, and one power note: `N of M pole groups without power (source <side>)`
+  (M counts the groups that the build's poles form, and `, first at (x, y)` follows for the first three) or `no poles in the
+  build`; when no side accepts the source, the note is `the power source could not be placed`, followed by a `FAIL:` line. A
+  step that fails adds a `FAIL:` line: an import that fails or reports errors, a string without a blueprint, a build that is
+  empty, that cannot place its power source or that reaches more than 1300 tiles from the origin of its coordinates (the limit
+  bounds the chunks that the game must generate), an error while building, or a photo that could not be taken.
+- **What the photo shows.** The game builds what can stand on grass and skips the rest without leaving a ghost, so a pumpjack
+  (needs oil) or an offshore pump (needs water) is missing and named in the report. The power source, a big pole and an energy
+  interface, stands 5 tiles outside the build (when it has poles), level with the build's pole nearest to that side. The
+  scenario tries east, north, west and south, each on its own, and keeps the side where the source reaches the most pole
+  groups, which the note names; a pole joins it only within its wire reach, so poles deeper inside can stay unpowered, and on
+  the west and south sides a strip of the pole's shadow or its tower can enter the margin. No ingredients are fed to the
+  machines (the modules and fuel that the blueprint requests are inserted), so a photo shows the build, not a running factory.
+  The photos are taken without alt mode (`show_entity_info = false`), so they carry no status icon; a machine with a recipe and
+  no ingredients showed none, with power and without it.
 
 ## Setup after a fresh clone
 

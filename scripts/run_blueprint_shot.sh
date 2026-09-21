@@ -1,11 +1,14 @@
 #!/bin/zsh
 # usage: run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]  -- photographs a blueprint or a blueprint book with
-# scenario blueprint-shot in the GUI game (screenshots need the renderer, so not headless) and writes <out-dir>/shot-<n>.webp,
-# replacing the ones already there: one photo of the whole build per blueprint, the first 4 of a book. The exit status is 0 only
-# when every photo that the game's report announces (`shots=<n>`) was converted and the report has no failure line. The timeout
-# (default 240 seconds) is how long the game gets to write its report. The game window opens for about half a minute and closes
-# by itself. The game runs without Steam (SteamAppId=427520), which would otherwise restart it and lose the arguments when Steam
-# is open but not logged in. Only the process started here is stopped.
+# scenario blueprint-shot in the GUI game (screenshots need the renderer, so not headless) and writes <out-dir>/shot-<n>.webp:
+# one photo of the whole build per blueprint, the first 4 of a book. Only a successful run touches <out-dir>: it moves the new
+# photos in, replacing the files of the same number, and removes the higher-numbered shot-<n>.webp that an older run left; a
+# failed run leaves the files there as they were (it may have created the folder, and a run killed with SIGKILL leaves its
+# hidden .stage.* folder behind). The exit status is 0 only when every photo that the game's report announces
+# (`shots=<n>`) was converted and the report has no line that starts with `FAIL`. The timeout (default 240 seconds) is how long
+# the game gets to write its report. The game window opens for about half a minute and closes by itself. The game runs without
+# Steam (SteamAppId=427520), which would otherwise restart it and lose the arguments when Steam is open but not logged in. Only
+# the process started here is stopped. Two runs cannot share a checkout (they share ingame/data): the second exits 2.
 HERE=${0:A:h}
 [[ $# -ge 2 ]] || { echo "usage: run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]" >&2; exit 2; }
 [[ -f $1 ]] || { echo "no such file: $1" >&2; exit 2; }
@@ -20,18 +23,38 @@ setopt extendedglob
 command -v cwebp > /dev/null || { echo "cwebp not found (brew install webp)" >&2; exit 1; }
 source "$HERE/factorio_env.sh"
 mkdir -p "$OUT" || exit 1
+# The lock keeps two runs from sharing ingame/data. With the module loaded and the file created, a refusal can only mean that
+# another run holds it.
+zmodload zsh/system || exit 1
+: >> data/.blueprint_shot.lock || exit 1
+zsystem flock -t 0 -f lockfd data/.blueprint_shot.lock 2> /dev/null || { echo "another run of this script is using $PWD; wait for it" >&2; exit 2; }
 export SteamAppId=${SteamAppId:-427520}
 printf 'return "%s"\n' "$STR" > data/scenarios/blueprint-shot/bp.lua || exit 1
 rm -f data/script-output/blueprint_shot_done.txt data/script-output/blueprint_*.png(N)
 "$F" --config "$PWD/config.ini" --mod-directory "$PWD/mods" --load-scenario blueprint-shot > blueprint_shot.log 2>&1 &
 PID=$!
-stop_game() { [[ -n $PID ]] && kill $PID 2> /dev/null; }
-trap stop_game EXIT
+STAGE=
+# Stops the game (SIGTERM, then SIGKILL after 5 s) and forgets its PID, so that a later call never signals a reused number.
+stop_game() {
+  [[ -n $PID ]] || return 0
+  kill -0 $PID 2> /dev/null || { PID=; return 0; }
+  kill $PID 2> /dev/null
+  for (( k = 0; k < 5; k++ )); do kill -0 $PID 2> /dev/null || break; sleep 1; done
+  kill -0 $PID 2> /dev/null && kill -9 $PID 2> /dev/null
+  wait $PID 2> /dev/null
+  PID=
+}
+cleanup() {
+  stop_game
+  if [[ -n $STAGE ]]; then rm -f "$STAGE"/shot-<->.webp(N); rmdir "$STAGE" 2> /dev/null; fi
+  return 0
+}
+trap cleanup EXIT
 trap 'exit 1' INT TERM HUP
 S=$(date +%s)
 while [ ! -f data/script-output/blueprint_shot_done.txt ]; do
   sleep 2
-  if ! kill -0 $PID 2> /dev/null; then echo "factorio exited early (see ingame/blueprint_shot.log)"; break; fi
+  if ! kill -0 $PID 2> /dev/null; then echo "factorio exited early (see ingame/blueprint_shot.log)"; PID=; break; fi
   if [ $(( $(date +%s) - S )) -gt $T ]; then echo "timeout"; break; fi
 done
 echo "elapsed $(( $(date +%s) - S ))s"
@@ -52,17 +75,21 @@ for f in $photos; do
     size=$now; sleep 1
   done
 done
-kill $PID 2> /dev/null
-for (( k = 0; k < 5; k++ )); do kill -0 $PID 2> /dev/null || break; sleep 1; done
-kill -0 $PID 2> /dev/null && kill -9 $PID 2> /dev/null
-wait $PID 2> /dev/null
-PID=
-rm -f "$OUT"/shot-<->.webp(N)
+stop_game
+# The photos are converted into a staging folder inside <out-dir> first, so that a run that fails leaves the files there as they were.
+STAGE=$(mktemp -d "$OUT/.stage.XXXXXX") || exit 1
 n=0
 for f in $photos; do
   name=shot-${${f:t:r}#blueprint_}
-  if cwebp -quiet -q ${WEBP_Q:-82} "$f" -o "$OUT/$name.webp"; then echo "wrote $OUT/$name.webp"; n=$(( n + 1 )); else echo "could not convert $f" >&2; fi
+  if cwebp -quiet -q ${WEBP_Q:-82} "$f" -o "$STAGE/$name.webp"; then echo "converted $name.webp"; n=$(( n + 1 )); else echo "could not convert $f" >&2; fi
 done
-failures=$(grep -ciE 'could not|error|built nothing|holds no blueprint' data/script-output/blueprint_shot_done.txt 2> /dev/null)
+failures=$(grep -c '^FAIL' data/script-output/blueprint_shot_done.txt 2> /dev/null)
 [[ -n $want && $want -gt 0 && $n -eq $want && ${failures:-0} -eq 0 ]] || {
-  echo "expected ${want:-no} photos, wrote $n, ${failures:-0} failure lines in the report (see ingame/blueprint_shot.log)" >&2; exit 1; }
+  echo "expected ${want:-no} photos, converted $n, ${failures:-0} FAIL lines in the report (see ingame/blueprint_shot.log)" >&2; exit 1; }
+mv -f "$STAGE"/shot-<->.webp "$OUT"/ || exit 1
+for f in $photos; do echo "wrote $OUT/shot-${${f:t:r}#blueprint_}.webp"; done
+# Only a successful run removes the higher-numbered photos that an older run left in <out-dir>.
+for old in "$OUT"/shot-<->.webp(N); do
+  if (( ${${old:t:r}#shot-} > want )); then rm -f "$old"; fi
+done
+exit 0

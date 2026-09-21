@@ -11,9 +11,10 @@ decode. It pairs the items of a list by `entity_number` (entities), by `index` (
 others, and it compares a list of number lists (the wires) as a set of rows, whatever their order. Any other list is compared by
 position, and a `note:` line says when a list of entities had to be compared that way because an `entity_number` is missing or
 repeated. Numbers compare by value, so 1 and 1.0 are the same, in wire rows and in positions too, and paired items are listed in
-numeric order. A value is cut to 80 characters (two long strings that differ show a window around their first difference) and a
-path to 300, keeping its end; at most 200 lines are printed and the rest is counted as `... and N more`. Invisible characters are written as \\u escapes. A file that is missing, or a string that does not decode,
-exits 2 with the reason. Standard library only (Python 3.11+).
+natural order (entity_number 2 before 10; a minus sign is part of the text). A value is cut to 80 characters (two long strings
+that differ show a window around their first difference) and a path to 300, keeping its end; at most 200 lines are printed and
+the rest is counted as `... and N more`. Invisible characters are written as \\u escapes. A file that is missing, or a string
+that does not decode, exits 2 with the reason. Standard library only (Python 3.11+).
 """
 import argparse
 import json
@@ -60,8 +61,8 @@ def canon(v):
 
 
 def natural(label):
-    """A sort key that puts entity_number=2 before entity_number=10."""
-    return [int(t) if i % 2 else t for i, t in enumerate(re.split(r'(\d+)', label))]
+    """A sort key that puts entity_number=2 before entity_number=10 and settles a tie by the text itself."""
+    return [int(t) if i % 2 else t for i, t in enumerate(re.split(r'(\d+)', label))], label
 
 
 def label_number(item, name):
