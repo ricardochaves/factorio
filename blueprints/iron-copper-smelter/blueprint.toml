@@ -1,0 +1,32 @@
+title = "Fundição de ferro/cobre"
+summary = "Fundição de chapas de ferro ou de cobre em fornalhas elétricas com módulos de produtividade 3, aceleradas por transmissores com módulos de velocidade 3, alimentada por uma linha de minério em esteira expressa."
+category = "mining-smelting"
+tags = ["blue-belt", "late-game", "modules", "beacons"]
+credits = "Design de Nilaus, da série Master Class (“Advanced Smelting (8 Beacon) 45 / sec output”), publicado por ele [neste post do FactorioBin](https://factoriobin.com/post/SnAX6v23). O post não declara licença. A blueprint do catálogo tem as mesmas 133 entidades (posições e módulos), gravada no Factorio 2.0.77, com nome e descrição próprios."
+
+[[files]]
+name = "Fundição de ferro/cobre"
+name_en = "Iron/copper smelter"
+name_es = "Fundición de hierro/cobre"
+path = "iron-copper-smelter.txt"
+
+[test]
+status = "in-game"
+game_version = "2.0.77"
+report = "README.md"
+
+[[images]]
+path = "images/overview.webp"
+alt = "Vista completa da fundição em funcionamento, com energia e minério de ferro na entrada, capturada no jogo"
+alt_en = "The whole smelter at work, powered and fed with iron ore, captured in-game"
+alt_es = "Vista completa de la fundición en funcionamiento, con energía y mena de hierro en la entrada, captura del juego"
+
+[en]
+title = "Iron/copper smelter"
+summary = "Iron or copper plate smelter: electric furnaces with productivity module 3, sped up by beacons with speed module 3, fed by a single line of ore on an express transport belt."
+credits = "Design by Nilaus, from the Master Class series (“Advanced Smelting (8 Beacon) 45 / sec output”), published by him in [this FactorioBin post](https://factoriobin.com/post/SnAX6v23), which does not state a license. The catalog blueprint has the same 133 entities (positions and modules), saved in Factorio 2.0.77, with its own name and description."
+
+[es]
+title = "Fundición de hierro/cobre"
+summary = "Fundición de placas de hierro o de cobre, alimentada por una sola cinta exprés de mena: hornos eléctricos con módulos de productividad 3, acelerados por faros con módulos de velocidad 3."
+credits = "Diseño de Nilaus, de la serie Master Class («Advanced Smelting (8 Beacon) 45 / sec output»), publicado por él en [esta entrada de FactorioBin](https://factoriobin.com/post/SnAX6v23). La entrada no declara licencia. El blueprint del catálogo tiene las mismas 133 entidades (posiciones y módulos), guardado en Factorio 2.0.77, con nombre y descripción propios."

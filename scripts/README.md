@@ -49,6 +49,12 @@ Everything runs with Python 3 (standard library only) on macOS; the in-game test
 | `crop_plastic.py` | Cuts a plastic block into an isolated test. |
 | `patch_plastic_feed.py`, `patch_water_acid.py` | Historical one-off patches that produced refinery v2 and v3. |
 
+## Iron/copper smelter (`blueprints/iron-copper-smelter/`)
+
+| Script | Purpose |
+|---|---|
+| `run_iron_copper_shot.sh` | Scenario `iron-copper-shot` in the normal game: builds the smelter on a grass field, fulfils its module requests, powers it and feeds iron ore through a loader and an infinity chest, measures ore in, plates out and electric power for three non-stack inserter capacity bonuses (+0, +1, +2: research none, inserter capacity bonus 2 and 7), takes the photo once all the electric furnaces are working and writes `blueprints/iron-copper-smelter/images/overview.webp`. It exits with 1 and keeps the old image when a check does not hold (see the harness section below). |
+
 ## City block (`blueprints/city-block-100x100-partial-concrete/` and `-full-concrete/`)
 
 | Script | Purpose |
@@ -150,6 +156,24 @@ Photos of any blueprint or blueprint book come from scenario `blueprint-shot`, t
   machines (the modules and fuel that the blueprint requests are inserted), so a photo shows the build, not a running factory.
   The photos are taken without alt mode (`show_entity_info = false`), so they carry no status icon; a machine with a recipe and
   no ingredients showed none, with power and without it.
+
+The iron/copper smelter is photographed and measured by its own scenario, `iron-copper-shot`, because `blueprint-shot`
+feeds no ingredients and the machines in this photo must be working (`CONTRIBUTING.md`). Run it with
+`./run_iron_copper_shot.sh`, with the `SteamAppId=427520` prefix when Steam is open but not logged in; it needs `cwebp` to
+write the image. The runner writes the scenario's `bp.lua` from
+`blueprints/iron-copper-smelter/iron-copper-smelter.txt`. Reviving the ghosts by script leaves the blueprint's module
+requests as item-request proxies, so the scenario fulfils them itself. Each non-stack inserter capacity bonus (+0, +1,
++2) warms up 18000 ticks and is measured over 3600 ticks, counting ore and plates with the game's production statistics
+and power by draining an energy interface; it also logs the plates and ore waiting in the furnaces so that a steady state
+can be checked. The ore source, the drain and the power source sit outside the frame, except the copper wire that leaves
+it at the bottom left. The photo waits until all the electric furnaces are working. The scenario writes a `FAIL:` line,
+and the runner then exits with 1 and leaves `images/overview.webp` as it was, when the ghosts do not all revive or the
+modules are missing, the big pole is not wired, the ore line is not full when a window starts, a window has no ore or no
+plates, the furnace buffers moved by more than 2 % of the flow in a window, or the furnaces are still not all working 900
+ticks after the last window (the photo is taken anyway, so that it can be looked at). The runner also stops when the
+scenario raises a Lua error, and it only trusts result files newer than its start. It exits with 2, before starting the
+game, when the blueprint file is unreadable or is not a blueprint string, or `cwebp` is missing. The measurements end up
+in `ingame/data/script-output/iron_copper_shot_done.txt` and are the numbers in the entry's README.
 
 ## Setup after a fresh clone
 
