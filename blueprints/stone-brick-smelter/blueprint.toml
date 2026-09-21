@@ -1,0 +1,29 @@
+title = "Fornalha de tijolos de pedra"
+summary = "Fornalha de tijolos de pedra com 8 fornalhas elétricas equipadas com módulos de produtividade e 18 transmissores com módulos de velocidade, alimentada por uma esteira expressa cheia de pedra."
+category = "mining-smelting"
+tags = ["blue-belt", "beacons", "modules", "late-game"]
+
+[[files]]
+name = "Fornalha de tijolos de pedra"
+name_en = "Stone brick smelter"
+name_es = "Horno de ladrillos de piedra"
+path = "stone-brick-smelter.txt"
+
+[test]
+status = "in-game"
+game_version = "2.0.77"
+report = "README.md"
+
+[[images]]
+path = "images/overview-all-working.webp"
+alt = "Vista completa da fornalha, com as oito fornalhas elétricas em funcionamento entre os transmissores, capturada no jogo"
+alt_en = "The whole smelter, with all eight electric furnaces running between the beacons, captured in-game"
+alt_es = "Vista completa del horno, con los ocho hornos eléctricos en funcionamiento entre los faros, captura del juego"
+
+[en]
+title = "Stone brick smelter"
+summary = "Stone brick smelter with 8 electric furnaces using productivity modules and 18 beacons with speed modules, fed by a full express belt of stone."
+
+[es]
+title = "Horno de ladrillos de piedra"
+summary = "Horno de ladrillos de piedra con 8 hornos eléctricos equipados con módulos de productividad y 18 faros con módulos de velocidad, alimentado por una cinta exprés llena de piedra."

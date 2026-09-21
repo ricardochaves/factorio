@@ -5,10 +5,15 @@
 # Local secrets, never committed.
 .env
 .env.*
-# Browser captures and keys: they carry cookies, tokens or session data.
+# Files that can hold an account token or a browser session, wherever a tool leaves them (Factorio's player-data.json,
+# recorded HTTP traffic, Playwright storage state and auth folders, and the Playwright MCP output folder).
+player-data.json
 *.har
-storage-state*.json
-playwright/.auth/
+*.har.gz
+*storage-state*.json
+**/playwright/.auth/
+.playwright-mcp/
+# Private keys and certificates.
 *.pem
 *.key
 
@@ -58,6 +63,7 @@ __pycache__/
 /scripts/ingame/data/scenarios/site-import/strings.lua
 /scripts/ingame/data/scenarios/city-test/strings.lua
 /scripts/ingame/data/scenarios/city-shot/strings.lua
+/scripts/ingame/data/scenarios/smelter-test/strings.lua
 /scripts/ingame/data/scenarios/bookimport/book.lua
 # The game keeps mod-settings.dat (and any mod zip) in the mod directory; only the vanilla mod list is tracked.
 /scripts/ingame/mods/*

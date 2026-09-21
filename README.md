@@ -12,6 +12,7 @@ Every blueprint can be copied from there with one click.
 | Blueprint | Category | What is inside | Files | Tested |
 |---|---|---|---|---|
 | [N × M belt balancers](blueprints/belt-balancers/) | Belts | 3 books, 1,731 blueprints | [`yellow-belt.txt`](blueprints/belt-balancers/yellow-belt.txt) · [`red-belt.txt`](blueprints/belt-balancers/red-belt.txt) · [`blue-belt.txt`](blueprints/belt-balancers/blue-belt.txt) | in game, 2.0.77 |
+| [Stone brick smelter](blueprints/stone-brick-smelter/) | Mining & smelting | 73 entities, 11 × 29 tiles | [`stone-brick-smelter.txt`](blueprints/stone-brick-smelter/stone-brick-smelter.txt) | in game, 2.0.77 |
 | [Oil refinery](blueprints/oil-refinery/) | Oil processing | 9,899 entities, 193 × 129 tiles | [`oil-refinery.txt`](blueprints/oil-refinery/oil-refinery.txt) | in game, 2.0.77 |
 | [100 × 100 robot-only city block, partial concrete](blueprints/city-block-100x100-partial-concrete/) | City blocks | 120 entities, 100 × 100 tiles | [`city-block-100x100-partial-concrete.txt`](blueprints/city-block-100x100-partial-concrete/city-block-100x100-partial-concrete.txt) | in game, 2.0.77 |
 | [100 × 100 robot-only city block, full concrete](blueprints/city-block-100x100-full-concrete/) | City blocks | 120 entities, 100 × 100 tiles | [`city-block-100x100-full-concrete.txt`](blueprints/city-block-100x100-full-concrete/city-block-100x100-full-concrete.txt) | in game, 2.0.77 |

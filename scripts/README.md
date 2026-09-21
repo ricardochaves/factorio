@@ -11,6 +11,7 @@ Everything runs with Python 3 (standard library only) on macOS; the in-game test
 | `bp.py` | Decode / encode blueprint strings, walk books. |
 | `bp_textconv.py` | `git diff` driver that shows blueprint changes entity by entity (see below). |
 | `render.py` | ASCII view of one balancer: `python3 render.py <book.txt> "4 to 4"`. |
+| `run_blueprint_shot.sh` | The photo step of `/add-blueprint`: `./run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]` builds a blueprint, or the first four of a book, in the game (scenario `blueprint-shot`, see "In-game harness"), powers it, photographs its whole extent and writes `<out-dir>/shot-<n>.webp`, replacing any already there. Needs the game and `cwebp`. |
 
 ## Catalog (`catalog/`)
 
@@ -19,7 +20,6 @@ Everything runs with Python 3 (standard library only) on macOS; the in-game test
 | `validate.py` | Checks every `blueprints/*/blueprint.toml`, decodes each string, rejects non-vanilla names, non-normal quality and game versions other than 2.0, and computes entities, size, materials and recipes. `--json build/catalog.json` writes the index for the site; `--readme` refreshes the table in the root README. Runs in CI (`.github/workflows/validate.yml`). |
 | `extract_blueprint.py` | Takes a blueprint string out of a file (`.txt`, `.json`, HTML), an http(s) URL, stdin or Claude Code's paste cache, proves that it decodes (zlib checksum, size limits, public addresses only) and writes it to a new file with a JSON summary that also says whether the catalog already holds that string or the same design under another label. It is the first step of the `/add-blueprint` command (`.claude/commands/add-blueprint.md`). |
 | `edit_blueprint.py` | The correction step of `/add-blueprint`: `decode <bp.txt> --out <bp.json>` writes the decoded JSON to edit (`extract_blueprint.py` turns the edited JSON back into a string), and `diff <before.txt> <after.txt>` lists every path whose value differs, so that a correction can be proved to change only what was meant. Standard library only. |
-| `run_blueprint_shot.sh` | The photo step of `/add-blueprint`: `./run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]` builds a blueprint, or the first four of a book, in the game (scenario `blueprint-shot`, see "In-game harness"), powers it, photographs its whole extent and writes `<out-dir>/shot-<n>.webp`, replacing any already there. Needs the game and `cwebp`. |
 | `vanilla-prototypes.json` | Every prototype name of the base game (entities with tile size and the item that places them, items, recipes, fluids, tiles, signals, quality). |
 | `dump_prototypes.sh` | Regenerates the file above from the local game with scenario `ingame/data/scenarios/dump-prototypes`; it refuses to save if any mod other than `base` is active. Re-run after a Factorio update. |
 | `vanilla-locale.json` | In-game names of items, entities, recipes and fluids in English, Brazilian Portuguese and Spanish, used by the website. |
@@ -56,6 +56,14 @@ Everything runs with Python 3 (standard library only) on macOS; the in-game test
 | `export_city.py` | Writes `strings.lua` for the two scenarios below from the two blueprint files, with the entity, tile and wire counts the game must find (counted from the decoded JSON). It refuses a blueprint that is not mirror-symmetric (tiles and entities), because neighboring blocks only line up when each side mirrors the side facing it. Both runners call it. |
 | `run_city_test.sh` | Headless scenario `city-test` (the server listens on 127.0.0.1 only). For both variants in 1 × 1, 2 × 1, 1 × 2, 2 × 2 and 3 × 3 arrangements, and for the two variants side by side in a checkerboard: imports the string, builds it away from the cell's center to prove the grid snapping, checks every entity, tile and wire against the blueprint, compares tile by tile the two faces of every seam between blocks (the street must be paved without gaps), plugs it into a power source, then checks the electric network, the roboports (status and energy), the lamps at night, the logistic network and the circuit networks, and lets the robots build ghosts in the middle of the first block and across a seam. Exit status 0 only when every check passed and at least one ran. |
 | `run_city_shot.sh` | Scenario `city-shot` in the normal game (screenshots need the renderer): builds each variant on a grass field as one block and as a 2 × 2 city, powers them, waits for the roboports to fill their buffers, takes the photos (day, night, 2 × 2, where four blocks meet, the street between two blocks, details, robots in flight) and writes each variant's `images/*.webp`. |
+
+## Stone brick smelter (`blueprints/stone-brick-smelter/`)
+
+| Script | Purpose |
+|---|---|
+| `export_smelter.py` | Writes `strings.lua` for the scenario below from the blueprint file, with the entity and module counts the game must find (counted from the decoded JSON). It refuses a blueprint whose southernmost express belt (the stone input) does not face north, or whose northernmost express underground belt (the brick output) is not a north-facing exit: that is where the scenario feeds and drains it. It also refuses a tie at either end, anything but exactly one substation (the scenario wires a second one to it) and fewer than four electric furnaces (the scenario reads the fourth). The runner calls it. |
+| `run_smelter_test.sh` | Headless scenario `smelter-test` (the server listens on 127.0.0.1 only). Imports the string, checks its entities, modules, single electric network and power, feeds it a full express belt of stone (infinity chest and express loader) and, after a 60 s warm-up, measures for 60 s (game time) the stone consumed, the bricks made and how long each furnace works, then reads the electric power drawn, once with every technology researched and once with none, on two surfaces in the same run. Only the run with every technology asserts the throughput (stone within 98 % to 101 % of a full express belt, 45/s, and bricks within 98 % to 101 % of what that stone yields, 45 / 2 × 1.2 = 27/s; every furnace working at least a quarter of the window); the run with none only gets the static and power checks, and its numbers are reported. Exit status 0 only when every check passed and at least one ran. |
+
 ## In-game harness (`ingame/`)
 
 Factorio runs headless with an isolated write-data dir (`ingame/data`), vanilla only (`ingame/mods/mod-list.json`
@@ -80,6 +88,7 @@ Environment variables:
 | `FBTIER` | `blue` | balancer scripts |
 | `FBWARM` | depends on tier | `export_tests.py` (warm-up ticks) |
 | `FBPHASES` | `ABCDEFGHI` | `export_tests.py` (measurement phases) |
+| `WEBP_Q` | `82` | `run_blueprint_shot.sh` (quality of the WebP photos) |
 
 `config.ini` is written on every run. Never commit anything else from `ingame/data`: `player-data.json` there holds
 your Factorio account token. Every runner that starts the headless server passes `--bind 127.0.0.1`, so nothing outside
