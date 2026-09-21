@@ -21,7 +21,8 @@ player-data.json
 id_rsa*
 id_ed25519*
 id_ecdsa*
-# Credential files of other tools: package registries, netrc, cloud CLIs and an MCP configuration that can hold tokens.
+# Credential files of other tools: package registries, netrc, the AWS CLI and an MCP configuration that can hold tokens (a
+# project MCP configuration that the repository shares would need its own `!.mcp.json` line, as the .claude/ block does).
 .netrc
 .npmrc
 .pypirc

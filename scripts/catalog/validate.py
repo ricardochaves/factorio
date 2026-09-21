@@ -129,7 +129,9 @@ class Checker:
         if Path(rel).is_absolute() or '..' in Path(rel).parts:
             self.err(where, f'path "{rel}" must stay inside the folder'); return None
         if not SAFE_PATH.fullmatch(rel):
-            self.err(where, f'path "{rel}" may hold only letters, digits, ".", "_", "-" and "/"'); return None
+            self.err(where, f'path "{rel}" must start with a letter or digit and may hold only letters, digits, '
+                            '".", "_", "-" and "/"')
+            return None
         if exts and path.suffix.lower() not in exts:
             self.err(where, f'"{rel}" must be one of {sorted(exts)}'); return None
         if not path.is_file():

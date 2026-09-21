@@ -52,12 +52,13 @@ So write the pull request title for players, and the commit title too in single-
      the power source reaches its poles, powered, with no ingredients fed to the machines, and are taken without alt
      mode, so they carry no status icon.
 2. Run `python3 scripts/catalog/validate.py --readme` (Python 3.11 or newer, standard library only). It checks the
-   metadata, decodes every string, rejects anything that is not vanilla Factorio 2.0 (Space Age entities, quality
-   other than normal, other game versions), text with invisible or reordering characters (zero-width characters,
-   bidirectional controls) in the metadata or the README, and file names with anything but letters, digits, `.`, `_`
-   and `-`, and refreshes the catalog table in [`README.md`](README.md). Commit the refreshed table with the
-   blueprint: the `validate` check fails when it is out of date. Entity counts, size, materials and recipes are
-   computed from the string, never typed by hand.
+   metadata, decodes every string and rejects anything that is not vanilla Factorio 2.0 (Space Age entities, quality
+   other than normal, other game versions). It also rejects text in the metadata or in the entry's README that holds
+   zero-width characters, bidirectional controls or other control or format characters, and file names listed in
+   `blueprint.toml` that do not start with a letter or digit or hold anything but letters, digits, `.`, `_` and `-`.
+   Then it refreshes the catalog table in [`README.md`](README.md). Commit the refreshed table with the blueprint: the
+   `validate` check fails when it is out of date. Entity counts, size, materials and recipes are computed from the
+   string, never typed by hand.
 3. Optionally test it in the game with the harness in [`scripts/`](scripts/).
 4. Open a pull request, as described [above](#how-a-change-reaches-main). A new version overwrites the same `.txt`
    file and git keeps the history, so never add `-v2` copies.
