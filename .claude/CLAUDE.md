@@ -18,7 +18,8 @@
 - Before finishing development and before pushing anything to GitHub, run the review agents below that match the change: their approval is a gate. Passwords and tokens must never be pushed, and nothing is pushed unless `security-reviewer` approves the final tree
 - Always fix the problems the review brings up; discuss them with the reviewer and reach a conclusion together
 - Create a virtual environment to install libraries; never install them on the host. Always use the virtual environment if it exists
-- You have access to the game: use it to validate the blueprints whenever possible
+- You have access to the game: use it to validate the blueprints, do not skip validation.
+- The reviewers are not here to play around. If they suggest something, you need to take it seriously. A suggestion from the security agent is important and must be followed.
 
 ## Review agents
 
@@ -51,11 +52,12 @@ Every time you merge into `main`, run `deploy-validator` to monitor the deployme
 
 ## Blueprints
 
-- Always add images to the blueprint: take real in-game screenshots so that every page of a blueprint has a realistic image. The blueprint must have power and everything else it needs, to avoid the "not working" icon (a red circle with a bar across it) shown when it does not work. Check the image before pushing
+- You will always add an image to the blueprint. Open the game and take a screenshot. The entire blueprint must be visible, even if that means using a different zoom level. Figure it out—do not keep asking questions or stopping your work. It’s ONE IMAGE, period. Continue all the way to the end without stopping.
 - The rules live in the system's code: follow the business rules in the code
 - When it is a blueprint where the output is only a single product, always calculate everything it consumes and everything it produces, and document this in both the blueprint and the website. The unit of measurement is items per second.
 - Run `blueprint-reviewer` on every blueprint change
 - `/add-blueprint <file.txt | file.json | url | pasted text>` adds a new entry from a blueprint string (`.claude/commands/add-blueprint.md`); it stops before any commit or push, `--allow-duplicate` adds a second copy of a design the catalog already holds, and Claude Code needs a restart after `.claude/commands/add-blueprint.md` is created or edited, because live reload is documented for `.claude/skills/` only
+- If you identify any incorrect information in the blueprints, you must correct it. The whole point of importing them here is to fix things, not simply accept whatever comes in.
 
 ## Website
 
