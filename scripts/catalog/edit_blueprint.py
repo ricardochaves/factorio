@@ -225,7 +225,7 @@ def cmd_diff(args):
     for note in notes[:MAX_LINES]:
         print(ex.make_visible('note: ' + clip_path(note)))
     if len(notes) > MAX_LINES:
-        print(f'... and {len(notes) - MAX_LINES} more notes')
+        print(f'... and {len(notes) - MAX_LINES} more')
     for path, a, b in found[:MAX_LINES]:
         print(line(path, a, b))
     if len(found) > MAX_LINES:
