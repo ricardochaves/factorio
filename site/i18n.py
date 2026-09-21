@@ -167,7 +167,8 @@ T = {
         'import_steps': [
             ('Copie a string', 'Pelo botão Copiar do card ou da página do blueprint.'),
             ('Clique em Importar string',
-             'No jogo, clique em Importar string na barra de atalhos (ou em Importar código, na biblioteca de projetos).'),
+             'No jogo, clique em Importar string na barra de atalhos, liberada pela tecnologia Robôs construtores '
+             '(ou em Importar código, na biblioteca de projetos).'),
             ('Cole e confirme', 'O blueprint, ou o livro inteiro, aparece na sua mão.'),
         ],
         'seal_title': 'Selo de teste em todo blueprint',
@@ -279,7 +280,9 @@ T = {
         'import_title': 'How to import',
         'import_steps': [
             ('Copy the string', "Use the Copy button on the card or on the blueprint's page."),
-            ('Open Import string', 'In the game, click Import string on the shortcut bar (or in the blueprint library).'),
+            ('Open Import string',
+             'In the game, click Import string on the shortcut bar, which the Construction robotics technology unlocks '
+             '(or in the blueprint library).'),
             ('Paste and confirm', 'The blueprint, or the whole book, lands in your hand.'),
         ],
         'seal_title': 'A test badge on every blueprint',
@@ -392,9 +395,9 @@ T = {
         'import_title': 'Cómo importar',
         'import_steps': [
             ('Copia la cadena', 'Con el botón Copiar de la tarjeta o de la página del blueprint.'),
-            ('Abre Importar desde texto',
-             'En el juego, haz clic en Importar desde texto, en la barra de acceso directo '
-             '(o en Importar cadena de texto, en la biblioteca de planos).'),
+            ('Abre la importación',
+             'En el juego, haz clic en Importar desde texto, en la barra de acceso directo, que desbloquea la tecnología '
+             'Robots de construcción (o en Importar cadena de texto, en la biblioteca de planos).'),
             ('Pega y confirma', 'El blueprint, o el libro entero, queda en tu cursor.'),
         ],
         'seal_title': 'Sello de prueba en cada blueprint',

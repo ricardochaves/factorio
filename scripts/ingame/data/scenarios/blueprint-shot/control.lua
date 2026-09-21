@@ -137,7 +137,7 @@ local function extent(s)
   return {x0 = x0, y0 = y0, x1 = x1, y1 = y1}
 end
 
--- Powers the build from outside the frame; returns "N of M pole groups without power" and where the first of them are. M counts
+-- Gives the build a power source outside the frame; returns "N of M pole groups without power" and where the first of them are. M counts
 -- the groups of the build's poles, those that the source reaches counting as one, so N equal to M means the source reaches none.
 local function power(s, box)
   local y = (box.y0 + box.y1) / 2

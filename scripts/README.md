@@ -135,10 +135,11 @@ placed`, which is a failure line. M counts the groups of the build's poles, and 
 one, so N equal to M means that the source reaches none of the build's poles. The game builds what can stand on grass and
 skips the rest without leaving a ghost, so a pumpjack (needs oil) or an offshore pump (needs water) is missing from the photo
 and named in the report. A pole joins the source only within its wire reach of the source pole, which stands 5 tiles east of
-the build, so poles deeper inside can stay unpowered: that is a limit of the test, not a defect of the design. A build whose
-farthest entity is more than 512 tiles from its center is refused with a `could not be built` line, because the game would
-otherwise generate an enormous area first. The photos are taken without alt mode (`show_entity_info = false`), so they carry
-no status icon, and the icon is absent even on a machine without power.
+the build, so poles deeper inside can stay unpowered: that is a limit of the test, not a defect of the design. A build that
+reaches more than 512 tiles from its center (the largest |x| or |y| of any entity or tile, plus the snapping grid) is refused
+with a `could not be built` line, because the game would otherwise generate an enormous area first. The photos are taken
+without alt mode (`show_entity_info = false`), so they carry no status icon: a photo of two assembling machines with no
+power, one with a recipe and one without, checked on 2.0.77, shows neither the no-power icon nor the no-recipe icon.
 
 ## Setup after a fresh clone
 

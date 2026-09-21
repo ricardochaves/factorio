@@ -37,7 +37,7 @@ Judge each hit on its own and record the hits you dismiss, with the reason. Thes
 
 - BLOCKER: a real secret, credential, private path or personal data that would become public; a workflow that can leak secrets or run untrusted code with privileges; an injection reachable by untrusted input at the reviewed commit.
 - MAJOR: a missing ignore rule for generated files with sensitive content; an unlicensed third-party file about to be published; an injection sink that untrusted input can reach after one more small change.
-- MINOR and NIT: hardening, each written as a change to make.
+- MINOR and NIT: hardening.
 
 ## Ground rules
 

@@ -10,9 +10,9 @@ decode. It pairs the items of a list by `entity_number` (entities), by `index` (
 `position` (tiles) when every item has that key and no two share it, so that removing an entity does not shift the paths of the
 others, and it compares a list of number lists (the wires) as a set of rows, whatever their order. Any other list is compared by
 position, and a `note:` line says when a list of entities had to be compared that way because an `entity_number` is missing or
-repeated. Numbers compare by value, so 1 and 1.0 are the same. A value is cut to 80 characters (two long strings that differ show
-a window around their first difference) and a path to 300, keeping its end; at most 200 lines are printed and the rest is counted
-as `... and N more`. Invisible characters are written as \\u escapes. A file that is missing, or a string that does not decode,
+repeated. Numbers compare by value, so 1 and 1.0 are the same, in wire rows and in positions too, and paired items are listed in
+numeric order. A value is cut to 80 characters (two long strings that differ show a window around their first difference) and a
+path to 300, keeping its end; at most 200 lines are printed and the rest is counted as `... and N more`. Invisible characters are written as \\u escapes. A file that is missing, or a string that does not decode,
 exits 2 with the reason. Standard library only (Python 3.11+).
 """
 import argparse
@@ -54,6 +54,16 @@ def is_scalar(v):
     return v is None or isinstance(v, str) or isinstance(v, bool) or is_number(v)
 
 
+def canon(v):
+    """A number as it compares: 1.0 is 1."""
+    return int(v) if isinstance(v, float) and v.is_integer() else v
+
+
+def natural(label):
+    """A sort key that puts entity_number=2 before entity_number=10."""
+    return [int(t) if i % 2 else t for i, t in enumerate(re.split(r'(\d+)', label))]
+
+
 def label_number(item, name):
     v = item.get(name)
     return f'{name}={v}' if isinstance(v, int) and not isinstance(v, bool) else None
@@ -62,7 +72,7 @@ def label_number(item, name):
 def label_position(item):
     p = item.get('position')
     if isinstance(p, dict) and is_number(p.get('x')) and is_number(p.get('y')):
-        return f'position=({p["x"]}, {p["y"]})'
+        return f'position=({canon(p["x"])}, {canon(p["y"])})'
     return None
 
 
@@ -119,7 +129,7 @@ def compare(a, b, path, out, notes):
         paired = pair(a, b)
         if paired:
             _, by_a, by_b = paired
-            for label in sorted(set(by_a) | set(by_b)):
+            for label in sorted(set(by_a) | set(by_b), key=natural):
                 p = f'{path}[{label}]'
                 if label not in by_b:
                     out.append((p, by_a[label], MISSING))
@@ -128,8 +138,9 @@ def compare(a, b, path, out, notes):
                 else:
                     compare(by_a[label], by_b[label], p, out, notes)
         elif (a or b) and rows(a) and rows(b):
-            count_a, count_b = Counter(json.dumps(r) for r in a), Counter(json.dumps(r) for r in b)
-            for row in sorted(set(count_a) | set(count_b)):
+            count_a = Counter(json.dumps([canon(x) for x in r]) for r in a)
+            count_b = Counter(json.dumps([canon(x) for x in r]) for r in b)
+            for row in sorted(set(count_a) | set(count_b), key=natural):
                 if count_a[row] > count_b[row]:
                     out.append((f'{path}[{row}]', json.loads(row), MISSING))
                 elif count_b[row] > count_a[row]:

@@ -17,7 +17,7 @@ The caller gives the worktree path, the change to review and the owner's decisio
 
 1. **Every factual claim in the changed docs against reality.**
    - GitHub configuration, read live and read-only: `gh api repos/ricardochaves/factorio` (merge methods, squash title and message defaults, branch deletion on merge), and the `rulesets`, `rules/branches/main`, `collaborators`, `actions/permissions` and `pages` endpoints under it. For GitHub semantics you are not sure of, read docs.github.com instead of assuming.
-   - Code: `.github/workflows/*.yml`, `site/build.py`, `scripts/catalog/validate.py`, `scripts/README.md`, `.gitignore`, and `.claude/CLAUDE.md` with `.claude/agents/*.md` (the rules they state must match the code and each other).
+   - Code: `.github/workflows/*.yml`, `site/build.py`, `scripts/catalog/validate.py`, `scripts/README.md`, `.gitignore`, and `.claude/CLAUDE.md` with `.claude/agents/*.md` and `.claude/commands/*.md` (the rules they state must match the code and each other).
    - Commands quoted in the docs: run the safe, read-only ones in a scratch copy and confirm they do what the text says.
 2. **Nothing useful was lost** when text moved between files, and each reader (players who import blueprints, contributors) is still served on their own.
 3. **Links and anchors.** Relative links resolve to files in the tree; anchors match the headings GitHub generates (render the Markdown with `gh api markdown -F text=@<file>` to see the ids: `-F` reads the file, and `-f` would send the literal string `@<file>`); external links respond.

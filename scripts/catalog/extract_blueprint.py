@@ -53,12 +53,17 @@ ALL_KINDS = KINDS + ('upgrade_planner', 'deconstruction_planner')
 WHOLE = re.compile(r'0[A-Za-z0-9+/]{40,}={0,2}')
 SCAN = re.compile(r'0[A-Za-z0-9+/]{60,}={0,2}')
 INVISIBLE = ('Cc', 'Cf', 'Co', 'Cs', 'Cn', 'Zl', 'Zp', 'Zs')  # control, format, private-use, surrogate, unassigned, separators and spaces (U+0020 never reaches the check)
-BLANKS = re.compile('[͏ᅟᅠ᠋-᠏⠀ㅤ︀-️ﾠ\U000e0100-\U000e01ef]')  # letters, marks and symbols that draw nothing
+BLANK_RANGES = ((0x034F, 0x034F), (0x115F, 0x1160), (0x17B4, 0x17B5), (0x180B, 0x180F), (0x2800, 0x2800),
+                (0x3164, 0x3164), (0xFE00, 0xFE0F), (0xFFA0, 0xFFA0), (0xE0100, 0xE01EF))  # letters, marks and symbols that draw nothing, by code point
 NON_ASCII = re.compile('[\x7f-\U0010ffff]')
 
 
 class Refuse(Exception):
     """The input cannot be used; the message says why."""
+
+
+def is_blank(c):
+    return any(lo <= ord(c) <= hi for lo, hi in BLANK_RANGES)
 
 
 def make_visible(text):
@@ -67,7 +72,7 @@ def make_visible(text):
     reader unseen. `text` is JSON, so each escape decodes back to the same character."""
     def escape(m):
         c = m.group()
-        if unicodedata.category(c) not in INVISIBLE and not BLANKS.match(c):
+        if unicodedata.category(c) not in INVISIBLE and not is_blank(c):
             return c
         return '\\u%04x' % ord(c) if ord(c) <= 0xFFFF else json.dumps(c)[1:-1]  # above U+FFFF JSON writes a surrogate pair
     return NON_ASCII.sub(escape, text)
