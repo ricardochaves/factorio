@@ -62,9 +62,10 @@ MARKDOWN_SPECIAL = re.compile(r'([\\|\[\]<>`])')
 
 
 EMOJI_SELECTORS = (0xFE0E, 0xFE0F)
-# Characters that take an emoji selector although their category is not So: U+203C, U+2049, U+2139, U+2194, U+2934, U+2935,
-# U+3030 and U+303D.
-EMOJI_TEXT_BASES = tuple(chr(cp) for cp in (0x203C, 0x2049, 0x2139, 0x2194, 0x2934, 0x2935, 0x3030, 0x303D))
+# Characters that take an emoji selector (Unicode's emoji-variation-sequences.txt) although their category is not So: U+203C,
+# U+2049, U+2139, U+2194, U+25FB to U+25FE, U+2934, U+2935, U+3030 and U+303D.
+EMOJI_TEXT_BASES = tuple(chr(cp) for cp in (0x203C, 0x2049, 0x2139, 0x2194, 0x25FB, 0x25FC, 0x25FD, 0x25FE, 0x2934, 0x2935,
+                                              0x3030, 0x303D))
 
 
 def bad_chars(text):
