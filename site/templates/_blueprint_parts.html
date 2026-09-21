@@ -42,7 +42,7 @@
          width="{{ first.variants[-1][1] }}" height="{{ first.variants[-1][2] }}" alt="{{ loc(first.alt) }}" fetchpriority="high" data-gallery-img>
   </a>
   <figcaption class="gallery-caption">
-    <span class="muted"><span class="source">{{ t.gallery_caption }}</span> <a href="{{ root ~ first.full }}" data-gallery-full>{{ m.icon('expand', 16) }} {{ t.full_size }}</a></span>
+    <span class="muted"><span class="source">{{ t.gallery_caption_one if e.images|length == 1 else t.gallery_caption }}</span> <a href="{{ root ~ first.full }}" data-gallery-full>{{ m.icon('expand', 16) }} {{ t.full_size }}</a></span>
     {% if e.images|length > 1 %}
     <span class="thumbs">
       {% for img in e.images %}
