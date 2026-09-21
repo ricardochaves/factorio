@@ -11,9 +11,11 @@ build/add-blueprint.*/ of this repository, a target that already exists, a symbo
 `blueprint.toml`, `README.md`, a `.txt` string in the folder or a `.webp` photo in images/, and an entry that the catalog
 validator (validate.py) rejects. The copy goes to a temporary folder in build/, the validator runs over that copy, and the
 folder is moved into place in one step, so a failure leaves no half-installed entry and what is validated is what is
-installed; each file is opened without following a link and must be a regular file. Nothing is overwritten and nothing of the
-entry is deleted. It prints `installed blueprints/<slug> (<n> files)` and exits 0, or prints `refused: <reason>` (or
-`failed: <reason>` for an input or output error) and exits 2. Standard library only (Python 3.11+).
+installed; each file is opened without following a link and must be a regular file (a process that swaps a folder of the entry
+for a link between the walk and the copy is not stopped, and the copy still has to pass the name list and the validator).
+Nothing is overwritten and nothing of the entry is deleted. It prints `installed blueprints/<slug> (<n> files)` and exits 0,
+or prints `refused: <reason>` (or `failed: <reason>` for an input or output error) and exits 2. Standard library only
+(Python 3.11+).
 """
 import argparse
 import os

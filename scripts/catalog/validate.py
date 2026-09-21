@@ -67,21 +67,22 @@ EMOJI_SELECTORS = (0xFE0E, 0xFE0F)
 def bad_chars(text):
     """The characters of `text` that draw nothing or reorder text, as U+XXXX: control characters other than tab and line
     breaks, format ones (bidirectional controls, zero-width characters, tags), private-use and surrogate ones, and the fillers
-    and selectors that the extractor lists as blank. The emoji selectors U+FE0E and U+FE0F are allowed only right after the
-    character they select (a run of them can carry bits that nobody sees). Unassigned characters are tested only through the
-    extractor's list of reserved ones that draw nothing: which characters are unassigned depends on the Unicode version of the
-    Python that runs the check."""
+    and selectors that the extractor lists as blank. The emoji selectors U+FE0E and U+FE0F are allowed only right after a
+    symbol, or after `#`, `*` or a digit that a keycap (U+20E3) follows: after any other character they could carry a bit that
+    nobody sees. Unassigned characters are tested only through the extractor's list of reserved ones that draw nothing: which
+    characters are unassigned depends on the Unicode version of the Python that runs the check."""
     found = set()
-    previous = ''
-    for c in text:
+    for i, c in enumerate(text):
         if ord(c) in EMOJI_SELECTORS:
-            bad = not previous or previous.isspace() or ord(previous) in EMOJI_SELECTORS
+            before = text[i - 1] if i else ' '
+            symbol = unicodedata.category(before) in ('So', 'Sm', 'Sk')
+            keycap = before in '#*0123456789' and text[i + 1:i + 2] == '⃣'
+            bad = not (symbol or keycap)
         else:
             category = unicodedata.category(c)
             bad = (category in ('Cf', 'Co', 'Cs', 'Zl', 'Zp') or (category == 'Cc' and c not in '\t\n\r') or is_blank(c))
         if bad:
             found.add(f'U+{ord(c):04X}')
-        previous = c
     return sorted(found)
 
 
@@ -402,8 +403,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('--root', type=Path, default=HERE.parent.parent, help='repository root (default: this repo)')
     ap.add_argument('--prototypes', type=Path, default=HERE / 'vanilla-prototypes.json')
-    ap.add_argument('--json', action=OutPath, help='write the catalog index here (use a git-ignored path such as build/); '
-                                                   'given once, without a ".." component')
+    ap.add_argument('--json', action=OutPath, help='write the catalog index here (use a git-ignored path such as build/; an '
+                                                   'existing file is overwritten); given once, without a ".." component')
     ap.add_argument('--readme', action='store_true', help='refresh the catalog table in README.md')
     args = ap.parse_args()
     root = args.root.resolve()
