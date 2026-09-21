@@ -9,11 +9,11 @@ copies that folder to blueprints/<slug>/ and nothing else, so that a command whi
 the folder the owner commits: it refuses a slug that is not lower-case words joined by "-", an entry root anywhere but
 build/add-blueprint.*/ of this repository, a target that already exists, a symbolic link, any file that is not
 `blueprint.toml`, `README.md`, a `.txt` string in the folder or a `.webp` photo in images/, and an entry that the catalog
-validator (validate.py, run over the entry root) rejects. The copy goes to a temporary folder in build/ and is moved into place
-in one step, so a failure leaves no half-installed entry; each file is opened without following a link and must be a regular
-file. Nothing is overwritten and nothing of the entry is deleted. It prints `installed blueprints/<slug> (<n> files)` and exits
-0, or prints `refused: <reason>` (or `failed: <reason>` for an input or output error) and exits 2. Standard library only
-(Python 3.11+).
+validator (validate.py) rejects. The copy goes to a temporary folder in build/, the validator runs over that copy, and the
+folder is moved into place in one step, so a failure leaves no half-installed entry and what is validated is what is
+installed; each file is opened without following a link and must be a regular file. Nothing is overwritten and nothing of the
+entry is deleted. It prints `installed blueprints/<slug> (<n> files)` and exits 0, or prints `refused: <reason>` (or
+`failed: <reason>` for an input or output error) and exits 2. Standard library only (Python 3.11+).
 """
 import argparse
 import os
@@ -86,7 +86,8 @@ def run_validator(root):
     tool = REPO / 'scripts' / 'catalog' / 'validate.py'
     done = subprocess.run([sys.executable, '-B', str(tool), '--root', str(root)], capture_output=True, text=True)
     if done.returncode != 0:
-        raise Refuse('the validator rejects the entry: ' + ' '.join(done.stderr.split())[:300])
+        # ascii(): the messages can quote text from the entry, and an escape or a bidirectional control must not reach a terminal
+        raise Refuse('the validator rejects the entry: ' + ascii(' '.join(done.stderr.split())[:300]))
 
 
 def copy_regular(source, target):
@@ -108,16 +109,17 @@ def main():
     try:
         src = entry_folder(args.entry_root, args.slug)
         files = files_to_copy(src)
-        run_validator(src.parents[1])
         target = REPO / 'blueprints' / args.slug
         if target.exists() or target.is_symlink():
             raise Refuse(f'blueprints/{args.slug} already exists; it is never overwritten')
         stage = Path(tempfile.mkdtemp(prefix='install.', dir=REPO / 'build'))
-        (stage / args.slug).mkdir()
+        staged = stage / 'blueprints' / args.slug
+        staged.mkdir(parents=True)
         for rel in files:
-            (stage / args.slug / rel).parent.mkdir(exist_ok=True)
-            copy_regular(src / rel, stage / args.slug / rel)
-        os.rename(stage / args.slug, target)  # one step, and it fails when the target exists and is not empty
+            (staged / rel).parent.mkdir(exist_ok=True)
+            copy_regular(src / rel, staged / rel)
+        run_validator(stage)  # over the copy, so that what is validated is exactly what is installed
+        os.rename(staged, target)  # one step, and it fails when the target exists and is not empty
         print(f'installed blueprints/{args.slug} ({len(files)} files)')
         return 0
     except Refuse as e:

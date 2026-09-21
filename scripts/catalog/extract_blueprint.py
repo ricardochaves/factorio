@@ -62,9 +62,11 @@ SCAN = re.compile(r'0[A-Za-z0-9+/]{60,}={0,2}')
 # spaces (only U+007F and above are tested: JSON already escapes the control characters below U+0020, and U+0020 is the
 # ordinary space).
 INVISIBLE = ('Cc', 'Cf', 'Co', 'Cs', 'Cn', 'Zl', 'Zp', 'Zs')
-# Letters, marks and symbols that draw nothing although their category is not in INVISIBLE, by code point.
-BLANK_RANGES = ((0x034F, 0x034F), (0x115F, 0x1160), (0x17B4, 0x17B5), (0x180B, 0x180F), (0x2800, 0x2800),
-                (0x3164, 0x3164), (0xFE00, 0xFE0F), (0xFFA0, 0xFFA0), (0xE0100, 0xE01EF))
+# Letters, marks and symbols that draw nothing although their category is not in INVISIBLE, by code point, and the reserved
+# code points that are ignorable when drawn (their category, Cn, depends on the Unicode version of the Python that runs).
+BLANK_RANGES = ((0x034F, 0x034F), (0x115F, 0x1160), (0x17B4, 0x17B5), (0x180B, 0x180F), (0x2065, 0x2065), (0x2800, 0x2800),
+                (0x3164, 0x3164), (0xFE00, 0xFE0F), (0xFFA0, 0xFFA0), (0xFFF0, 0xFFF8), (0xE0000, 0xE0000), (0xE0002, 0xE001F),
+                (0xE0080, 0xE00FF), (0xE0100, 0xE01EF), (0xE01F0, 0xE0FFF))
 NON_ASCII = re.compile('[\x7f-\U0010ffff]')
 
 

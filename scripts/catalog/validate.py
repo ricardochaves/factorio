@@ -61,17 +61,27 @@ SAFE_PATH = re.compile(r'[A-Za-z0-9][A-Za-z0-9._/-]*')  # a file named in bluepr
 MARKDOWN_SPECIAL = re.compile(r'([\\|\[\]<>`])')
 
 
+EMOJI_SELECTORS = (0xFE0E, 0xFE0F)
+
+
 def bad_chars(text):
     """The characters of `text` that draw nothing or reorder text, as U+XXXX: control characters other than tab and line
     breaks, format ones (bidirectional controls, zero-width characters, tags), private-use and surrogate ones, and the fillers
-    and selectors that the extractor lists as blank (the emoji selectors U+FE0E and U+FE0F are allowed). Unassigned characters
-    are not tested: which ones exist depends on the Unicode version of the Python that runs the check."""
+    and selectors that the extractor lists as blank. The emoji selectors U+FE0E and U+FE0F are allowed only right after the
+    character they select (a run of them can carry bits that nobody sees). Unassigned characters are tested only through the
+    extractor's list of reserved ones that draw nothing: which characters are unassigned depends on the Unicode version of the
+    Python that runs the check."""
     found = set()
+    previous = ''
     for c in text:
-        category = unicodedata.category(c)
-        if (category in ('Cf', 'Co', 'Cs', 'Zl', 'Zp') or (category == 'Cc' and c not in '\t\n\r')
-                or (is_blank(c) and c not in '︎️')):
+        if ord(c) in EMOJI_SELECTORS:
+            bad = not previous or previous.isspace() or ord(previous) in EMOJI_SELECTORS
+        else:
+            category = unicodedata.category(c)
+            bad = (category in ('Cf', 'Co', 'Cs', 'Zl', 'Zp') or (category == 'Cc' and c not in '\t\n\r') or is_blank(c))
+        if bad:
             found.add(f'U+{ord(c):04X}')
+        previous = c
     return sorted(found)
 
 
