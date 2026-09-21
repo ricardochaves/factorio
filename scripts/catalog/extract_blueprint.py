@@ -32,6 +32,7 @@ import socket
 import ssl
 import sys
 import time
+import unicodedata
 import urllib.error
 import urllib.request
 import zlib
@@ -51,10 +52,24 @@ COSMETIC = ('label', 'description', 'icons', 'version', 'active_index')
 ALL_KINDS = KINDS + ('upgrade_planner', 'deconstruction_planner')
 WHOLE = re.compile(r'0[A-Za-z0-9+/]{40,}={0,2}')
 SCAN = re.compile(r'0[A-Za-z0-9+/]{60,}={0,2}')
+INVISIBLE = ('Cc', 'Cf', 'Co', 'Cs', 'Cn', 'Zl', 'Zp')  # control, format, private-use, surrogate, unassigned, line and paragraph separators
+NON_ASCII = re.compile('[\x7f-\U0010ffff]')
 
 
 class Refuse(Exception):
     """The input cannot be used; the message says why."""
+
+
+def make_visible(text):
+    """`text` with every invisible character written as a JSON \\u escape. A label or a description comes from the source, and a
+    character that draws nothing (a zero-width space, a bidirectional control, a Unicode tag character) would otherwise reach the
+    reader unseen. `text` is JSON, so each escape decodes back to the same character."""
+    def escape(m):
+        c = m.group()
+        if unicodedata.category(c) not in INVISIBLE:
+            return c
+        return '\\u%04x' % ord(c) if ord(c) <= 0xFFFF else json.dumps(c)[1:-1]  # above U+FFFF JSON writes a surrogate pair
+    return NON_ASCII.sub(escape, text)
 
 
 def game_version(v):
@@ -152,8 +167,10 @@ def decode_bounded(s):
     raw = base64.b64decode(s[1:], validate=True)
     d = zlib.decompressobj()
     out = d.decompress(raw, MAX_DECOMPRESSED)
-    if not d.eof or d.unconsumed_tail:
+    if d.unconsumed_tail:
         raise ValueError('the decompressed payload is larger than the limit')
+    if not d.eof:
+        raise ValueError('the compressed data is cut short')
     return json.loads(out)
 
 
@@ -315,7 +332,13 @@ def run(args):
         raise Refuse(f'the text is larger than {args.max_bytes} bytes')
     found = find_candidates(text)
     if not found:
-        raise Refuse('no blueprint string found: nothing decodes (a copy with a typo fails the zlib checksum)')
+        hint = ''
+        if text.lstrip().startswith(('{', '[')):
+            try:
+                json.loads(text)
+            except (ValueError, RecursionError) as e:  # a JSONDecodeError names the line and column
+                hint = f'; the text looks like JSON but does not parse ({e})'
+        raise Refuse('no blueprint string found: nothing decodes (a copy with a typo fails the zlib checksum)' + hint)
     if args.pick is not None:
         if not 1 <= args.pick <= len(found):
             raise Refuse(f'--pick {args.pick} is outside 1..{len(found)}')
@@ -323,7 +346,7 @@ def run(args):
     if len(found) > 1:
         listing = [{'pick': i, 'found_in': loc, 'kind': k, 'label': o[k].get('label') or '', 'chars': len(s)}
                    for i, (loc, s, _, o, k) in enumerate(found, 1)]
-        print(json.dumps({'ambiguous': listing}, ensure_ascii=False, indent=1))
+        print(make_visible(json.dumps({'ambiguous': listing}, ensure_ascii=False, indent=1)))
         print(f'{len(found)} different blueprints found; nothing was written (choose one with --pick N)', file=sys.stderr)
         return 3
     loc, s, reencoded, obj, kind = found[0]
@@ -335,7 +358,7 @@ def run(args):
         raise Refuse(f'{args.out.parent} does not exist')
     summary = summarize(obj, kind, s, source, loc, reencoded, args.out)  # before writing: a failure leaves no file behind
     args.out.write_text(s + '\n', encoding='utf-8')
-    print(json.dumps(summary, ensure_ascii=False, indent=1))
+    print(make_visible(json.dumps(summary, ensure_ascii=False, indent=1)))
     return 0
 
 

@@ -1,7 +1,7 @@
 # Factorio blueprints
 
 My personal collection of blueprints for **vanilla Factorio 2.0** (base game, no Space Age), shared to help other
-players. Every blueprint here was tested in the game itself (headless Factorio 2.0.77) before being published.
+players. Each blueprint says how it was tested: see the *Tested* column below and the report on the blueprint's page.
 
 Website: <https://ricardochaves.github.io/factorio/>, in Brazilian Portuguese, English (`/en/`) and Spanish (`/es/`).
 Every blueprint can be copied from there with one click.
@@ -26,7 +26,8 @@ README (in Portuguese) with what was measured, how it was built and known limits
 1. Get the file's text: the **Copy** button on the website, or on GitHub **Copy raw file** (or **Download raw file** and
    open it). The balancer books are 3 to 6 MB of text, too large to select by hand; on the website each balancer and
    each sub-book can also be copied on its own.
-2. In the game, press **Import string** in the shortcut bar (or in the blueprint library) and paste.
+2. In the game, press **Import blueprint string** in the shortcut bar (or **Import string** in the blueprint library) and
+   paste.
 
 Each file is always the latest version. Older versions live in the git history:
 

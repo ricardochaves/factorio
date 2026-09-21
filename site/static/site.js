@@ -127,6 +127,7 @@
       ev.preventDefault();
       img.width = +thumb.dataset.w;
       img.height = +thumb.dataset.h;
+      img.style.aspectRatio = thumb.dataset.w + ' / ' + thumb.dataset.h;  // the new box holds while the image loads; the attributes alone keep the old image's ratio until then
       img.sizes = thumb.dataset.sizes;
       img.srcset = thumb.dataset.srcset;
       img.src = thumb.dataset.src;

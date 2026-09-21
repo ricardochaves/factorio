@@ -10,6 +10,7 @@
 local BP = require("bp")
 
 local MAX_SHOTS = 4
+local MAX_REACH = 512                   -- tiles from a blueprint's center: one farther entity would make the game generate a huge area before any report exists
 local SHOT_DELAY = 120                  -- ticks between the build and the photo
 local LONG_SIDE = 2048                  -- px of the photo's longer side (the API's advice with anti-aliasing); a small build zooms in, at most MAX_ZOOM
 local MAX_ZOOM, MIN_ZOOM = 2, 0.05
@@ -136,7 +137,8 @@ local function extent(s)
   return {x0 = x0, y0 = y0, x1 = x1, y1 = y1}
 end
 
--- Powers the build from outside the frame; returns "N pole groups without power" and where the first of them are.
+-- Powers the build from outside the frame; returns "N of M pole groups without power" and where the first of them are. M counts
+-- the groups of the build's poles, those that the source reaches counting as one, so N equal to M means the source reaches none.
 local function power(s, box)
   local y = (box.y0 + box.y1) / 2
   local pole = s.create_entity{name = "big-electric-pole", position = {box.x1 + SOURCE_GAP, y}, force = "player"}
@@ -146,10 +148,15 @@ local function power(s, box)
   eei.power_production = 1e9
   eei.energy = 1e12
   local cut_off, n, poles, where = {}, 0, 0, {}
+  local groups, m = {}, 0
   for _, p in pairs(s.find_entities_filtered{type = "electric-pole", force = "player"}) do
     if p.unit_number ~= pole.unit_number then
       poles = poles + 1
       local group = p.electric_network_id or ("pole " .. p.unit_number)
+      if not groups[group] then
+        groups[group] = true
+        m = m + 1
+      end
       if p.electric_network_id ~= pole.electric_network_id and not cut_off[group] then
         cut_off[group] = true
         n = n + 1
@@ -158,7 +165,7 @@ local function power(s, box)
     end
   end
   if poles == 0 then return "no poles in the build" end
-  return string.format("%d pole groups without power%s", n, n > 0 and (", first at " .. table.concat(where, " ")) or "")
+  return string.format("%d of %d pole groups without power%s", n, m, n > 0 and (", first at " .. table.concat(where, " ")) or "")
 end
 
 local function photo(s, box, n)
@@ -185,15 +192,20 @@ local function prepare(stack)
   storage.total = found.total
   if found.total == 0 then storage.log[#storage.log + 1] = "the string holds no blueprint with entities" end
   for n, bp in ipairs(found) do
-    local s = build(bp, n)
-    local box = extent(s)
-    if box then
-      local standing, all, missing = built_of(bp, s)
-      local powered = power(s, box)
-      storage.shots[#storage.shots + 1] = {surface = s, box = box, n = n}
-      storage.log[#storage.log + 1] = string.format("blueprint %d: %d of %d entities built%s, %s", n, standing, all, missing, powered)
+    local r = reach(bp)
+    if r > MAX_REACH then
+      storage.log[#storage.log + 1] = string.format("blueprint %d could not be built: it reaches %d tiles from its center, more than the limit of %d", n, math.ceil(r), MAX_REACH)
     else
-      storage.log[#storage.log + 1] = string.format("blueprint %d built nothing", n)
+      local s = build(bp, n)
+      local box = extent(s)
+      if box then
+        local standing, all, missing = built_of(bp, s)
+        local powered = power(s, box)
+        storage.shots[#storage.shots + 1] = {surface = s, box = box, n = n}
+        storage.log[#storage.log + 1] = string.format("blueprint %d: %d of %d entities built%s, %s", n, standing, all, missing, powered)
+      else
+        storage.log[#storage.log + 1] = string.format("blueprint %d built nothing", n)
+      end
     end
   end
 end

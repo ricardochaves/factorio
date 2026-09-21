@@ -129,12 +129,16 @@ script exits 1. The script sets `SteamAppId=427520` itself. It deletes every `sh
 it converts the new photos, so a failed run leaves that folder without them, and it exits 0 only when every photo that the
 report announces was written and the report has no failure line (one that says `could not`, `error`, `built nothing` or
 `holds no blueprint`). The report has a `shots=<n> total=<m>` line (photos taken, blueprints found) and, for each blueprint,
-`<built> of <all> entities built` followed by the names of those not built, and one of three power notes: `N pole groups
+`<built> of <all> entities built` followed by the names of those not built, and one of three power notes: `N of M pole groups
 without power` (with `, first at (x, y)` for the first three), `no poles in the build`, or `the power source could not be
-placed`, which is a failure line. The game builds what can stand on grass and skips the rest without leaving a ghost, so a
-pumpjack (needs oil) or an offshore pump (needs water) is missing from the photo and named in the report. A pole joins the
-source only within its wire reach of the source pole, which stands 5 tiles east of the build, so poles deeper inside can stay
-unpowered. The photos are taken without alt mode (`show_entity_info = false`), so they carry no status icon.
+placed`, which is a failure line. M counts the groups of the build's poles, and the groups that the source reaches count as
+one, so N equal to M means that the source reaches none of the build's poles. The game builds what can stand on grass and
+skips the rest without leaving a ghost, so a pumpjack (needs oil) or an offshore pump (needs water) is missing from the photo
+and named in the report. A pole joins the source only within its wire reach of the source pole, which stands 5 tiles east of
+the build, so poles deeper inside can stay unpowered: that is a limit of the test, not a defect of the design. A build whose
+farthest entity is more than 512 tiles from its center is refused with a `could not be built` line, because the game would
+otherwise generate an enormous area first. The photos are taken without alt mode (`show_entity_info = false`), so they carry
+no status icon, and the icon is absent even on a machine without power.
 
 ## Setup after a fresh clone
 

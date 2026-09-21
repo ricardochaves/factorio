@@ -27,6 +27,8 @@ player-data.json
 !/.claude/commands/
 /.claude/commands/*
 !/.claude/commands/*.md
+# Personal notes for Claude Code that stay on this machine.
+CLAUDE.local.md
 
 # --- Python / C build output ---------------------------------------------------
 __pycache__/
