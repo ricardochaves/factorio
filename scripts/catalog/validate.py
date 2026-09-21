@@ -23,7 +23,9 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
+sys.path.insert(0, str(HERE))  # site/build.py loads this file by path, so its own folder is not on sys.path
 import bp  # noqa: E402  (scripts/bp.py)
+from extract_blueprint import is_blank  # noqa: E402  (the characters that draw nothing although their category is visible)
 from outpath import OutPath  # noqa: E402  (scripts/catalog/outpath.py)
 
 CATEGORIES = {
@@ -35,9 +37,9 @@ CATEGORIES = {
 TEST_STATUS = {'in-game': 'in game', 'simulation': 'simulation only', 'untested': 'not tested'}
 VIEWERS = {'nxm-matrix'}
 IMAGE_EXT = {'.webp', '.png', '.jpg', '.jpeg'}
-SLUG = re.compile(r'^[a-z0-9]+(?:-[a-z0-9]+)*$')
+SLUG = re.compile(r'[a-z0-9]+(?:-[a-z0-9]+)*')  # always matched with fullmatch: `$` would also accept a trailing newline
 TAG = SLUG
-VERSION_STR = re.compile(r'^\d+\.\d+\.\d+$')
+VERSION_STR = re.compile(r'[0-9]+\.[0-9]+\.[0-9]+')
 SCHEMA = {  # key: (required, type)
     'title': (True, str), 'summary': (True, str), 'category': (True, str), 'tags': (True, list),
     'files': (True, list), 'test': (False, dict), 'images': (True, list), 'viewer': (False, str),
@@ -61,11 +63,14 @@ MARKDOWN_SPECIAL = re.compile(r'([\\|\[\]<>`])')
 
 def bad_chars(text):
     """The characters of `text` that draw nothing or reorder text, as U+XXXX: control characters other than tab and line
-    breaks, and format (bidirectional controls, zero-width characters, tags), private-use, surrogate and unassigned ones."""
+    breaks, format ones (bidirectional controls, zero-width characters, tags), private-use and surrogate ones, and the fillers
+    and selectors that the extractor lists as blank (the emoji selectors U+FE0E and U+FE0F are allowed). Unassigned characters
+    are not tested: which ones exist depends on the Unicode version of the Python that runs the check."""
     found = set()
     for c in text:
         category = unicodedata.category(c)
-        if category in ('Cf', 'Co', 'Cs', 'Cn', 'Zl', 'Zp') or (category == 'Cc' and c not in '\t\n\r'):
+        if (category in ('Cf', 'Co', 'Cs', 'Zl', 'Zp') or (category == 'Cc' and c not in '\t\n\r')
+                or (is_blank(c) and c not in '︎️')):
             found.add(f'U+{ord(c):04X}')
     return sorted(found)
 
@@ -114,7 +119,7 @@ class Checker:
         ok = True
         for key in table:
             if key not in schema:
-                self.err(where, f'unknown key "{key}"'); ok = False
+                self.err(where, f'unknown key {key!r}'); ok = False
         for key, (required, typ) in schema.items():
             if key not in table:
                 if required:
@@ -145,8 +150,10 @@ class Checker:
         except tomllib.TOMLDecodeError as e:
             self.err(where, f'invalid TOML: {e}'); return None
         for path, text in strings_of(meta, ''):
-            if bad_chars(text):
-                self.err(where, f'{path} holds characters that draw nothing or reorder text: {", ".join(bad_chars(text))}')
+            found = bad_chars(text)
+            if found:
+                self.err(where, f'{path!r} holds characters that draw nothing or reorder text (a zero-width joiner and a '
+                                f'byte-order mark included): {", ".join(found)}')
         self.check_fields(where, meta, SCHEMA)
         # Keep going after a schema error so one run reports every problem; wrong types count as absent.
         for key, (_, typ) in SCHEMA.items():
@@ -156,7 +163,7 @@ class Checker:
         if 'category' in meta and meta['category'] not in CATEGORIES:
             self.err(where, f'category "{meta["category"]}" is not one of {sorted(CATEGORIES)}')
         for t in meta['tags']:
-            if not isinstance(t, str) or not TAG.match(t):
+            if not isinstance(t, str) or not TAG.fullmatch(t):
                 self.err(where, f'tag {t!r} must be lower-case words joined by "-"')
         if 'viewer' in meta and meta['viewer'] not in VIEWERS:
             self.err(where, f'viewer "{meta["viewer"]}" is not one of {sorted(VIEWERS)}')
@@ -175,7 +182,7 @@ class Checker:
         test = meta.get('test', {})
         if test.get('status') and test['status'] not in TEST_STATUS:
             self.err(where, f'test.status "{test["status"]}" is not one of {sorted(TEST_STATUS)}')
-        if test.get('game_version') and not VERSION_STR.match(test['game_version']):
+        if test.get('game_version') and not VERSION_STR.fullmatch(test['game_version']):
             self.err(where, f'test.game_version "{test["game_version"]}" must look like 2.0.77')
         if test.get('report'):
             self.rel_file(where, folder, test['report'])
@@ -294,7 +301,7 @@ class Checker:
 
     def check_folder(self, folder):
         where = self.where(folder)
-        if not SLUG.match(folder.name):
+        if not SLUG.fullmatch(folder.name):
             self.err(where, 'folder name must be lower-case words joined by "-"')
         if not (folder / 'blueprint.toml').is_file():
             self.err(where, 'missing blueprint.toml'); return None
@@ -307,7 +314,8 @@ class Checker:
                 self.err(where, 'README.md is not UTF-8 text')
             else:
                 if found:
-                    self.err(where, f'README.md holds characters that draw nothing or reorder text: {", ".join(found)}')
+                    self.err(where, 'README.md holds characters that draw nothing or reorder text (a zero-width joiner and a '
+                                    f'byte-order mark included): {", ".join(found)}')
         meta = self.load_meta(folder)
         if meta is None:
             return None

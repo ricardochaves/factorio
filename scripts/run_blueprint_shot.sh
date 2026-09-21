@@ -1,6 +1,5 @@
 #!/bin/zsh
-# usage: run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]  (<out-dir> inside this repository's build/)
-# -- photographs a blueprint or a blueprint book with
+# usage: run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]  -- photographs a blueprint or a blueprint book with
 # scenario blueprint-shot in the GUI game (screenshots need the renderer, so not headless) and writes <out-dir>/shot-<n>.webp:
 # one photo of the whole build per blueprint, the first 4 of a book. Only a successful run touches <out-dir>: it moves the new
 # photos in, replacing the files of the same number, and removes the higher-numbered shot-<n>.webp that an older run left; a
@@ -9,7 +8,8 @@
 # (`shots=<n>`) was converted and the report has no line that starts with `FAIL`. The timeout (default 240 seconds) is how long
 # the game gets to write its report. The game window opens for about half a minute and closes by itself. The game runs without
 # Steam (SteamAppId=427520), which would otherwise restart it and lose the arguments when Steam is open but not logged in. Only
-# the process started here is stopped. Two runs cannot share a checkout (they share ingame/data): the second exits 2.
+# the process started here is stopped. Two runs cannot share a checkout (they share ingame/data): the second exits 2. So does
+# an <out-dir> that is not inside this repository's build/.
 HERE=${0:A:h}
 [[ $# -ge 2 && $# -le 3 ]] || { echo "usage: run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]" >&2; exit 2; }
 [[ -f $1 ]] || { echo "no such file: $1" >&2; exit 2; }

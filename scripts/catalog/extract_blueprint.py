@@ -46,6 +46,7 @@ from urllib.parse import urlsplit
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
+sys.path.insert(0, str(HERE))  # so that the sibling modules import when this file is loaded by path
 import bp  # noqa: E402  (scripts/bp.py)
 from outpath import OutPath  # noqa: E402  (scripts/catalog/outpath.py)
 
@@ -223,8 +224,10 @@ def find_candidates(text):
     else:
         try:
             data = json.loads(text)
-            raw += [(f'JSON {loc}', bp.encode(val) if isinstance(val, dict) else val, isinstance(val, dict))
-                    for loc, val in json_candidates(data)]
+            # A wrapper around a blueprint (a book's child with its "index", say) is encoded without its other keys, so that
+            # the string is one of the four kinds and nothing else.
+            raw += [(f'JSON {loc}', bp.encode({k: val[k] for k in ALL_KINDS if k in val}) if isinstance(val, dict) else val,
+                     isinstance(val, dict)) for loc, val in json_candidates(data)]
         except (ValueError, RecursionError):
             pass  # not JSON, or nested too deeply to be a real blueprint file: scan the text instead
         if len(raw) > MAX_CANDIDATES:
@@ -376,7 +379,11 @@ def run(args):
     if not args.out.parent.is_dir():
         raise Refuse(f'{args.out.parent} does not exist')
     summary = summarize(obj, kind, s, source, loc, reencoded, args.out)  # before writing: a failure leaves no file behind
-    args.out.write_text(s + '\n', encoding='utf-8')
+    try:
+        with open(args.out, 'x', encoding='utf-8') as f:  # 'x' fails on an existing path, a dangling link included
+            f.write(s + '\n')
+    except FileExistsError:
+        raise Refuse(f'{args.out} already exists; it is never overwritten') from None
     print(make_visible(json.dumps(summary, ensure_ascii=False, indent=1)))
     return 0
 

@@ -7,16 +7,22 @@ usage:
 <entry-root> is build/add-blueprint.<random>/root (or root-<k>) of this repository, and it holds blueprints/<slug>/. The tool
 copies that folder to blueprints/<slug>/ and nothing else, so that a command which only lets it run cannot put anything else in
 the folder the owner commits: it refuses a slug that is not lower-case words joined by "-", an entry root anywhere but
-build/add-blueprint.*/ of this repository, a target that already exists, a symbolic link, and any file that is not
-`blueprint.toml`, `README.md`, a `.txt` string in the folder or a `.webp` photo in images/. Nothing is overwritten and nothing is
-deleted. It prints `installed blueprints/<slug> (<n> files)` and exits 0, or prints `refused: <reason>` and exits 2.
-Standard library only (Python 3.11+).
+build/add-blueprint.*/ of this repository, a target that already exists, a symbolic link, any file that is not
+`blueprint.toml`, `README.md`, a `.txt` string in the folder or a `.webp` photo in images/, and an entry that the catalog
+validator (validate.py, run over the entry root) rejects. The copy goes to a temporary folder in build/ and is moved into place
+in one step, so a failure leaves no half-installed entry; each file is opened without following a link and must be a regular
+file. Nothing is overwritten and nothing of the entry is deleted. It prints `installed blueprints/<slug> (<n> files)` and exits
+0, or prints `refused: <reason>` (or `failed: <reason>` for an input or output error) and exits 2. Standard library only
+(Python 3.11+).
 """
 import argparse
 import os
 import re
 import shutil
+import stat
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
@@ -43,10 +49,14 @@ def entry_folder(entry_root, slug):
     return src
 
 
+def unreadable(error):
+    raise error  # os.walk skips a folder that it cannot list unless it is told to raise
+
+
 def files_to_copy(src):
     """The paths, relative to `src`, of every file to copy, after checking each entry of the tree."""
     files = []
-    for folder, dirnames, filenames in os.walk(src, followlinks=False):  # a link to a folder is listed, never entered
+    for folder, dirnames, filenames in os.walk(src, followlinks=False, onerror=unreadable):  # a link to a folder is listed only
         dirnames.sort()
         for name in dirnames + sorted(filenames):
             p = Path(folder) / name
@@ -71,28 +81,52 @@ def files_to_copy(src):
     return files
 
 
+def run_validator(root):
+    """The catalog validator over the entry root: the files were named right, and their content has to be right too."""
+    tool = REPO / 'scripts' / 'catalog' / 'validate.py'
+    done = subprocess.run([sys.executable, '-B', str(tool), '--root', str(root)], capture_output=True, text=True)
+    if done.returncode != 0:
+        raise Refuse('the validator rejects the entry: ' + ' '.join(done.stderr.split())[:300])
+
+
+def copy_regular(source, target):
+    """Copy one file, opened without following a link and without blocking on a pipe; it must be a regular file."""
+    fd = os.open(source, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    with os.fdopen(fd, 'rb') as a:
+        if not stat.S_ISREG(os.fstat(a.fileno()).st_mode):
+            raise Refuse(f'{source} is not a regular file')
+        with open(target, 'xb') as b:
+            shutil.copyfileobj(a, b)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('entry_root', help='build/add-blueprint.<random>/root or root-<k>')
     ap.add_argument('slug', help='the folder name under blueprints/')
     args = ap.parse_args()
+    stage = None
     try:
         src = entry_folder(args.entry_root, args.slug)
         files = files_to_copy(src)
+        run_validator(src.parents[1])
         target = REPO / 'blueprints' / args.slug
         if target.exists() or target.is_symlink():
             raise Refuse(f'blueprints/{args.slug} already exists; it is never overwritten')
-        target.mkdir(parents=True)
+        stage = Path(tempfile.mkdtemp(prefix='install.', dir=REPO / 'build'))
+        (stage / args.slug).mkdir()
         for rel in files:
-            (target / rel).parent.mkdir(exist_ok=True)
-            with open(src / rel, 'rb') as a, open(target / rel, 'xb') as b:
-                shutil.copyfileobj(a, b)
+            (stage / args.slug / rel).parent.mkdir(exist_ok=True)
+            copy_regular(src / rel, stage / args.slug / rel)
+        os.rename(stage / args.slug, target)  # one step, and it fails when the target exists and is not empty
         print(f'installed blueprints/{args.slug} ({len(files)} files)')
         return 0
     except Refuse as e:
         print(f'refused: {e}', file=sys.stderr)
     except OSError as e:
-        print(f'refused: {type(e).__name__}: {e}', file=sys.stderr)
+        print(f'failed: {type(e).__name__}: {e}', file=sys.stderr)
+    finally:
+        if stage is not None:
+            shutil.rmtree(stage, ignore_errors=True)  # the tool's own temporary folder, whatever happened
     return 2
 
 

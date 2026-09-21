@@ -28,6 +28,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
+sys.path.insert(0, str(HERE))  # so that the sibling modules import when this file is loaded by path
 import bp  # noqa: E402  (scripts/bp.py)
 import extract_blueprint as ex  # noqa: E402  (its reader and its bounded decoder refuse oversized input)
 from outpath import OutPath  # noqa: E402  (scripts/catalog/outpath.py)

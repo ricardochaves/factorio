@@ -54,8 +54,8 @@ So write the pull request title for players, and the commit title too in single-
 2. Run `python3 scripts/catalog/validate.py --readme` (Python 3.11 or newer, standard library only). It checks the
    metadata, decodes every string and rejects anything that is not vanilla Factorio 2.0 (Space Age entities, quality
    other than normal, other game versions). It also rejects text in the metadata or in the entry's README that holds
-   zero-width characters, bidirectional controls or other control or format characters, and file names listed in
-   `blueprint.toml` that do not start with a letter or digit or hold anything but letters, digits, `.`, `_` and `-`.
+   zero-width characters, bidirectional controls or other control or format characters, and paths listed in
+   `blueprint.toml` that do not start with a letter or digit or hold anything but letters, digits, `.`, `_`, `-` and `/`.
    Then it refreshes the catalog table in [`README.md`](README.md). Commit the refreshed table with the blueprint: the
    `validate` check fails when it is out of date. Entity counts, size, materials and recipes are computed from the
    string, never typed by hand.
