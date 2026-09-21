@@ -166,8 +166,8 @@ T = {
         'import_title': 'Como importar',
         'import_steps': [
             ('Copie a string', 'Pelo botão Copiar do card ou da página do blueprint.'),
-            ('Clique em Importar código do projeto',
-             'No jogo, clique em Importar código do projeto na barra de atalhos (ou em Importar código, na biblioteca de projetos).'),
+            ('Clique em Importar string',
+             'No jogo, clique em Importar string na barra de atalhos (ou em Importar código, na biblioteca de projetos).'),
             ('Cole e confirme', 'O blueprint, ou o livro inteiro, aparece na sua mão.'),
         ],
         'seal_title': 'Selo de teste em todo blueprint',
@@ -279,8 +279,7 @@ T = {
         'import_title': 'How to import',
         'import_steps': [
             ('Copy the string', "Use the Copy button on the card or on the blueprint's page."),
-            ('Click Import blueprint string',
-             'In the game, click Import blueprint string on the shortcut bar (or Import string in the blueprint library).'),
+            ('Open Import string', 'In the game, click Import string on the shortcut bar (or in the blueprint library).'),
             ('Paste and confirm', 'The blueprint, or the whole book, lands in your hand.'),
         ],
         'seal_title': 'A test badge on every blueprint',
@@ -393,8 +392,8 @@ T = {
         'import_title': 'Cómo importar',
         'import_steps': [
             ('Copia la cadena', 'Con el botón Copiar de la tarjeta o de la página del blueprint.'),
-            ('Abre la importación',
-             'En el juego, haz clic en Importar string de plano, en la barra de acceso directo '
+            ('Abre Importar desde texto',
+             'En el juego, haz clic en Importar desde texto, en la barra de acceso directo '
              '(o en Importar cadena de texto, en la biblioteca de planos).'),
             ('Pega y confirma', 'El blueprint, o el libro entero, queda en tu cursor.'),
         ],
