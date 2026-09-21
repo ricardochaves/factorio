@@ -15,9 +15,13 @@ that holds exactly this string, and `same_design_as` the one that holds the same
 description, icons or game version (nothing is refused for either). Exit 2: nothing usable, or any other failure
 (the reason is on stderr). Exit 3: several different blueprints were found (the list is printed; nothing was written;
 choose with --pick N). It never runs anything it reads. Limits: 50 MB of input, 256 MiB once decompressed, 50 candidate
-strings. A URL must be http(s) and must resolve to a public address, also after each redirect (a DNS rebinding between
-the check and the request is not prevented); --allow-private lifts that for a service you run yourself, and only together
-with EXTRACT_BLUEPRINT_ALLOW_PRIVATE=1 in the environment, so a command line alone cannot switch the check off.
+strings. Fetching a URL needs EXTRACT_BLUEPRINT_ALLOW_URL=1 in the environment: the address of a request can carry data out,
+and a command that starts with the assignment is not matched by an allow rule for this script, so in Claude Code's default
+permission mode a person is asked first. A
+URL must be http(s) and must resolve to a public address, also after each redirect (a DNS rebinding between the check and the
+request is not prevented); --allow-private lifts that for a service you run yourself, and only together with
+EXTRACT_BLUEPRINT_ALLOW_PRIVATE=1 in the environment, so a command line alone cannot switch the check off. --out is accepted
+once and refuses a path with a `..` component (outpath.py).
 Standard library only (Python 3.11+).
 """
 import argparse
@@ -32,6 +36,7 @@ import socket
 import ssl
 import sys
 import time
+import unicodedata
 import urllib.error
 import urllib.request
 import zlib
@@ -41,7 +46,9 @@ from urllib.parse import urlsplit
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
+sys.path.insert(0, str(HERE))  # so that the sibling modules import when this file is loaded by path
 import bp  # noqa: E402  (scripts/bp.py)
+from outpath import OutPath  # noqa: E402  (scripts/catalog/outpath.py)
 
 MAX_BYTES = 50 * 1024 * 1024
 MAX_DECOMPRESSED = 256 * 1024 * 1024
@@ -51,10 +58,36 @@ COSMETIC = ('label', 'description', 'icons', 'version', 'active_index')
 ALL_KINDS = KINDS + ('upgrade_planner', 'deconstruction_planner')
 WHOLE = re.compile(r'0[A-Za-z0-9+/]{40,}={0,2}')
 SCAN = re.compile(r'0[A-Za-z0-9+/]{60,}={0,2}')
+# Unicode categories that draw nothing: control, format, private-use, surrogate, unassigned, line and paragraph separators and
+# spaces (only U+007F and above are tested: JSON already escapes the control characters below U+0020, and U+0020 is the
+# ordinary space).
+INVISIBLE = ('Cc', 'Cf', 'Co', 'Cs', 'Cn', 'Zl', 'Zp', 'Zs')
+# Letters, marks and symbols that draw nothing although their category is not in INVISIBLE, by code point, and the reserved
+# code points that are ignorable when drawn (their category, Cn, depends on the Unicode version of the Python that runs).
+BLANK_RANGES = ((0x034F, 0x034F), (0x115F, 0x1160), (0x17B4, 0x17B5), (0x180B, 0x180F), (0x2065, 0x2065), (0x2800, 0x2800),
+                (0x3164, 0x3164), (0xFE00, 0xFE0F), (0xFFA0, 0xFFA0), (0xFFF0, 0xFFF8), (0xE0000, 0xE0000), (0xE0002, 0xE001F),
+                (0xE0080, 0xE00FF), (0xE0100, 0xE01EF), (0xE01F0, 0xE0FFF))
+NON_ASCII = re.compile('[\x7f-\U0010ffff]')
 
 
 class Refuse(Exception):
     """The input cannot be used; the message says why."""
+
+
+def is_blank(c):
+    return any(lo <= ord(c) <= hi for lo, hi in BLANK_RANGES)
+
+
+def make_visible(text):
+    """`text` with every invisible character written as a JSON \\u escape. A label or a description comes from the source, and a
+    character that draws nothing (a zero-width space, a bidirectional control, a Unicode tag character) would otherwise reach the
+    reader unseen. `text` is JSON, so each escape decodes back to the same character."""
+    def escape(m):
+        c = m.group()
+        if unicodedata.category(c) not in INVISIBLE and not is_blank(c):
+            return c
+        return '\\u%04x' % ord(c) if ord(c) <= 0xFFFF else json.dumps(c)[1:-1]  # above U+FFFF JSON writes a surrogate pair
+    return NON_ASCII.sub(escape, text)
 
 
 def game_version(v):
@@ -152,8 +185,10 @@ def decode_bounded(s):
     raw = base64.b64decode(s[1:], validate=True)
     d = zlib.decompressobj()
     out = d.decompress(raw, MAX_DECOMPRESSED)
-    if not d.eof or d.unconsumed_tail:
+    if d.unconsumed_tail:
         raise ValueError('the decompressed payload is larger than the limit')
+    if not d.eof:
+        raise ValueError('the compressed data is cut short')
     return json.loads(out)
 
 
@@ -191,8 +226,10 @@ def find_candidates(text):
     else:
         try:
             data = json.loads(text)
-            raw += [(f'JSON {loc}', bp.encode(val) if isinstance(val, dict) else val, isinstance(val, dict))
-                    for loc, val in json_candidates(data)]
+            # A wrapper around a blueprint (a book's child with its "index", say) is encoded without its other keys, so that
+            # the string is one of the four kinds and nothing else.
+            raw += [(f'JSON {loc}', bp.encode({k: val[k] for k in ALL_KINDS if k in val}) if isinstance(val, dict) else val,
+                     isinstance(val, dict)) for loc, val in json_candidates(data)]
         except (ValueError, RecursionError):
             pass  # not JSON, or nested too deeply to be a real blueprint file: scan the text instead
         if len(raw) > MAX_CANDIDATES:
@@ -303,6 +340,10 @@ def run(args):
         text = sys.stdin.read()
         source = {'type': 'stdin', 'where': '-'}
     elif re.match(r'^[A-Za-z][A-Za-z0-9+.-]*://', args.source):
+        if os.environ.get('EXTRACT_BLUEPRINT_ALLOW_URL') != '1':
+            raise Refuse('fetching a URL needs EXTRACT_BLUEPRINT_ALLOW_URL=1 in the environment (a command that starts with the '
+                         'assignment is not matched by an allow rule for this script, so in the default permission mode the '
+                         'person who runs Claude Code approves the address first)')
         text = read_url(args.source, args.max_bytes, args.allow_private)
         source = {'type': 'url', 'where': args.source}
     else:
@@ -315,7 +356,13 @@ def run(args):
         raise Refuse(f'the text is larger than {args.max_bytes} bytes')
     found = find_candidates(text)
     if not found:
-        raise Refuse('no blueprint string found: nothing decodes (a copy with a typo fails the zlib checksum)')
+        hint = ''
+        if text.lstrip().startswith(('{', '[')):
+            try:
+                json.loads(text)
+            except (ValueError, RecursionError) as e:  # a JSONDecodeError names the line and column
+                hint = f'; the text looks like JSON but does not parse ({e})'
+        raise Refuse('no blueprint string found: nothing decodes (a copy with a typo fails the zlib checksum)' + hint)
     if args.pick is not None:
         if not 1 <= args.pick <= len(found):
             raise Refuse(f'--pick {args.pick} is outside 1..{len(found)}')
@@ -323,7 +370,7 @@ def run(args):
     if len(found) > 1:
         listing = [{'pick': i, 'found_in': loc, 'kind': k, 'label': o[k].get('label') or '', 'chars': len(s)}
                    for i, (loc, s, _, o, k) in enumerate(found, 1)]
-        print(json.dumps({'ambiguous': listing}, ensure_ascii=False, indent=1))
+        print(make_visible(json.dumps({'ambiguous': listing}, ensure_ascii=False, indent=1)))
         print(f'{len(found)} different blueprints found; nothing was written (choose one with --pick N)', file=sys.stderr)
         return 3
     loc, s, reencoded, obj, kind = found[0]
@@ -334,8 +381,12 @@ def run(args):
     if not args.out.parent.is_dir():
         raise Refuse(f'{args.out.parent} does not exist')
     summary = summarize(obj, kind, s, source, loc, reencoded, args.out)  # before writing: a failure leaves no file behind
-    args.out.write_text(s + '\n', encoding='utf-8')
-    print(json.dumps(summary, ensure_ascii=False, indent=1))
+    try:
+        with open(args.out, 'x', encoding='utf-8') as f:  # 'x' fails on an existing path, a dangling link included
+            f.write(s + '\n')
+    except FileExistsError:
+        raise Refuse(f'{args.out} already exists; it is never overwritten') from None
+    print(make_visible(json.dumps(summary, ensure_ascii=False, indent=1)))
     return 0
 
 
@@ -346,7 +397,7 @@ def main():
     claude_dir = Path(os.environ.get('CLAUDE_CONFIG_DIR') or Path.home() / '.claude')
     ap.add_argument('--paste-cache-dir', type=Path, default=claude_dir / 'paste-cache')
     ap.add_argument('--max-age-hours', type=float, default=6)
-    ap.add_argument('--out', type=Path, required=True, help='where to write the string (must not exist)')
+    ap.add_argument('--out', action=OutPath, required=True, help='where to write the string (must not exist)')
     ap.add_argument('--max-bytes', type=int, default=MAX_BYTES)
     ap.add_argument('--pick', type=int, metavar='N', help='when several blueprints are found, take the Nth (1-based)')
     ap.add_argument('--allow-private', action='store_true',

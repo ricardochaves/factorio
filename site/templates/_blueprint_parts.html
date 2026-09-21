@@ -36,14 +36,15 @@
 
 {% macro gallery(e) %}
 {% set first = e.images[0] %}
+{% set many = e.images|length > 1 %}
 <figure class="panel gallery" data-gallery>
   <a class="gallery-main" href="{{ root ~ first.full }}" data-gallery-link>
     <img src="{{ root ~ first.variants[-1][0] }}" srcset="{{ srcset(first) }}" sizes="min({{ first.shown }}px, calc(100vw - 52px))"
          width="{{ first.variants[-1][1] }}" height="{{ first.variants[-1][2] }}" alt="{{ loc(first.alt) }}" fetchpriority="high" data-gallery-img>
   </a>
   <figcaption class="gallery-caption">
-    <span class="muted"><span class="source">{{ t.gallery_caption }}</span> <a href="{{ root ~ first.full }}" data-gallery-full>{{ m.icon('expand', 16) }} {{ t.full_size }}</a></span>
-    {% if e.images|length > 1 %}
+    <span class="muted"><span class="source">{{ t.gallery_caption if many else t.gallery_caption_one }}</span> <a href="{{ root ~ first.full }}" data-gallery-full>{{ m.icon('expand', 16) }} {{ t.full_size }}</a></span>
+    {% if many %}
     <span class="thumbs">
       {% for img in e.images %}
       <a href="{{ root ~ img.full }}" class="thumb" data-thumb{% if loop.first %} aria-current="true"{% endif %}

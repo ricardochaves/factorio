@@ -45,16 +45,20 @@ So write the pull request title for players, and the commit title too in single-
    - `blueprint.toml`, the hand-written metadata (copy one from another folder);
    - `README.md`, in Portuguese: what it does, inputs and outputs, how it was tested, known limits (the website shows
      it as the blueprint's report, one card per `##` section);
-   - `images/` (WebP) with at least one real screenshot taken in the game, listed in `blueprint.toml`. The machines
-     in the shot must be working (powered, fed), so no "not working" icon shows up. The exception is the photos taken by
-     this repository's Claude Code command `/add-blueprint` (`.claude/commands/add-blueprint.md`): they show the build
-     placed and, where the power source reaches its poles, powered, with no ingredients fed to the machines, and are
-     taken without alt mode, so they carry no status icon.
+   - `images/` (WebP): one real screenshot taken in the game per new entry, listed in `blueprint.toml` (the validator
+     requires at least one, and the maintainer's review asks to remove a second). The machines in the shot must be
+     working (powered, fed), so no "not working" icon shows up. The exception is the photos taken by this repository's
+     Claude Code command `/add-blueprint` (`.claude/commands/add-blueprint.md`): they show the build placed and, where
+     the power source reaches its poles, powered, with no ingredients fed to the machines, and are taken without alt
+     mode, so they carry no status icon.
 2. Run `python3 scripts/catalog/validate.py --readme` (Python 3.11 or newer, standard library only). It checks the
-   metadata, decodes every string, rejects anything that is not vanilla Factorio 2.0 (Space Age entities, quality
-   other than normal, other game versions) and refreshes the catalog table in [`README.md`](README.md). Commit the
-   refreshed table with the blueprint: the `validate` check fails when it is out of date. Entity counts, size,
-   materials and recipes are computed from the string, never typed by hand.
+   metadata, decodes every string and rejects anything that is not vanilla Factorio 2.0 (Space Age entities, quality
+   other than normal, other game versions). It also rejects text in the metadata or in the entry's README that holds
+   zero-width characters, bidirectional controls, other control or format characters or fillers that draw nothing, and
+   paths listed in `blueprint.toml` that do not start with a letter or digit or hold anything but letters, digits, `.`,
+   `_`, `-` and `/`. Then it refreshes the catalog table in [`README.md`](README.md). Commit the refreshed table with
+   the blueprint: the `validate` check fails when it is out of date. Entity counts, size, materials and recipes are
+   computed from the string, never typed by hand.
 3. Optionally test it in the game with the harness in [`scripts/`](scripts/).
 4. Open a pull request, as described [above](#how-a-change-reaches-main). A new version overwrites the same `.txt`
    file and git keeps the history, so never add `-v2` copies.

@@ -6,12 +6,28 @@
 .env
 .env.*
 # Files that can hold an account token or a browser session, wherever a tool leaves them (Factorio's player-data.json,
-# recorded HTTP traffic, Playwright storage state and the Playwright MCP output folder).
+# recorded HTTP traffic, Playwright storage state and auth folders, and the Playwright MCP output folder).
 player-data.json
 *.har
 *.har.gz
 *storage-state*.json
+**/playwright/.auth/
 .playwright-mcp/
+# Private keys and certificates.
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+id_ecdsa*
+# Credential files of other tools: package registries, netrc, the AWS CLI and an MCP configuration that can hold tokens (a
+# project MCP configuration that the repository shares would need its own `!.mcp.json` line, as the .claude/ block does).
+.netrc
+.npmrc
+.pypirc
+.aws/
+.mcp.json
 
 # Claude Code: keep only the project instructions and the shared subagents and commands (Markdown files only). A project
 # settings.json or a hook script under .claude/ would need its own `!` line here.
@@ -23,6 +39,8 @@ player-data.json
 !/.claude/commands/
 /.claude/commands/*
 !/.claude/commands/*.md
+# Personal notes for Claude Code that stay on this machine.
+CLAUDE.local.md
 
 # --- Python / C build output ---------------------------------------------------
 __pycache__/

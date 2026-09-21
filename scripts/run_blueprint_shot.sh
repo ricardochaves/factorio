@@ -8,13 +8,17 @@
 # (`shots=<n>`) was converted and the report has no line that starts with `FAIL`. The timeout (default 240 seconds) is how long
 # the game gets to write its report. The game window opens for about half a minute and closes by itself. The game runs without
 # Steam (SteamAppId=427520), which would otherwise restart it and lose the arguments when Steam is open but not logged in. Only
-# the process started here is stopped. Two runs cannot share a checkout (they share ingame/data): the second exits 2.
+# the process started here is stopped. Two runs cannot share a checkout (they share ingame/data): the second exits 2. So does
+# an <out-dir> that is not inside this repository's build/.
 HERE=${0:A:h}
-[[ $# -ge 2 ]] || { echo "usage: run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]" >&2; exit 2; }
+[[ $# -ge 2 && $# -le 3 ]] || { echo "usage: run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]" >&2; exit 2; }
 [[ -f $1 ]] || { echo "no such file: $1" >&2; exit 2; }
 T=${3:-240}
 [[ $T == <-> ]] || { echo "the timeout is a whole number of seconds, not '$T'" >&2; exit 2; }
 BP=${1:A}; OUT=${2:A}
+# The photos go into a git-ignored folder of this repository: the runner moves files into <out-dir> and deletes the higher-numbered
+# shot-<n>.webp there, and an allow rule for the script cannot limit where <out-dir> points.
+[[ $OUT == "${HERE:h}/build/"* ]] || { echo "the out-dir must be inside ${HERE:h}/build/: $OUT" >&2; exit 2; }
 STR=$(<"$BP")
 # The string goes into a Lua source file between quotes: only the characters of a blueprint string may reach it. A glob compares
 # every byte, where a regular expression would stop at a NUL byte and let the rest through.
@@ -59,7 +63,7 @@ while [ ! -f data/script-output/blueprint_shot_done.txt ]; do
 done
 echo "elapsed $(( $(date +%s) - S ))s"
 cat data/script-output/blueprint_shot_done.txt 2> /dev/null
-grep -iE "error|exception|traceback" blueprint_shot.log | head -10
+grep -iE "error|exception|traceback" blueprint_shot.log | LC_ALL=C cut -c1-200 | head -10
 want=$(sed -n 's/^shots=\([0-9][0-9]*\) total=.*/\1/p' data/script-output/blueprint_shot_done.txt 2> /dev/null)
 # The game writes the photos after the report: wait until they all exist and stop growing, then stop the game.
 for (( k = 0; k < 30; k++ )); do

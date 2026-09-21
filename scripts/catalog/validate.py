@@ -17,12 +17,16 @@ import json
 import re
 import sys
 import tomllib
+import unicodedata
 from collections import Counter
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
+sys.path.insert(0, str(HERE))  # site/build.py loads this file by path, so its own folder is not on sys.path
 import bp  # noqa: E402  (scripts/bp.py)
+from extract_blueprint import is_blank  # noqa: E402  (the characters that draw nothing although their category is visible)
+from outpath import OutPath  # noqa: E402  (scripts/catalog/outpath.py)
 
 CATEGORIES = {
     'belts': 'Belts', 'mining-smelting': 'Mining & smelting', 'oil': 'Oil processing', 'production': 'Production',
@@ -33,9 +37,9 @@ CATEGORIES = {
 TEST_STATUS = {'in-game': 'in game', 'simulation': 'simulation only', 'untested': 'not tested'}
 VIEWERS = {'nxm-matrix'}
 IMAGE_EXT = {'.webp', '.png', '.jpg', '.jpeg'}
-SLUG = re.compile(r'^[a-z0-9]+(?:-[a-z0-9]+)*$')
+SLUG = re.compile(r'[a-z0-9]+(?:-[a-z0-9]+)*')  # always matched with fullmatch: `$` would also accept a trailing newline
 TAG = SLUG
-VERSION_STR = re.compile(r'^\d+\.\d+\.\d+$')
+VERSION_STR = re.compile(r'[0-9]+\.[0-9]+\.[0-9]+')
 SCHEMA = {  # key: (required, type)
     'title': (True, str), 'summary': (True, str), 'category': (True, str), 'tags': (True, list),
     'files': (True, list), 'test': (False, dict), 'images': (True, list), 'viewer': (False, str),
@@ -51,6 +55,57 @@ SUB_SCHEMA = {
     'en': TRANSLATION, 'es': TRANSLATION,
 }
 README_START, README_END = '<!-- catalog:start -->', '<!-- catalog:end -->'
+
+
+SAFE_PATH = re.compile(r'[A-Za-z0-9][A-Za-z0-9._/-]*')  # a file named in blueprint.toml ends up in a link of the README table
+MARKDOWN_SPECIAL = re.compile(r'([\\|\[\]<>`])')
+
+
+EMOJI_SELECTORS = (0xFE0E, 0xFE0F)
+# Characters that take an emoji selector (Unicode's emoji-variation-sequences.txt) although their category is not So: U+203C,
+# U+2049, U+2139, U+2194, U+25FB to U+25FE, U+2934, U+2935, U+3030 and U+303D.
+EMOJI_TEXT_BASES = tuple(chr(cp) for cp in (0x203C, 0x2049, 0x2139, 0x2194, 0x25FB, 0x25FC, 0x25FD, 0x25FE, 0x2934, 0x2935,
+                                              0x3030, 0x303D))
+
+
+def bad_chars(text):
+    """The characters of `text` that draw nothing or reorder text, as U+XXXX: control characters other than tab and line
+    breaks, format ones (bidirectional controls, zero-width characters, tags), private-use and surrogate ones, and the fillers
+    and selectors that the extractor lists as blank. The emoji selectors U+FE0E and U+FE0F are allowed only right after a
+    symbol above ASCII (category So, or one of the few emoji that are not), or after `#`, `*` or a digit that a keycap
+    (U+20E3) follows: after any other character they could carry a bit that nobody sees. Unassigned characters are tested
+    only through the extractor's list of reserved ones that draw nothing: which characters are unassigned depends on the
+    Unicode version of the Python that runs the check."""
+    found = set()
+    for i, c in enumerate(text):
+        if ord(c) in EMOJI_SELECTORS:
+            before = text[i - 1] if i else ' '
+            symbol = (ord(before) > 0x7F and unicodedata.category(before) == 'So') or before in EMOJI_TEXT_BASES
+            keycap = before in '#*0123456789' and text[i + 1:i + 2] == chr(0x20E3)
+            bad = not (symbol or keycap)
+        else:
+            category = unicodedata.category(c)
+            bad = (category in ('Cf', 'Co', 'Cs', 'Zl', 'Zp') or (category == 'Cc' and c not in '\t\n\r') or is_blank(c))
+        if bad:
+            found.add(f'U+{ord(c):04X}')
+    return sorted(found)
+
+
+def strings_of(value, path):
+    """(path, text) for every string inside a TOML value."""
+    if isinstance(value, str):
+        yield path, value
+    elif isinstance(value, dict):
+        for k, v in value.items():
+            yield from strings_of(v, f'{path}.{k}' if path else str(k))
+    elif isinstance(value, list):
+        for i, v in enumerate(value):
+            yield from strings_of(v, f'{path}[{i}]')
+
+
+def md_cell(text):
+    """`text` as one cell of a Markdown table: one line, with what would open a link, a tag or a column escaped."""
+    return MARKDOWN_SPECIAL.sub(r'\\\1', ' '.join(text.split()))
 
 
 def game_version(v):
@@ -80,7 +135,7 @@ class Checker:
         ok = True
         for key in table:
             if key not in schema:
-                self.err(where, f'unknown key "{key}"'); ok = False
+                self.err(where, f'unknown key {key!r}'); ok = False
         for key, (required, typ) in schema.items():
             if key not in table:
                 if required:
@@ -94,6 +149,10 @@ class Checker:
         path = (folder / rel)
         if Path(rel).is_absolute() or '..' in Path(rel).parts:
             self.err(where, f'path "{rel}" must stay inside the folder'); return None
+        if not SAFE_PATH.fullmatch(rel):
+            self.err(where, f'path "{rel}" must start with a letter or digit and may hold only letters, digits, '
+                            '".", "_", "-" and "/"')
+            return None
         if exts and path.suffix.lower() not in exts:
             self.err(where, f'"{rel}" must be one of {sorted(exts)}'); return None
         if not path.is_file():
@@ -106,6 +165,12 @@ class Checker:
             meta = tomllib.loads((folder / 'blueprint.toml').read_text(encoding='utf-8'))
         except tomllib.TOMLDecodeError as e:
             self.err(where, f'invalid TOML: {e}'); return None
+        for path, text in strings_of(meta, ''):
+            found = bad_chars(text)
+            if found:
+                self.err(where, f'{path!r} holds characters that draw nothing or reorder text (a zero-width joiner and a '
+                                'byte-order mark included; an emoji selector is allowed only right after a symbol): '
+                                f'{", ".join(found)}')
         self.check_fields(where, meta, SCHEMA)
         # Keep going after a schema error so one run reports every problem; wrong types count as absent.
         for key, (_, typ) in SCHEMA.items():
@@ -115,7 +180,7 @@ class Checker:
         if 'category' in meta and meta['category'] not in CATEGORIES:
             self.err(where, f'category "{meta["category"]}" is not one of {sorted(CATEGORIES)}')
         for t in meta['tags']:
-            if not isinstance(t, str) or not TAG.match(t):
+            if not isinstance(t, str) or not TAG.fullmatch(t):
                 self.err(where, f'tag {t!r} must be lower-case words joined by "-"')
         if 'viewer' in meta and meta['viewer'] not in VIEWERS:
             self.err(where, f'viewer "{meta["viewer"]}" is not one of {sorted(VIEWERS)}')
@@ -134,7 +199,7 @@ class Checker:
         test = meta.get('test', {})
         if test.get('status') and test['status'] not in TEST_STATUS:
             self.err(where, f'test.status "{test["status"]}" is not one of {sorted(TEST_STATUS)}')
-        if test.get('game_version') and not VERSION_STR.match(test['game_version']):
+        if test.get('game_version') and not VERSION_STR.fullmatch(test['game_version']):
             self.err(where, f'test.game_version "{test["game_version"]}" must look like 2.0.77')
         if test.get('report'):
             self.rel_file(where, folder, test['report'])
@@ -253,12 +318,22 @@ class Checker:
 
     def check_folder(self, folder):
         where = self.where(folder)
-        if not SLUG.match(folder.name):
+        if not SLUG.fullmatch(folder.name):
             self.err(where, 'folder name must be lower-case words joined by "-"')
         if not (folder / 'blueprint.toml').is_file():
             self.err(where, 'missing blueprint.toml'); return None
         if not (folder / 'README.md').is_file():
             self.err(where, 'missing README.md')
+        else:
+            try:
+                found = bad_chars((folder / 'README.md').read_text(encoding='utf-8'))
+            except UnicodeDecodeError:
+                self.err(where, 'README.md is not UTF-8 text')
+            else:
+                if found:
+                    self.err(where, 'README.md holds characters that draw nothing or reorder text (a zero-width joiner and a '
+                                    'byte-order mark included; an emoji selector is allowed only right after a symbol): '
+                                    f'{", ".join(found)}')
         meta = self.load_meta(folder)
         if meta is None:
             return None
@@ -323,7 +398,7 @@ def readme_table(catalog):
     rows = ['| Blueprint | Category | What is inside | Files | Tested |', '|---|---|---|---|---|']
     order = list(CATEGORIES)
     for e in sorted(catalog, key=lambda e: (order.index(e['category']), e['title'])):
-        title = e['en'].get('title', e['title'])
+        title = md_cell(e['en'].get('title', e['title']))
         files = ' · '.join(f'[`{f["path"]}`](blueprints/{e["slug"]}/{f["path"]})' for f in e['files'])
         test = e['test']
         tested = TEST_STATUS.get(test.get('status'), '?') + (f', {test["game_version"]}' if test.get('game_version') else '')
@@ -335,7 +410,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('--root', type=Path, default=HERE.parent.parent, help='repository root (default: this repo)')
     ap.add_argument('--prototypes', type=Path, default=HERE / 'vanilla-prototypes.json')
-    ap.add_argument('--json', type=Path, help='write the catalog index here (use a git-ignored path such as build/)')
+    ap.add_argument('--json', action=OutPath, help='write the catalog index here (use a git-ignored path such as build/; an '
+                                                   'existing file is overwritten); given once, without a ".." component')
     ap.add_argument('--readme', action='store_true', help='refresh the catalog table in README.md')
     args = ap.parse_args()
     root = args.root.resolve()

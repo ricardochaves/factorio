@@ -16,9 +16,12 @@ Everything runs with Python 3 (standard library only) on macOS; the in-game test
 
 | File | Purpose |
 |---|---|
-| `validate.py` | Checks every `blueprints/*/blueprint.toml`, decodes each string, rejects non-vanilla names, non-normal quality and game versions other than 2.0, and computes entities, size, materials and recipes. `--json build/catalog.json` writes the index for the site; `--readme` refreshes the table in the root README. Runs in CI (`.github/workflows/validate.yml`). |
-| `extract_blueprint.py` | Takes a blueprint string out of a file (`.txt`, `.json`, HTML), an http(s) URL, stdin or Claude Code's paste cache, proves that it decodes (zlib checksum, size limits, public addresses only) and writes it to a new file with a JSON summary that also says whether the catalog already holds that string or the same design under another label. It is the first step of the `/add-blueprint` command (`.claude/commands/add-blueprint.md`). |
-| `run_blueprint_shot.sh` | The photo step of `/add-blueprint`: `./run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]` builds a blueprint, or the first four of a book, in the game (scenario `blueprint-shot`, see "In-game harness"), powers it where its source reaches the poles, photographs its whole extent and, only after a successful run, writes `<out-dir>/shot-<n>.webp`, replacing any already there. Needs the game and `cwebp`. |
+| `validate.py` | Checks every `blueprints/*/blueprint.toml`, decodes each string, rejects non-vanilla names, non-normal quality, game versions other than 2.0 and text (metadata and entry READMEs) with zero-width characters, bidirectional controls, other control or format characters or fillers that draw nothing, and computes entities, size, materials and recipes. `--json build/catalog.json` writes the index for the site; `--readme` refreshes the table in the root README, with the titles escaped. Runs in CI (`.github/workflows/validate.yml`). |
+| `extract_blueprint.py` | Takes a blueprint string out of a file (`.txt`, `.json`, HTML), an http(s) URL, stdin or Claude Code's paste cache, proves that it decodes (zlib checksum, size limits, public addresses only) and writes it to a new file with a JSON summary that also says whether the catalog already holds that string or the same design under another label. A URL is fetched only with `EXTRACT_BLUEPRINT_ALLOW_URL=1` in the environment, as `EXTRACT_BLUEPRINT_ALLOW_URL=1 python3 scripts/catalog/extract_blueprint.py <url> --out <file>`. It is the first step of the `/add-blueprint` command (`.claude/commands/add-blueprint.md`). |
+| `edit_blueprint.py` | The correction step of `/add-blueprint`: `decode <bp.txt> --out <bp.json>` writes the decoded JSON to edit (`extract_blueprint.py` turns the edited JSON back into a string; `decode` refuses, and writes nothing for, a string whose top-level object holds a key other than `blueprint`, `blueprint_book`, `upgrade_planner` or `deconstruction_planner`), and `diff <before.txt> <after.txt>` lists every path whose value differs, so that a correction can be proved to change only what was meant. It pairs entities by `entity_number`, compares the wires as rows (whatever their order, counting a repeated row) and writes invisible characters as `\u` escapes. Standard library only. |
+| `install_entry.py` | The copy step of `/add-blueprint` (step 8): `install_entry.py <entry-root> <slug>` copies `<entry-root>/blueprints/<slug>/` (the entry root is `build/add-blueprint.*/root` or `root-<k>`) to `blueprints/<slug>/` and refuses anything but the files of a catalog entry (`blueprint.toml`, `README.md`, `.txt` strings, `.webp` photos in `images/`), a link, a slug that is not lower-case words joined by `-`, an entry that already exists and an entry that `validate.py` rejects. It copies into a temporary folder in `build/`, runs `validate.py` over the copy and moves it into place in one step. Standard library only. |
+| `outpath.py` | The `--out` (extractor, `edit_blueprint.py decode`) and `--json` (validator) option: accepted once, and refused when the path has a `..` component, so that an allow rule that pins the path to a folder holds. Imported by those tools. |
+| `run_blueprint_shot.sh` | The photo step of `/add-blueprint`: `./run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]` builds a blueprint, or the first four of a book, in the game (scenario `blueprint-shot`, see "In-game harness"), powers it where its source reaches the poles, photographs its whole extent and, only after a successful run, writes `<out-dir>/shot-<n>.webp`, replacing any already there; `<out-dir>` must be inside this repository's `build/`. Needs the game and `cwebp`. |
 | `vanilla-prototypes.json` | Every prototype name of the base game (entities with tile size and the item that places them, items, recipes, fluids, tiles, signals, quality). |
 | `dump_prototypes.sh` | Regenerates the file above from the local game with scenario `ingame/data/scenarios/dump-prototypes`; it refuses to save if any mod other than `base` is active. Re-run after a Factorio update. |
 | `vanilla-locale.json` | In-game names of items, entities, recipes and fluids in English, Brazilian Portuguese and Spanish, used by the website. |
@@ -93,6 +96,7 @@ Environment variables:
 | `FBTIER` | `blue` | balancer scripts |
 | `FBWARM` | depends on tier | `export_tests.py` (warm-up ticks) |
 | `FBPHASES` | `ABCDEFGHI` | `export_tests.py` (measurement phases) |
+| `WEBP_Q` | `82` | `run_*_shot.sh` (quality of the WebP photos) |
 
 `config.ini` is written on every run. Never commit anything else from `ingame/data`: `player-data.json` there holds
 your Factorio account token. Every runner that starts the headless server passes `--bind 127.0.0.1`, so nothing outside
@@ -127,14 +131,15 @@ prefix when Steam is open but not logged in). Its shots are listed at the top of
 of the block, outside every frame except its copper wire.
 
 Photos of any blueprint or blueprint book come from scenario `blueprint-shot`, through `./run_blueprint_shot.sh <blueprint.txt>
-<out-dir> [timeout-seconds]`. It needs the normal (non-headless) game, whose window opens for about half a minute, and `cwebp`
-(`brew install webp`).
+<out-dir> [timeout-seconds]`, with `<out-dir>` inside this repository's `build/`: it is resolved against the current folder, so
+from `scripts/` write `../build/shots`. It needs the normal (non-headless) game, whose window opens for about half a minute,
+and `cwebp` (`brew install webp`).
 
 - **Input and exit status.** The file holds one bare blueprint string on one line. The script exits 2 for anything else, for a
-  usage error, a missing file, a timeout that is not a whole number and a second run in the same checkout (which would share
-  `ingame/data`). It exits 1 for every other failure: no `cwebp` or game binary, a folder or file it cannot create, or a
-  failed run. It exits 0 only when every photo that the report announces was written and the report has no line that starts
-  with `FAIL`. It sets `SteamAppId=427520` itself.
+  usage error, a missing file, a timeout that is not a whole number, an `<out-dir>` outside `build/` and a second run in the
+  same checkout (which would share `ingame/data`). It exits 1 for every other failure: no `cwebp` or game binary, a folder
+  or file it cannot create, or a failed run. It exits 0 only when every photo that the report announces was written and the
+  report has no line that starts with `FAIL`. It sets `SteamAppId=427520` itself.
 - **Output.** Each photo is converted into a staging folder first. Only a successful run moves the new `shot-<n>.webp` into
   `<out-dir>`, replacing the file of the same number, and removes the higher-numbered ones that an older run left; a failed run
   leaves the files there as they were (a new `<out-dir>` is still created, empty).

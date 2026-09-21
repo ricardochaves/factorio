@@ -167,7 +167,8 @@ T = {
         'import_steps': [
             ('Copie a string', 'Pelo botão Copiar do card ou da página do blueprint.'),
             ('Clique em Importar string',
-             'No jogo, clique em Importar string na barra de atalhos (ou em Importar código, na biblioteca de projetos).'),
+             'No jogo, clique em Importar string na barra de atalhos (ou em Importar código, na biblioteca de projetos). '
+             'Este atalho requer a tecnologia Robôs construtores.'),
             ('Cole e confirme', 'O blueprint, ou o livro inteiro, aparece na sua mão.'),
         ],
         'seal_title': 'Selo de teste em todo blueprint',
@@ -197,7 +198,7 @@ T = {
         'download_txt': 'Baixar .txt · {size}', 'history_github': 'Histórico no GitHub',
         'test_banner': 'Factorio {v}, sem Space Age.', 'updated': 'Atualizado em {date}.',
         'see_report': 'Ver relatório',
-        'gallery_caption': 'Capturas do próprio jogo.', 'full_size': 'Ver em tamanho real',
+        'gallery_caption': 'Capturas do próprio jogo.', 'gallery_caption_one': 'Captura do próprio jogo.', 'full_size': 'Ver em tamanho real',
         'from_string': 'calculado a partir da string',
         'st_entities': 'entidades', 'st_tiles': 'tiles',
         'produces': 'O que produz', 'materials': 'Materiais',
@@ -279,7 +280,9 @@ T = {
         'import_title': 'How to import',
         'import_steps': [
             ('Copy the string', "Use the Copy button on the card or on the blueprint's page."),
-            ('Open Import string', 'In the game, click Import string on the shortcut bar (or in the blueprint library).'),
+            ('Open Import string',
+             'In the game, click Import string on the shortcut bar (or in the blueprint library). '
+             'This shortcut requires the Construction robotics technology.'),
             ('Paste and confirm', 'The blueprint, or the whole book, lands in your hand.'),
         ],
         'seal_title': 'A test badge on every blueprint',
@@ -309,7 +312,7 @@ T = {
         'download_txt': 'Download .txt · {size}', 'history_github': 'History on GitHub',
         'test_banner': 'Factorio {v}, no Space Age.', 'updated': 'Updated {date}.',
         'see_report': 'See report',
-        'gallery_caption': 'In-game screenshots.', 'full_size': 'View full size',
+        'gallery_caption': 'In-game screenshots.', 'gallery_caption_one': 'In-game screenshot.', 'full_size': 'View full size',
         'from_string': 'computed from the string',
         'st_entities': 'entities', 'st_tiles': 'tiles',
         'produces': 'What it makes', 'materials': 'Materials',
@@ -393,8 +396,8 @@ T = {
         'import_steps': [
             ('Copia la cadena', 'Con el botón Copiar de la tarjeta o de la página del blueprint.'),
             ('Abre la importación',
-             'En el juego, haz clic en Importar desde texto (Import string), en la barra de acceso directo '
-             '(o en Importar cadena de texto, en la biblioteca de planos).'),
+             'En el juego, haz clic en Importar desde texto, en la barra de acceso directo (o en Importar cadena de texto, '
+             'en la biblioteca de planos). El atajo de la barra requiere la tecnología Robots de construcción.'),
             ('Pega y confirma', 'El blueprint, o el libro entero, queda en tu cursor.'),
         ],
         'seal_title': 'Sello de prueba en cada blueprint',
@@ -424,7 +427,7 @@ T = {
         'download_txt': 'Descargar .txt · {size}', 'history_github': 'Historial en GitHub',
         'test_banner': 'Factorio {v}, sin Space Age.', 'updated': 'Actualizado el {date}.',
         'see_report': 'Ver informe',
-        'gallery_caption': 'Capturas del propio juego.', 'full_size': 'Ver a tamaño completo',
+        'gallery_caption': 'Capturas del propio juego.', 'gallery_caption_one': 'Captura del propio juego.', 'full_size': 'Ver a tamaño completo',
         'from_string': 'calculado a partir de la cadena',
         'st_entities': 'entidades', 'st_tiles': 'casillas',
         'produces': 'Qué produce', 'materials': 'Materiales',
@@ -479,6 +482,11 @@ T = {
         'privacy_lead': 'Qué mide este sitio, solo con tu permiso, y cómo cambiar de opinión.',
     },
 }
+
+# Every language defines the same keys. Without this check a missing key fails the build only on the page that uses it.
+_differ = {lang: sorted(set(T[DEFAULT]) ^ set(T[lang])) for lang in LANGS if set(T[lang]) != set(T[DEFAULT])}
+if _differ:
+    raise SystemExit(f'i18n: the keys of these languages differ from {DEFAULT}: {_differ}')
 
 
 def label(d, lang):
