@@ -17,12 +17,14 @@ import json
 import re
 import sys
 import tomllib
+import unicodedata
 from collections import Counter
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 import bp  # noqa: E402  (scripts/bp.py)
+from outpath import OutPath  # noqa: E402  (scripts/catalog/outpath.py)
 
 CATEGORIES = {
     'belts': 'Belts', 'mining-smelting': 'Mining & smelting', 'oil': 'Oil processing', 'production': 'Production',
@@ -51,6 +53,38 @@ SUB_SCHEMA = {
     'en': TRANSLATION, 'es': TRANSLATION,
 }
 README_START, README_END = '<!-- catalog:start -->', '<!-- catalog:end -->'
+
+
+SAFE_PATH = re.compile(r'[A-Za-z0-9][A-Za-z0-9._/-]*')  # a file named in blueprint.toml ends up in a link of the README table
+MARKDOWN_SPECIAL = re.compile(r'([\\|\[\]<>`])')
+
+
+def bad_chars(text):
+    """The characters of `text` that draw nothing or reorder text, as U+XXXX: control characters other than tab and line
+    breaks, and format (bidirectional controls, zero-width characters, tags), private-use, surrogate and unassigned ones."""
+    found = set()
+    for c in text:
+        category = unicodedata.category(c)
+        if category in ('Cf', 'Co', 'Cs', 'Cn', 'Zl', 'Zp') or (category == 'Cc' and c not in '\t\n\r'):
+            found.add(f'U+{ord(c):04X}')
+    return sorted(found)
+
+
+def strings_of(value, path):
+    """(path, text) for every string inside a TOML value."""
+    if isinstance(value, str):
+        yield path, value
+    elif isinstance(value, dict):
+        for k, v in value.items():
+            yield from strings_of(v, f'{path}.{k}' if path else str(k))
+    elif isinstance(value, list):
+        for i, v in enumerate(value):
+            yield from strings_of(v, f'{path}[{i}]')
+
+
+def md_cell(text):
+    """`text` as one cell of a Markdown table: one line, with what would open a link, a tag or a column escaped."""
+    return MARKDOWN_SPECIAL.sub(r'\\\1', ' '.join(text.split()))
 
 
 def game_version(v):
@@ -94,6 +128,8 @@ class Checker:
         path = (folder / rel)
         if Path(rel).is_absolute() or '..' in Path(rel).parts:
             self.err(where, f'path "{rel}" must stay inside the folder'); return None
+        if not SAFE_PATH.fullmatch(rel):
+            self.err(where, f'path "{rel}" may hold only letters, digits, ".", "_", "-" and "/"'); return None
         if exts and path.suffix.lower() not in exts:
             self.err(where, f'"{rel}" must be one of {sorted(exts)}'); return None
         if not path.is_file():
@@ -106,6 +142,9 @@ class Checker:
             meta = tomllib.loads((folder / 'blueprint.toml').read_text(encoding='utf-8'))
         except tomllib.TOMLDecodeError as e:
             self.err(where, f'invalid TOML: {e}'); return None
+        for path, text in strings_of(meta, ''):
+            if bad_chars(text):
+                self.err(where, f'{path} holds characters that draw nothing or reorder text: {", ".join(bad_chars(text))}')
         self.check_fields(where, meta, SCHEMA)
         # Keep going after a schema error so one run reports every problem; wrong types count as absent.
         for key, (_, typ) in SCHEMA.items():
@@ -259,6 +298,14 @@ class Checker:
             self.err(where, 'missing blueprint.toml'); return None
         if not (folder / 'README.md').is_file():
             self.err(where, 'missing README.md')
+        else:
+            try:
+                found = bad_chars((folder / 'README.md').read_text(encoding='utf-8'))
+            except UnicodeDecodeError:
+                self.err(where, 'README.md is not UTF-8 text')
+            else:
+                if found:
+                    self.err(where, f'README.md holds characters that draw nothing or reorder text: {", ".join(found)}')
         meta = self.load_meta(folder)
         if meta is None:
             return None
@@ -323,7 +370,7 @@ def readme_table(catalog):
     rows = ['| Blueprint | Category | What is inside | Files | Tested |', '|---|---|---|---|---|']
     order = list(CATEGORIES)
     for e in sorted(catalog, key=lambda e: (order.index(e['category']), e['title'])):
-        title = e['en'].get('title', e['title'])
+        title = md_cell(e['en'].get('title', e['title']))
         files = ' · '.join(f'[`{f["path"]}`](blueprints/{e["slug"]}/{f["path"]})' for f in e['files'])
         test = e['test']
         tested = TEST_STATUS.get(test.get('status'), '?') + (f', {test["game_version"]}' if test.get('game_version') else '')
@@ -335,7 +382,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('--root', type=Path, default=HERE.parent.parent, help='repository root (default: this repo)')
     ap.add_argument('--prototypes', type=Path, default=HERE / 'vanilla-prototypes.json')
-    ap.add_argument('--json', type=Path, help='write the catalog index here (use a git-ignored path such as build/)')
+    ap.add_argument('--json', action=OutPath, help='write the catalog index here (use a git-ignored path such as build/); '
+                                                   'given once, without a ".." component')
     ap.add_argument('--readme', action='store_true', help='refresh the catalog table in README.md')
     args = ap.parse_args()
     root = args.root.resolve()

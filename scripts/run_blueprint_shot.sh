@@ -1,5 +1,6 @@
 #!/bin/zsh
-# usage: run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]  -- photographs a blueprint or a blueprint book with
+# usage: run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]  (<out-dir> inside this repository's build/)
+# -- photographs a blueprint or a blueprint book with
 # scenario blueprint-shot in the GUI game (screenshots need the renderer, so not headless) and writes <out-dir>/shot-<n>.webp:
 # one photo of the whole build per blueprint, the first 4 of a book. Only a successful run touches <out-dir>: it moves the new
 # photos in, replacing the files of the same number, and removes the higher-numbered shot-<n>.webp that an older run left; a
@@ -10,11 +11,14 @@
 # Steam (SteamAppId=427520), which would otherwise restart it and lose the arguments when Steam is open but not logged in. Only
 # the process started here is stopped. Two runs cannot share a checkout (they share ingame/data): the second exits 2.
 HERE=${0:A:h}
-[[ $# -ge 2 ]] || { echo "usage: run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]" >&2; exit 2; }
+[[ $# -ge 2 && $# -le 3 ]] || { echo "usage: run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]" >&2; exit 2; }
 [[ -f $1 ]] || { echo "no such file: $1" >&2; exit 2; }
 T=${3:-240}
 [[ $T == <-> ]] || { echo "the timeout is a whole number of seconds, not '$T'" >&2; exit 2; }
 BP=${1:A}; OUT=${2:A}
+# The photos go into a git-ignored folder of this repository: the runner moves files into <out-dir> and deletes the higher-numbered
+# shot-<n>.webp there, and an allow rule for the script cannot limit where <out-dir> points.
+[[ $OUT == "${HERE:h}/build/"* ]] || { echo "the out-dir must be inside ${HERE:h}/build/: $OUT" >&2; exit 2; }
 STR=$(<"$BP")
 # The string goes into a Lua source file between quotes: only the characters of a blueprint string may reach it. A glob compares
 # every byte, where a regular expression would stop at a NUL byte and let the rest through.

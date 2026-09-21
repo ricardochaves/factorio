@@ -4,18 +4,20 @@
   python3 scripts/catalog/edit_blueprint.py diff <before.txt> <after.txt>      list every path whose value differs
 
 The way back is scripts/catalog/extract_blueprint.py: given the edited JSON file it encodes the string, proves that it decodes
-and reports what it holds. `decode` never overwrites --out. `diff` prints `<path>: <before> -> <after>` for each difference
-(`-` stands for a value that is missing on that side), then `N difference(s)` or `identical`, and exits 0 whenever both strings
-decode. It pairs the items of a list by the first of `entity_number` (entities), `index` (icons and the blueprints of a book) and
-`position` (tiles, and entities that have no usable entity_number) that every item has and no two share, so that removing an
-entity does not shift the paths of the others, and it compares a list of number lists (the wires) as rows, whatever their order,
-counting a repeated row. Any other list is compared by position, and a `note:` line says when a list of entities had to be
-compared that way because an `entity_number` is missing or repeated and no other key pairs them. Numbers compare by value, so 1
-and 1.0 are the same, in wire rows and in positions too, and paired items are listed in natural order (entity_number 2 before 10;
-a minus sign is part of the text). A value is cut to 80 characters (two long strings that differ show a window around their first
-difference) and a path to 300, keeping its end; at most 200 difference lines and 200 note lines are printed, and the rest is
-counted as `... and N more`. Invisible characters are written as \\u escapes. A file that is missing, or a string that does not
-decode, exits 2 with the reason. Standard library only (Python 3.11+).
+and reports what it holds. `decode` never overwrites --out, accepts --out once, refuses a path with a `..` component
+(outpath.py) and refuses a string whose top-level object holds a key other than the four kinds, so that a crafted string cannot
+leave a file that another tool reads as its configuration. `diff` prints `<path>: <before> -> <after>` for each difference (`-`
+stands for a value that is missing on that side), then `N difference(s)` or `identical`, and exits 0 whenever both strings
+decode. It pairs the items of a list by the first of `entity_number` (entities), `index` (icons and the blueprints of a book)
+and `position` (tiles, and entities that have no usable entity_number) that every item has and no two share, so that removing
+an entity does not shift the paths of the others, and it compares a list of number lists (the wires) as rows, whatever their
+order, counting a repeated row. Any other list is compared by position, and a `note:` line says when a list of entities had to
+be compared that way because an `entity_number` is missing or repeated and no other key pairs them. Numbers compare by value,
+so 1 and 1.0 are the same, in wire rows and in positions too, and paired items are listed in natural order (entity_number 2
+before 10; a minus sign is part of the text). A value is cut to 80 characters (two long strings that differ show a window
+around their first difference) and a path to 300, keeping its end; at most 200 difference lines and 200 note lines are printed,
+and the rest is counted as `... and N more`. Invisible characters are written as \\u escapes. A file that is missing, or a
+string that does not decode, exits 2 with the reason. Standard library only (Python 3.11+).
 """
 import argparse
 import json
@@ -28,6 +30,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 import bp  # noqa: E402  (scripts/bp.py)
 import extract_blueprint as ex  # noqa: E402  (its reader and its bounded decoder refuse oversized input)
+from outpath import OutPath  # noqa: E402  (scripts/catalog/outpath.py)
 
 MAX_LINES = 200
 MAX_VALUE = 80
@@ -202,6 +205,12 @@ def line(path, a, b):
 
 def cmd_decode(args):
     obj = load(args.file)
+    # The decoded object is written as it is, so a crafted string must not be able to bring keys that another tool reads as
+    # its own configuration (hooks, mcpServers, ...): a real string holds exactly one of the four kinds at the top.
+    extra = sorted(str(k) for k in obj if k not in ex.ALL_KINDS)
+    if extra:
+        keys = ', '.join(extra)[:120]
+        raise ex.Refuse(f'the string decodes to an object with other top-level keys ({keys}); nothing is written')
     if not args.out.parent.is_dir():
         raise ex.Refuse(f'{args.out.parent} is not a directory')
     # Built before the file exists, so that a failure while building leaves nothing behind.
@@ -239,7 +248,7 @@ def main():
     sub = ap.add_subparsers(dest='command', required=True)
     dec = sub.add_parser('decode', help='write the decoded JSON of a string')
     dec.add_argument('file', metavar='bp.txt', help='a file that holds one blueprint string')
-    dec.add_argument('--out', type=Path, required=True, help='where to write the JSON (must not exist)')
+    dec.add_argument('--out', action=OutPath, required=True, help='where to write the JSON (must not exist)')
     dec.set_defaults(run=cmd_decode)
     dif = sub.add_parser('diff', help='list what differs between two strings')
     dif.add_argument('before', help='a file that holds the string as it was')

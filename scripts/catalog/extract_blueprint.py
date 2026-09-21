@@ -15,9 +15,12 @@ that holds exactly this string, and `same_design_as` the one that holds the same
 description, icons or game version (nothing is refused for either). Exit 2: nothing usable, or any other failure
 (the reason is on stderr). Exit 3: several different blueprints were found (the list is printed; nothing was written;
 choose with --pick N). It never runs anything it reads. Limits: 50 MB of input, 256 MiB once decompressed, 50 candidate
-strings. A URL must be http(s) and must resolve to a public address, also after each redirect (a DNS rebinding between
-the check and the request is not prevented); --allow-private lifts that for a service you run yourself, and only together
-with EXTRACT_BLUEPRINT_ALLOW_PRIVATE=1 in the environment, so a command line alone cannot switch the check off.
+strings. Fetching a URL needs EXTRACT_BLUEPRINT_ALLOW_URL=1 in the environment: the address of a request can carry data out,
+and a command that starts with the assignment is not matched by an allow rule for this script, so a person is asked first. A
+URL must be http(s) and must resolve to a public address, also after each redirect (a DNS rebinding between the check and the
+request is not prevented); --allow-private lifts that for a service you run yourself, and only together with
+EXTRACT_BLUEPRINT_ALLOW_PRIVATE=1 in the environment, so a command line alone cannot switch the check off. --out is accepted
+once and refuses a path with a `..` component (outpath.py).
 Standard library only (Python 3.11+).
 """
 import argparse
@@ -43,6 +46,7 @@ from urllib.parse import urlsplit
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 import bp  # noqa: E402  (scripts/bp.py)
+from outpath import OutPath  # noqa: E402  (scripts/catalog/outpath.py)
 
 MAX_BYTES = 50 * 1024 * 1024
 MAX_DECOMPRESSED = 256 * 1024 * 1024
@@ -330,6 +334,10 @@ def run(args):
         text = sys.stdin.read()
         source = {'type': 'stdin', 'where': '-'}
     elif re.match(r'^[A-Za-z][A-Za-z0-9+.-]*://', args.source):
+        if os.environ.get('EXTRACT_BLUEPRINT_ALLOW_URL') != '1':
+            raise Refuse('fetching a URL needs EXTRACT_BLUEPRINT_ALLOW_URL=1 in the environment (a command that starts with the '
+                         'assignment is not matched by an allow rule for this script, so the person who runs Claude Code '
+                         'approves the address first)')
         text = read_url(args.source, args.max_bytes, args.allow_private)
         source = {'type': 'url', 'where': args.source}
     else:
@@ -379,7 +387,7 @@ def main():
     claude_dir = Path(os.environ.get('CLAUDE_CONFIG_DIR') or Path.home() / '.claude')
     ap.add_argument('--paste-cache-dir', type=Path, default=claude_dir / 'paste-cache')
     ap.add_argument('--max-age-hours', type=float, default=6)
-    ap.add_argument('--out', type=Path, required=True, help='where to write the string (must not exist)')
+    ap.add_argument('--out', action=OutPath, required=True, help='where to write the string (must not exist)')
     ap.add_argument('--max-bytes', type=int, default=MAX_BYTES)
     ap.add_argument('--pick', type=int, metavar='N', help='when several blueprints are found, take the Nth (1-based)')
     ap.add_argument('--allow-private', action='store_true',
