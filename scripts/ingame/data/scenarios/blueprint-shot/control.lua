@@ -1,5 +1,5 @@
 -- Photos of any blueprint or blueprint book, taken with the game's own renderer (needs the GUI build, not headless). Each
--- blueprint is built on its own grass field, powered and photographed whole, framed by its own extent; a book gives one photo
+-- blueprint is built on its own grass field, given a power source and photographed whole, framed by its own extent; a book gives one photo
 -- per blueprint, the first MAX_SHOTS of them. The power source (a big pole and an energy interface) sits outside the frame;
 -- only its copper wire enters it. Nothing is fed to the machines, so the photo shows the build, not a running factory.
 -- Test data: scripts/run_blueprint_shot.sh writes bp.lua. Photos go to script-output/blueprint_<n>.png and the report to
@@ -88,9 +88,9 @@ local function revive_all(ghosts)
   end
 end
 
--- Builds the blueprint on a new surface.
-local function build(stack, n)
-  local s = grass_surface("blueprint-" .. n, reach(stack))
+-- Builds the blueprint, which reaches `r` tiles from its center, on a new surface.
+local function build(stack, n, r)
+  local s = grass_surface("blueprint-" .. n, r)
   revive_all(stack.build_blueprint{surface = s, force = "player", build_mode = defines.build_mode.forced, position = {0, 0}})
   revive_all(s.find_entities_filtered{name = {"entity-ghost", "tile-ghost"}})   -- ghosts that waited for a neighbour
   fill_requests(s)
@@ -179,7 +179,7 @@ local function photo(s, box, n)
   return string.format("blueprint_%d.png: %d x %d tiles, zoom %.3f", n, math.ceil(w), math.ceil(h), zoom)
 end
 
--- Imports the string, builds and powers every blueprint it holds; fills storage.shots, storage.log and storage.total.
+-- Imports the string, builds every blueprint it holds and gives it a power source; fills storage.shots, storage.log and storage.total.
 local function prepare(stack)
   local imported = stack.import_stack(BP)   -- 0 ok, -1 ok with errors, 1 failed
   if imported > 0 then
@@ -196,7 +196,7 @@ local function prepare(stack)
     if r > MAX_REACH then
       storage.log[#storage.log + 1] = string.format("blueprint %d could not be built: it reaches %d tiles from its center, more than the limit of %d", n, math.ceil(r), MAX_REACH)
     else
-      local s = build(bp, n)
+      local s = build(bp, n, r)
       local box = extent(s)
       if box then
         local standing, all, missing = built_of(bp, s)

@@ -6,17 +6,20 @@
 The way back is scripts/catalog/extract_blueprint.py: given the edited JSON file it encodes the string, proves that it decodes
 and reports what it holds. `decode` never overwrites --out. `diff` prints `<path>: <before> -> <after>` for each difference
 (`-` stands for a value that is missing on that side), then `N difference(s)` or `identical`, and exits 0 whenever both strings
-decode. It pairs the items of a list by `entity_number` (or by `index`, for icons and for the blueprints of a book) when every item
-has one, so that removing an entity does not shift the paths of the others; any other list is compared by position. Numbers compare
-by value, so 1 and 1.0 are the same. A path or a value is cut to 80 characters (two long strings that differ show a window around
-their first difference), at most 200 lines are printed and the rest is counted as `... and N more`. Invisible characters are written
-as \\u escapes. A file that is missing, or a string that does not decode, exits 2 with the reason.
-Standard library only (Python 3.11+).
+decode. It pairs the items of a list by `entity_number` (entities), by `index` (icons and the blueprints of a book) or by
+`position` (tiles) when every item has that key and no two share it, so that removing an entity does not shift the paths of the
+others, and it compares a list of number lists (the wires) as a set of rows, whatever their order. Any other list is compared by
+position, and a `note:` line says when a list of entities had to be compared that way because an `entity_number` is missing or
+repeated. Numbers compare by value, so 1 and 1.0 are the same. A value is cut to 80 characters (two long strings that differ show
+a window around their first difference) and a path to 300, keeping its end; at most 200 lines are printed and the rest is counted
+as `... and N more`. Invisible characters are written as \\u escapes. A file that is missing, or a string that does not decode,
+exits 2 with the reason. Standard library only (Python 3.11+).
 """
 import argparse
 import json
 import re
 import sys
+from collections import Counter
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -26,7 +29,7 @@ import extract_blueprint as ex  # noqa: E402  (its reader and its bounded decode
 
 MAX_LINES = 200
 MAX_VALUE = 80
-KEYS = ('entity_number', 'index')  # what pairs the items of a list: entities, and icons and the blueprints of a book
+MAX_PATH = 300
 PLAIN_KEY = re.compile(r'[A-Za-z0-9_-]+')
 MISSING = object()
 
@@ -47,14 +50,52 @@ def is_number(v):
     return isinstance(v, (int, float)) and not isinstance(v, bool)
 
 
-def key_of(items):
-    """The key that identifies every item of a list of objects, when each item has it and no two share its value."""
-    for key in KEYS:
-        if items and all(isinstance(i, dict) and key in i for i in items):
-            values = [i[key] for i in items]
-            if all(isinstance(v, int) and not isinstance(v, bool) for v in values) and len(set(values)) == len(values):
-                return key
+def is_scalar(v):
+    return v is None or isinstance(v, str) or isinstance(v, bool) or is_number(v)
+
+
+def label_number(item, name):
+    v = item.get(name)
+    return f'{name}={v}' if isinstance(v, int) and not isinstance(v, bool) else None
+
+
+def label_position(item):
+    p = item.get('position')
+    if isinstance(p, dict) and is_number(p.get('x')) and is_number(p.get('y')):
+        return f'position=({p["x"]}, {p["y"]})'
     return None
+
+
+LABELS = (('entity_number', lambda i: label_number(i, 'entity_number')), ('index', lambda i: label_number(i, 'index')),
+          ('position', label_position))
+
+
+def keyed(items):
+    """(kind, {label: item}) when every item of the list is an object with the same kind of key and no two share it, or None."""
+    if not items or not all(isinstance(i, dict) for i in items):
+        return None
+    for kind, label in LABELS:
+        labels = [label(i) for i in items]
+        if None not in labels and len(set(labels)) == len(labels):
+            return kind, dict(zip(labels, items))
+    return None
+
+
+def pair(a, b):
+    """(kind, {label: item} of a, {label: item} of b) when both lists pair by the same kind of key; an empty list pairs with any."""
+    ka, kb = keyed(a), keyed(b)
+    if ka and kb and ka[0] == kb[0]:
+        return ka[0], ka[1], kb[1]
+    if not a and kb:
+        return kb[0], {}, kb[1]
+    if not b and ka:
+        return ka[0], ka[1], {}
+    return None
+
+
+def rows(items):
+    """True for a list whose items are all lists of scalars, like the wires of a blueprint (an empty list counts)."""
+    return all(isinstance(i, list) and all(is_scalar(x) for x in i) for i in items)
 
 
 def key_text(k):
@@ -62,8 +103,9 @@ def key_text(k):
     return k if PLAIN_KEY.fullmatch(k) else json.dumps(k, ensure_ascii=False)
 
 
-def compare(a, b, path, out):
-    """Append (path, before, after) to `out` for every leaf or subtree that differs."""
+def compare(a, b, path, out, notes):
+    """Append (path, before, after) to `out` for every leaf or subtree that differs, and a sentence to `notes` for a list that
+    could not be paired the way its items suggest."""
     if isinstance(a, dict) and isinstance(b, dict):
         for k in sorted(set(a) | set(b)):
             p = f'{path}.{key_text(k)}' if path else key_text(k)
@@ -72,28 +114,37 @@ def compare(a, b, path, out):
             elif k not in a:
                 out.append((p, MISSING, b[k]))
             else:
-                compare(a[k], b[k], p, out)
+                compare(a[k], b[k], p, out, notes)
     elif isinstance(a, list) and isinstance(b, list):
-        key = key_of(a)
-        if key and key == key_of(b):
-            by_a, by_b = {i[key]: i for i in a}, {i[key]: i for i in b}
-            for v in sorted(set(by_a) | set(by_b)):
-                p = f'{path}[{key}={v}]'
-                if v not in by_b:
-                    out.append((p, by_a[v], MISSING))
-                elif v not in by_a:
-                    out.append((p, MISSING, by_b[v]))
+        paired = pair(a, b)
+        if paired:
+            _, by_a, by_b = paired
+            for label in sorted(set(by_a) | set(by_b)):
+                p = f'{path}[{label}]'
+                if label not in by_b:
+                    out.append((p, by_a[label], MISSING))
+                elif label not in by_a:
+                    out.append((p, MISSING, by_b[label]))
                 else:
-                    compare(by_a[v], by_b[v], p, out)
-            return
-        for i in range(max(len(a), len(b))):
-            p = f'{path}[{i}]'
-            if i >= len(b):
-                out.append((p, a[i], MISSING))
-            elif i >= len(a):
-                out.append((p, MISSING, b[i]))
-            else:
-                compare(a[i], b[i], p, out)
+                    compare(by_a[label], by_b[label], p, out, notes)
+        elif (a or b) and rows(a) and rows(b):
+            count_a, count_b = Counter(json.dumps(r) for r in a), Counter(json.dumps(r) for r in b)
+            for row in sorted(set(count_a) | set(count_b)):
+                if count_a[row] > count_b[row]:
+                    out.append((f'{path}[{row}]', json.loads(row), MISSING))
+                elif count_b[row] > count_a[row]:
+                    out.append((f'{path}[{row}]', MISSING, json.loads(row)))
+        else:
+            if a and b and any(isinstance(i, dict) and 'entity_number' in i for i in a + b):
+                notes.append(f'{path or "(top level)"}: an entity_number is missing or repeated, so the list is compared by position')
+            for i in range(max(len(a), len(b))):
+                p = f'{path}[{i}]'
+                if i >= len(b):
+                    out.append((p, a[i], MISSING))
+                elif i >= len(a):
+                    out.append((p, MISSING, b[i]))
+                else:
+                    compare(a[i], b[i], p, out, notes)
     elif is_number(a) and is_number(b):
         if a != b:
             out.append((path, a, b))
@@ -103,6 +154,11 @@ def compare(a, b, path, out):
 
 def clip(text):
     return text if len(text) <= MAX_VALUE else text[:MAX_VALUE - 3] + '...'
+
+
+def clip_path(path):
+    """A path is kept whole up to 300 characters, and beyond that its start and its end stay: the end says what changed."""
+    return path if len(path) <= MAX_PATH else path[:100] + '...' + path[-(MAX_PATH - 103):]
 
 
 def show(v):
@@ -125,7 +181,7 @@ def line(path, a, b):
         left, right = excerpts(a, b)
     else:
         left, right = show(a), show(b)
-    return ex.make_visible(f'{clip(path)}: {left} -> {right}')
+    return ex.make_visible(f'{clip_path(path)}: {left} -> {right}')
 
 
 def cmd_decode(args):
@@ -145,11 +201,13 @@ def cmd_decode(args):
 
 def cmd_diff(args):
     before, after = load(args.before), load(args.after)
-    found = []
+    found, notes = [], []
     try:
-        compare(before, after, '', found)
+        compare(before, after, '', found, notes)
     except RecursionError:
         raise ex.Refuse('the blueprints are nested too deeply to compare') from None
+    for note in notes[:MAX_LINES]:
+        print(ex.make_visible('note: ' + clip_path(note)))
     for path, a, b in found[:MAX_LINES]:
         print(line(path, a, b))
     if len(found) > MAX_LINES:

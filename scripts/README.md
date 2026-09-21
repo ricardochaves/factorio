@@ -11,7 +11,7 @@ Everything runs with Python 3 (standard library only) on macOS; the in-game test
 | `bp.py` | Decode / encode blueprint strings, walk books. |
 | `bp_textconv.py` | `git diff` driver that shows blueprint changes entity by entity (see below). |
 | `render.py` | ASCII view of one balancer: `python3 render.py <book.txt> "4 to 4"`. |
-| `run_blueprint_shot.sh` | The photo step of `/add-blueprint`: `./run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]` builds a blueprint, or the first four of a book, in the game (scenario `blueprint-shot`, see "In-game harness"), powers it, photographs its whole extent and writes `<out-dir>/shot-<n>.webp`, replacing any already there. Needs the game and `cwebp`. |
+| `run_blueprint_shot.sh` | The photo step of `/add-blueprint`: `./run_blueprint_shot.sh <blueprint.txt> <out-dir> [timeout-seconds]` builds a blueprint, or the first four of a book, in the game (scenario `blueprint-shot`, see "In-game harness"), connects a power source to it, photographs its whole extent and writes `<out-dir>/shot-<n>.webp`, replacing any already there. Needs the game and `cwebp`. |
 
 ## Catalog (`catalog/`)
 

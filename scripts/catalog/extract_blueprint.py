@@ -52,7 +52,8 @@ COSMETIC = ('label', 'description', 'icons', 'version', 'active_index')
 ALL_KINDS = KINDS + ('upgrade_planner', 'deconstruction_planner')
 WHOLE = re.compile(r'0[A-Za-z0-9+/]{40,}={0,2}')
 SCAN = re.compile(r'0[A-Za-z0-9+/]{60,}={0,2}')
-INVISIBLE = ('Cc', 'Cf', 'Co', 'Cs', 'Cn', 'Zl', 'Zp')  # control, format, private-use, surrogate, unassigned, line and paragraph separators
+INVISIBLE = ('Cc', 'Cf', 'Co', 'Cs', 'Cn', 'Zl', 'Zp', 'Zs')  # control, format, private-use, surrogate, unassigned, separators and spaces (U+0020 never reaches the check)
+BLANKS = re.compile('[͏ᅟᅠ᠋-᠏⠀ㅤ︀-️ﾠ\U000e0100-\U000e01ef]')  # letters, marks and symbols that draw nothing
 NON_ASCII = re.compile('[\x7f-\U0010ffff]')
 
 
@@ -66,7 +67,7 @@ def make_visible(text):
     reader unseen. `text` is JSON, so each escape decodes back to the same character."""
     def escape(m):
         c = m.group()
-        if unicodedata.category(c) not in INVISIBLE:
+        if unicodedata.category(c) not in INVISIBLE and not BLANKS.match(c):
             return c
         return '\\u%04x' % ord(c) if ord(c) <= 0xFFFF else json.dumps(c)[1:-1]  # above U+FFFF JSON writes a surrogate pair
     return NON_ASCII.sub(escape, text)
