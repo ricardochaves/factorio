@@ -23,7 +23,7 @@ Blueprint único de una refinería completa para Factorio 2.0.77, juego base (si
 
 Producción (máquinas por receta): plástico 96, combustible sólido 120 (petróleo ligero) + 34 (gas),
 combustible de cohete 48, baterías 40, azufre 39, ácido sulfúrico 12, lubricante 13,
-craqueo de petróleo ligero 41 y de petróleo pesado 17, explosivos 2, munición de lanzallamas 2 y barriles.
+destilación de petróleo ligero 41 y de petróleo pesado 17, explosivos 2, munición de lanzallamas 2 y barriles.
 
 Cada bloque de plástico tiene 48 plantas químicas (1 `speed-module-3` + 2 `productivity-module-3`, sin faro) y consume 1152 de gas/s.
 
@@ -55,7 +55,7 @@ En otros regímenes: con gas de sobra en los productores, o con solo el plástic
 
 ## Límites conocidos
 
-- Con todo consumiendo, la demanda de gas (~4800/s) es mayor que la producción (~2160/s + craqueo de petróleo ligero). Resultado: plástico 49 %,
+- Con todo consumiendo, la demanda de gas (~4800/s) es mayor que la producción (~2160/s + destilación de petróleo ligero). Resultado: plástico 49 %,
   azufre 66 % y combustible sólido a partir de gas 0 %. No es un cuello de botella de las bombas, es el balance de producción.
 - En ese régimen de escasez, los dos bloques de plástico tienen la misma prioridad (`petroleum-gas > 95000`); el combustible sólido
   a partir de gas (`> 97000`) recibe menos.

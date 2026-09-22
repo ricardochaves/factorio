@@ -181,7 +181,7 @@ tables, links, code spans and code blocks, each language's game terms and number
 
 <Two sentences: what it is and what it is for.>
 
-- File: [`<file>.txt`](<file>.txt) — blueprint string; in the game its name is `<label>`.
+- File: [`<file>.txt`](<file>.txt) — blueprint string; in-game, its name is `<label>`.
 - This is always the current version. Earlier versions live in the git history.
 
 ![<alt_en>](images/shot-1.webp)
@@ -210,7 +210,7 @@ tables, links, code spans and code blocks, each language's game terms and number
 ```markdown
 # <[es] title>
 
-<Dos frases: qué es y para qué sirve.>
+<Two sentences: what it is and what it is for.>
 
 - Archivo: [`<file>.txt`](<file>.txt) — cadena de blueprint; en el juego se llama `<label>`.
 - Esta es siempre la versión actual. Las versiones anteriores quedan en el historial de git.
@@ -258,7 +258,7 @@ an added wire (`0 of M pole groups without power (source <side>)` and nothing af
 
 > Não houve teste de funcionamento. O jogo importou e construiu o blueprint e o ligou a uma fonte de energia; nenhuma máquina foi abastecida com itens. O validador do catálogo confirmou que a string é válida e só usa itens do jogo base (versão <a que o validador reportar>). A imagem foi capturada no jogo e mostra o blueprint construído, não em funcionamento.
 
-> There was no functional test. The game imported and built the blueprint and connected it to a power source; no machine was fed any items. The catalog validator confirmed that the string is valid and uses only base-game items (version <the one the validator reports>). The image was captured in the game and shows the blueprint built, not running.
+> There was no functional test. The game imported and built the blueprint and connected it to a power source; no machine was fed any items. The catalog validator confirmed that the string is valid and uses only base-game items (version <the one the validator reports>). The image was captured in-game and shows the blueprint built, not running.
 
 > No hubo prueba de funcionamiento. El juego importó y construyó el blueprint y lo conectó a una fuente de energía; no se abasteció ninguna máquina con objetos. El validador del catálogo confirmó que la cadena es válida y solo usa objetos del juego base (versión <la que indique el validador>). La imagen se capturó en el juego y muestra el blueprint construido, no en funcionamiento.
 
@@ -285,7 +285,7 @@ red "not working" circle.
 <example>
 Step 3, one call with four questions (a recommendation first, and the user can always type their own answer):
 
-- Slug and titles: "Which slug and titles?" with `balancer-2-to-2` · Balanceador 2 para 2 / Balancer 2 to 2 / Balanceador 2 a 2 (Recommended) and `two-lane-balancer` · Balanceador de duas faixas / Two-lane balancer / Balanceador de dos carriles.
+- Slug and titles: "Which slug and titles?" with `balancer-2-to-2` · Balanceador 2 para 2 / Balancer 2 to 2 / Balanceador de 2 a 2 (Recommended) and `two-lane-balancer` · Balanceador de duas faixas / Two-lane balancer / Balanceador de dos carriles.
 - Category: "Which category fits?" with `belts` (Recommended), `production` and `city-blocks`.
 - Tags (several may be chosen): `balancer`, `yellow-belt`, `early-game`, `modules`.
 - Origin: "Whose design is it?" with "My own" (Recommended) and "Someone else's: I will give the author, the URL and the licence".

@@ -1,5 +1,5 @@
 title = "Refinaria de petróleo"
-summary = "Refinamento avançado de petróleo com craqueamento, plástico, combustível sólido e de foguete, baterias, enxofre, ácido sulfúrico e lubrificante."
+summary = "Refinamento avançado de petróleo com refino de petróleo pesado e leve, plástico, combustível sólido e de foguete, baterias, enxofre, ácido sulfúrico e lubrificante."
 category = "oil"
 tags = ["late-game", "modules", "beacons", "blue-belt"]
 
@@ -44,4 +44,4 @@ summary = "Advanced oil processing with cracking, plastic, solid and rocket fuel
 
 [es]
 title = "Refinería de petróleo"
-summary = "Procesamiento avanzado de petróleo con craqueo, plástico, combustible sólido y de cohete, baterías, azufre, ácido sulfúrico y lubricante."
+summary = "Procesamiento avanzado de petróleo con destilación de petróleo pesado y ligero, plástico, combustible sólido y de cohete, baterías, azufre, ácido sulfúrico y lubricante."
