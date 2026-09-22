@@ -2,13 +2,16 @@
 -- blueprint is built on its own grass field, powered and photographed whole, framed by its own extent; a book gives one photo
 -- per blueprint, the first MAX_SHOTS of them. The power source (a big pole and an energy interface) stands outside the frame, on
 -- the side where it reaches the most poles of the build (east first, then north, west and south); its copper wire enters the
--- frame, and on the west and south sides a strip of its shadow or its tower can enter the margin. No ingredients are fed to the
+-- frame, and on the west and south sides a strip of its shadow or its tower can enter the margin. A pole group that the source
+-- does not reach gets a copper wire from the source added beyond the usual reach, so every build with poles is photographed
+-- powered, and a group left without power is a failure. No ingredients are fed to the
 -- machines (only the modules and fuel that the blueprint itself requests are inserted), so the photo shows the build, not a
 -- running factory.
 -- Test data: scripts/run_blueprint_shot.sh writes bp.lua. Photos go to script-output/blueprint_<n>.png and the report to
 -- script-output/blueprint_shot_done.txt, which is written even when a step fails. Its first line is
 -- `shots=<photos taken> total=<blueprints in the string>`; then one line per blueprint (`<built> of <all> entities built`, the
--- names of those not built, `<N> of <M> pole groups without power (source <side>)`) and one per photo (size in tiles with its
+-- names of those not built, `<N> of <M> pole groups without power (source <side>)`, with `; <K> reached through an added
+-- wire, first at ...` when the source's reach left K groups out) and one per photo (size in tiles with its
 -- margin, zoom). A step that fails adds a line that starts with `FAIL:`, which is what the runner looks for.
 local BP = require("bp")
 
@@ -170,10 +173,43 @@ local function place_source(s, at, dx, dy)
   return pole, eei
 end
 
--- Powers the build from outside the frame, on the side where the source reaches the most of the build's poles: each side is
--- tried on its own and the best kept. Returns "N of M pole groups without power" (M counts the groups that the build's poles
--- form, N those that the source does not reach) and where the first of them are, and true as a second value when the source
--- could not be placed.
+-- Wires the source pole to every pole group that its own reach left out: a copper wire from the source to the group's pole
+-- nearest to it, placed without the reach check (LuaWireConnector.connect_to with reach_check false), so that the photo
+-- shows the whole build powered. Returns how many groups got that wire, where the first of them are, and how many groups
+-- are still without power afterwards.
+local function wire_unreached(source, poles)
+  local sx, sy = source.position.x, source.position.y
+  local order = {}
+  for i, p in ipairs(poles) do order[i] = {pole = p, group = group_of(p), d = (p.position.x - sx) ^ 2 + (p.position.y - sy) ^ 2} end
+  table.sort(order, function(a, b) return a.d < b.d end)
+  local connector = source.get_wire_connector(defines.wire_connector_id.pole_copper, true)
+  local wired, where, done = 0, {}, {}
+  for _, o in ipairs(order) do
+    -- a failed wire leaves the group open, so its next-nearest pole is tried
+    if not done[o.group] and o.pole.electric_network_id ~= source.electric_network_id then
+      if connector.connect_to(o.pole.get_wire_connector(defines.wire_connector_id.pole_copper, true), false) then
+        done[o.group] = true
+        wired = wired + 1
+        if wired <= 3 then where[wired] = string.format("(%.0f, %.0f)", o.pole.position.x, o.pole.position.y) end
+      end
+    end
+  end
+  local unpowered, seen = 0, {}
+  for _, p in ipairs(poles) do
+    if p.electric_network_id ~= source.electric_network_id and not seen[group_of(p)] then
+      seen[group_of(p)] = true
+      unpowered = unpowered + 1
+    end
+  end
+  return wired, where, unpowered
+end
+
+-- Powers the build from outside the frame, on the side where the source reaches the most of the build's poles (each side is
+-- tried on its own and the best kept), then wires the source to the groups that it still does not reach. Returns
+-- "N of M pole groups without power (source <side>)" (M counts the groups that the build's own poles form, N those left
+-- without power, 0 unless a wire failed), followed by "; K reached through an added wire, first at ..." when the source's
+-- own reach left K groups out, and as a second value a failure message, when the source could not be placed or a group
+-- stayed without power.
 local function power(s, box)
   local poles = s.find_entities_filtered{type = "electric-pole", force = "player"}
   if #poles == 0 then return "no poles in the build" end
@@ -209,9 +245,11 @@ local function power(s, box)
     end
   end
   local placed = best and place_source(s, best.at, best.side.dx, best.side.dy)
-  if not placed then return "the power source could not be placed", true end
-  return string.format("%d of %d pole groups without power (source %s)%s", best.n, groups, best.side.name,
-    best.n > 0 and (", first at " .. table.concat(best.where, " ")) or "")
+  if not placed then return "the power source could not be placed", "the power source could not be placed" end
+  local wired, where, unpowered = wire_unreached(placed, poles)
+  local note = string.format("%d of %d pole groups without power (source %s)%s", unpowered, groups, best.side.name,
+    wired > 0 and string.format("; %d reached through an added wire, first at %s", wired, table.concat(where, " ")) or "")
+  return note, unpowered > 0 and string.format("%d pole groups stayed without power", unpowered) or nil
 end
 
 local function photo(s, box, n)
@@ -246,10 +284,10 @@ local function prepare(stack)
       local box = extent(s)
       if box then
         local standing, all, missing = built_of(bp, s)
-        local powered, no_source = power(s, box)
+        local powered, failure = power(s, box)
         storage.shots[#storage.shots + 1] = {surface = s, box = box, n = n}
         storage.log[#storage.log + 1] = string.format("blueprint %d: %d of %d entities built%s, %s", n, standing, all, missing, powered)
-        if no_source then storage.log[#storage.log + 1] = string.format(FAIL .. "blueprint %d: the power source could not be placed", n) end
+        if failure then storage.log[#storage.log + 1] = string.format(FAIL .. "blueprint %d: %s", n, failure) end
       else
         storage.log[#storage.log + 1] = string.format(FAIL .. "blueprint %d built nothing", n)
       end

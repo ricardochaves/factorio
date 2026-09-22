@@ -15,7 +15,7 @@
     <div class="test-banner test-banner-{{ e.test.get('status', 'untested') }}">
       {{ m.test_badge(e.test, big=true) }}
       <span>{% if e.test.get('game_version') %}{{ t.test_banner.format(v=e.test.game_version) }}{% endif %}{% if e.date %} {{ t.updated.format(date=fmt_date(e.date)) }}{% endif %}</span>
-      {% if e.report %}<a href="#report">{{ t.see_report }}</a>{% endif %}
+      {% if e.report[lang] %}<a href="#report">{{ t.see_report }}</a>{% endif %}
     </div>
   </div>
   <div class="bp-actions" {% if is_book %}data-book-actions{% endif %}>
@@ -60,22 +60,22 @@
 {% endmacro %}
 
 {% macro report(e) %}
-{% if e.report %}
+{% if e.report[lang] %}
 <section class="container section" aria-labelledby="report">
   <div class="section-head">
     <h2 id="report">{{ t.report }}</h2>
-    <span class="source">{{ t.report_source }}{% if t.report_lang_note %} · {{ t.report_lang_note }}{% endif %}</span>
+    <span class="source">{{ t.report_source }}</span>
   </div>
-  <div class="report"{% if lang != 'pt' %} lang="pt-BR"{% endif %}>
-    {% for s in e.report if not s.big %}
+  <div class="report">
+    {% for s in e.report[lang] if not s.big %}
     <article class="panel prose">
       {{ m.panel_head((s.title or t.overview)|safe, none, s.id, 'h3') }}
       {{ s.html|safe }}
     </article>
     {% endfor %}
   </div>
-  {% for s in e.report if s.big %}
-  <details class="panel prose big-section"{% if lang != 'pt' %} lang="pt-BR"{% endif %}>
+  {% for s in e.report[lang] if s.big %}
+  <details class="panel prose big-section">
     <summary><h3 id="{{ s.id }}">{{ s.title|safe }}</h3><span class="source">{{ t.expand }}</span></summary>
     {{ s.html|safe }}
   </details>

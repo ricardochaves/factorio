@@ -15,7 +15,7 @@ Fundição de chapas de ferro ou de cobre em fornalhas elétricas com módulos d
 | Entidades | 133 |
 | Área | 13 × 47 tiles |
 | Fornalhas elétricas | 13 |
-| Transmissores (beacons) | 31 |
+| Transmissores | 31 |
 | Insersores rápidos | 27 |
 | Módulos | 62 × `speed-module-3`, 26 × `productivity-module-3` |
 | Postes médios | 16 |
@@ -31,7 +31,7 @@ A tabela lista as peças principais. O restante são 24 esteiras subterrâneas e
 
 ## Resultados medidos no jogo
 
-Medido no Factorio 2.0.77 (jogo base, sem mods), com a blueprint sobre grama, minério de ferro infinito entrando pela linha de entrada (a linha ficou cheia) e a linha de saída escoando tudo. Cada nível de pesquisa teve 18 000 ticks (5 min) de aquecimento antes de ser medido por 3600 ticks (60 s), contando os itens pelas estatísticas de produção do jogo e a energia pelo esvaziamento de um buffer de energia. Nas três janelas as chapas guardadas nas saídas das fornalhas ficaram estáveis (1191 → 1192, 293 → 278 e 208 → 207 chapas), então a produção medida é a vazão da linha de saída. A vazão depende da pesquisa de bônus de capacidade de insersores (os insersores rápidos são os únicos da blueprint), por isso há um resultado para cada nível:
+Medido no Factorio 2.0.77 (jogo base, sem mods), com a blueprint sobre grama, minério de ferro infinito entrando pela linha de entrada (a linha ficou cheia) e a linha de saída escoando tudo. Cada nível de pesquisa teve 18.000 ticks (5 min) de aquecimento antes de ser medido por 3.600 ticks (60 s), contando os itens pelas estatísticas de produção do jogo e a energia pelo esvaziamento de um buffer de energia. Nas três janelas as chapas guardadas nas saídas das fornalhas ficaram praticamente estáveis (1.191 → 1.192, 293 → 278 e 208 → 207 chapas), então a produção medida é a vazão da linha de saída. A vazão depende da pesquisa de bônus de capacidade de insersores (os insersores rápidos são os únicos da blueprint), por isso há um resultado para cada nível:
 
 | Pesquisa | Minério consumido | Chapas produzidas | Energia elétrica |
 |---|---|---|---|

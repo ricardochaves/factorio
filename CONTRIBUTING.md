@@ -1,8 +1,8 @@
 # Contributing
 
 This repository holds vanilla Factorio 2.0 blueprints and the website that publishes them
-(<https://ricardochaves.github.io/factorio/>). Write pull requests, commit messages and code comments in English; the
-metadata of each blueprint (with optional English and Spanish translations) and its report are in Portuguese.
+(<https://ricardochaves.github.io/factorio/>). Write pull requests, commit messages and code comments in English. Everything the
+website shows exists in Brazilian Portuguese, English and Spanish: the metadata of each blueprint and its README too.
 
 ## How a change reaches `main`
 
@@ -43,17 +43,20 @@ So write the pull request title for players, and the commit title too in single-
    The folder holds:
    - the `.txt` file: a single blueprint or a book (several files only for the book-like entries above);
    - `blueprint.toml`, the hand-written metadata (copy one from another folder);
-   - `README.md`, in Portuguese: what it does, inputs and outputs, how it was tested, known limits (the website shows
-     it as the blueprint's report, one card per `##` section);
+   - `README.md` in Portuguese, with `README.en.md` and `README.es.md` as its English and Spanish translations: what
+     it does, inputs and outputs, how it was tested, known limits (the website shows the README of the page's language
+     as the blueprint's report, one card per `##` section). The translations keep the headings, tables, links, code
+     spans and code blocks of `README.md`, which the validator checks;
    - `images/` (WebP): one real screenshot taken in the game per new entry, listed in `blueprint.toml` (the validator
      requires at least one, and the maintainer's review asks to remove a second). The machines in the shot must be
      working (powered, fed), so no "not working" icon shows up. The exception is the photos taken by this repository's
-     Claude Code command `/add-blueprint` (`.claude/commands/add-blueprint.md`): they show the build placed and, where
-     the power source reaches its poles, powered, with no ingredients fed to the machines, and are taken without alt
+     Claude Code command `/add-blueprint` (`.claude/commands/add-blueprint.md`): they show the build placed and powered
+     (the test wires its power source to every group of poles), with no ingredients fed to the machines, and are taken without alt
      mode, so they carry no status icon.
 2. Run `python3 scripts/catalog/validate.py --readme` (Python 3.11 or newer, standard library only). It checks the
    metadata, decodes every string and rejects anything that is not vanilla Factorio 2.0 (Space Age entities, quality
-   other than normal, other game versions). It also rejects text in the metadata or in the entry's README that holds
+   other than normal, other game versions). It also rejects a missing translation, a translated README whose structure differs from `README.md`, and text in
+   the metadata or in the entry's READMEs that holds
    zero-width characters, bidirectional controls, other control or format characters or fillers that draw nothing, and
    paths listed in `blueprint.toml` that do not start with a letter or digit or hold anything but letters, digits, `.`,
    `_`, `-` and `/`. Then it refreshes the catalog table in [`README.md`](README.md). Commit the refreshed table with
@@ -80,11 +83,11 @@ any change to that script before running `git diff` or `git log -p`.
 | `title`, `summary` | yes | Name and one-sentence description, in Portuguese. |
 | `category` | yes | One of `belts`, `mining-smelting`, `oil`, `production`, `science`, `power`, `trains`, `bots`, `city-blocks`, `circuits`, `defense`, `rocket`. |
 | `tags` | yes | Lower-case words, e.g. `["early-game", "blue-belt"]`. |
-| `[[files]]` | yes, 1+ | One entry per `.txt` file (usually one): `name` shown to players (optional `name_en`, `name_es`) and `path` of its `.txt` file. Every `.txt` in the folder must be listed, from the simplest variant to the most advanced; the website opens on the last one. |
-| `[[images]]` | yes, 1+ | `path` and `alt` text (optional `alt_en`, `alt_es`). The first image is the card cover. |
+| `[[files]]` | yes, 1+ | One entry per `.txt` file (usually one): `name` shown to players, with its translations `name_en` and `name_es`, and `path` of its `.txt` file. Every `.txt` in the folder must be listed, from the simplest variant to the most advanced; the website opens on the last one. |
+| `[[images]]` | yes, 1+ | `path` and `alt` text, with its translations `alt_en` and `alt_es`. The first image is the card cover. |
 | `[test]` | no | `status` = `in-game`, `simulation` or `untested`; `game_version`; `report` (usually `README.md`). |
 | `credits` | no | Where the design came from, in Markdown (links allowed). |
-| `[en]`, `[es]` | no | English and Spanish `title`, `summary` and `credits`. Anything missing falls back to Portuguese. |
+| `[en]`, `[es]` | yes | English and Spanish `title` and `summary`, and `credits` when the blueprint has credits. Nothing falls back to Portuguese. |
 | `viewer` | no | Special page layout; today only `nxm-matrix` (balancer books labeled `N to M`). Its panel states, for every balancer, that it passed the flow simulation, the 9-phase in-game test and (with a splitter) the independent checker, so use it only for books that passed all three, as the belt balancers did. |
 
 ### Choosing the category of a city block
@@ -114,7 +117,8 @@ python3 -m http.server -d build/site 8000     # http://localhost:8000/
 It supports three languages, always kept in sync: Brazilian Portuguese at `/`, US English at `/en/` and Spanish at
 `/es/`. Interface text lives in [`site/i18n.py`](site/i18n.py); names of items and recipes come from the game's own
 translations ([`scripts/catalog/vanilla-locale.json`](scripts/catalog/vanilla-locale.json), refreshed by
-`scripts/catalog/dump_locale.py`). Each blueprint's README is shown in Portuguese in every language, with a note.
+`scripts/catalog/dump_locale.py`). Each blueprint page shows the README of its language (`README.md`, `README.en.md` or `README.es.md`), and the build
+fails when a translation is missing.
 
 Visits are measured with Google Analytics 4, but only after the visitor accepts the banner
 ([`site/static/analytics.js`](site/static/analytics.js)): nothing from Google loads before that, or on any host other

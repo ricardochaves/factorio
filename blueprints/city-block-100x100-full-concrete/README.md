@@ -29,10 +29,10 @@ Piso, em unidades do item que o coloca:
 
 | Piso | Unidades |
 |---|---|
-| Concreto refinado | 8 808 |
+| Concreto refinado | 8.808 |
 | Concreto refinado com marca de perigo | 608 |
 | Calçada de pedra (tijolo de pedra) | 584 |
-| Tiles no total | 10 000 |
+| Tiles no total | 10.000 |
 
 O resto dos materiais: 76 baús de armazenagem, 24 lâmpadas, 16 postes grandes e 4 roboports.
 
@@ -71,7 +71,7 @@ Teste automatizado no Factorio 2.0.77 headless (`scenarios/city-test`, 254 checa
 
 | Verificação | Resultado |
 |---|---|
-| Importação | a string importa sem erros: 120 entidades e 10 000 tiles, com alinhamento absoluto à grade de 100 × 100 |
+| Importação | a string importa sem erros: 120 entidades e 10.000 tiles, com alinhamento absoluto à grade de 100 × 100 |
 | Construção | todas as entidades e tiles nas posições da blueprint e os fios em número igual ao dela (por bloco: 20 de cobre, 12 vermelhos e 12 verdes), 0 fantasmas sobrando, com 1 e com 4 blocos, sem sobreposição; com 4 blocos, mais 16 fios de cobre entre blocos vizinhos |
 | Rede elétrica | os 16 postes formam 1 rede; os 64 postes dos 4 blocos também formam 1 só, ligada sozinha; roboports e lâmpadas estão nela |
 | Roboports | cada roboport novo começa com 10 MJ dos 100 MJ do buffer e sobe cerca de 5 MJ por segundo: 19,9 MJ com 2 s, 59,5 MJ com 10 s, cheio com 20 s. Até lá o status é "Pouca energia"; com o buffer cheio, todos ficam "Trabalhando" |

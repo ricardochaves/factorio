@@ -1,8 +1,9 @@
 """Interface text of the site: Brazilian Portuguese (default, at /), US English (at /en/) and Spanish (at /es/).
 
 Blueprint content (title, summary, credits, file names, image alt text) comes from each blueprint.toml, with the
-translations in its [en] / [es] tables and name_<lang> / alt_<lang> keys. Game names (items, recipes, entities) come
-from the game's own locale files, see scripts/catalog/vanilla-locale.json.
+translations in its [en] / [es] tables and name_<lang> / alt_<lang> keys, and the report from README.md,
+README.en.md and README.es.md. Game names (items, recipes, entities) come from the game's own locale files, see
+scripts/catalog/vanilla-locale.json.
 """
 
 LANGS = ('pt', 'en', 'es')
@@ -205,7 +206,7 @@ T = {
         'materials_note': 'Nomes como aparecem no jogo em português.',
         'more_items': 'Ver todos os {n} itens', 'more_recipes': 'Ver todas as {n} receitas',
         'inserted': 'Módulos e itens inseridos',
-        'report': 'Relatório', 'report_source': 'README do blueprint', 'report_lang_note': '',
+        'report': 'Relatório', 'report_source': 'README do blueprint',
         'overview': 'Visão geral', 'expand': 'Mostrar',
         'history': 'Histórico no git', 'history_source': 'a partir dos commits', 'see_diff': 'Ver mudanças',
         'history_empty': 'O histórico aparece aqui a partir do primeiro commit.',
@@ -320,7 +321,6 @@ T = {
         'more_items': 'Show all {n} items', 'more_recipes': 'Show all {n} recipes',
         'inserted': 'Modules and inserted items',
         'report': 'Report', 'report_source': "blueprint's README",
-        'report_lang_note': 'The report is written in Portuguese.',
         'overview': 'Overview', 'expand': 'Show',
         'history': 'Git history', 'history_source': 'from the commits', 'see_diff': 'See diff',
         'history_empty': 'History shows up here from the first commit on.',
@@ -435,7 +435,6 @@ T = {
         'more_items': 'Ver los {n} objetos', 'more_recipes': 'Ver las {n} recetas',
         'inserted': 'Módulos y objetos insertados',
         'report': 'Informe', 'report_source': 'README del blueprint',
-        'report_lang_note': 'El informe está escrito en portugués.',
         'overview': 'Resumen', 'expand': 'Mostrar',
         'history': 'Historial en git', 'history_source': 'a partir de los commits', 'see_diff': 'Ver diferencias',
         'history_empty': 'El historial aparece aquí a partir del primer commit.',
@@ -490,8 +489,9 @@ if _differ:
 
 
 def label(d, lang):
-    """d is one of the {'pt': ..., 'en': ..., 'es': ...} dicts above."""
-    return d.get(lang) or d[DEFAULT]
+    """d is one of the {'pt': ..., 'en': ..., 'es': ...} dicts above; a missing language fails the build instead of
+    showing Portuguese."""
+    return d[lang]
 
 
 def fmt_int(n, lang):

@@ -29,16 +29,23 @@ id_ecdsa*
 .aws/
 .mcp.json
 
-# Claude Code: keep only the project instructions and the shared subagents and commands (Markdown files only). A project
+# Claude Code: keep only the project instructions, rules, subagents, commands and skills (Markdown files only). A project
 # settings.json or a hook script under .claude/ would need its own `!` line here.
 /.claude/*
 !/.claude/CLAUDE.md
+!/.claude/rules/
+/.claude/rules/**/*
+!/.claude/rules/**/
+!/.claude/rules/**/*.md
 !/.claude/agents/
 /.claude/agents/*
 !/.claude/agents/*.md
 !/.claude/commands/
 /.claude/commands/*
 !/.claude/commands/*.md
+!/.claude/skills/
+/.claude/skills/*/*
+!/.claude/skills/*/SKILL.md
 # Personal notes for Claude Code that stay on this machine.
 CLAUDE.local.md
 
