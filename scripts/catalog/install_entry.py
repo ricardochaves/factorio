@@ -8,10 +8,11 @@ usage:
 copies that folder to blueprints/<slug>/ and nothing else, so that a command which only lets it run cannot put anything else in
 the folder the owner commits: it refuses a slug that is not lower-case words joined by "-", an entry root anywhere but
 build/add-blueprint.*/ of this repository, a target that already exists, a symbolic link, any file that is not
-`blueprint.toml`, `README.md`, a `.txt` string in the folder or a `.webp` photo in images/, and an entry that the catalog
-validator (validate.py) rejects. The copy goes to a temporary folder in build/, the validator runs over that copy, and the
-folder is moved into place in one step, so a failure leaves no half-installed entry and what is validated is what is
-installed; each file is opened without following a link and must be a regular file (a process that swaps a folder of the entry
+`blueprint.toml`, the README in the three languages (`README.md`, `README.en.md`, `README.es.md`), a `.txt` string in the
+folder or a `.webp` photo in images/, and an entry that the catalog validator (validate.py) rejects. The copy goes to a
+temporary folder in build/, the validator runs over that copy, and the folder is moved into place in one step, so a failure
+leaves no half-installed entry and what is validated is what is installed; each file is opened without following a link
+and must be a regular file (a process that swaps a folder of the entry
 for a link between the walk and the copy is not stopped, and the copy still has to pass the name list and the validator).
 Nothing is overwritten and nothing of the entry is deleted. It prints `installed blueprints/<slug> (<n> files)` and exits 0,
 or prints `refused: <reason>` (or `failed: <reason>` for an input or output error) and exits 2. Standard library only
@@ -72,7 +73,7 @@ def files_to_copy(src):
             if not p.is_file():
                 raise Refuse(f'{rel} is not a regular file')
             parts = rel.parts
-            top = len(parts) == 1 and (parts[0] in ('blueprint.toml', 'README.md') or
+            top = len(parts) == 1 and (parts[0] in ('blueprint.toml', 'README.md', 'README.en.md', 'README.es.md') or
                                        (parts[0].endswith('.txt') and NAME.fullmatch(parts[0])))
             photo = len(parts) == 2 and parts[0] == 'images' and parts[1].endswith('.webp') and NAME.fullmatch(parts[1])
             if not (top or photo):

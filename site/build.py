@@ -2,8 +2,8 @@
 """Build the GitHub Pages site from blueprints/ into build/site/.
 
 Everything on the site comes from the repository: blueprint.toml (hand-written metadata), the blueprint strings
-(numbers, materials, recipes, book contents), each README.md (the report), the images and the git history (dates,
-changes). Nothing is typed twice.
+(numbers, materials, recipes, book contents), each entry's README in the three languages (the report), the images and
+the git history (dates, changes). Nothing is typed twice.
 
 usage (from the repository root, inside the virtual environment with site/requirements.txt installed):
   python3 site/build.py                    build into build/site/
@@ -298,14 +298,14 @@ def origin_code(description):
 
 
 def translated(default, table, key):
-    """{lang: text} from the Portuguese default and the [en] / [es] tables of blueprint.toml."""
-    return {lang: (default if lang == i18n.DEFAULT else (table.get(lang) or {}).get(key) or default)
-            for lang in i18n.LANGS}
+    """{lang: text} from the Portuguese default and the [en] / [es] tables of blueprint.toml. The validator requires
+    every translation, so nothing falls back to Portuguese."""
+    return {lang: default if lang == i18n.DEFAULT else table[lang][key] for lang in i18n.LANGS}
 
 
 def translated_key(item, key):
-    """{lang: text} from item[key] (Portuguese) and item[f'{key}_{lang}']."""
-    return {lang: item.get(key if lang == i18n.DEFAULT else f'{key}_{lang}') or item[key] for lang in i18n.LANGS}
+    """{lang: text} from item[key] (Portuguese) and item[f'{key}_{lang}'], which the validator requires."""
+    return {lang: item[key if lang == i18n.DEFAULT else f'{key}_{lang}'] for lang in i18n.LANGS}
 
 
 def nxm_grid(entry, f, data):
@@ -438,8 +438,9 @@ def build_model(out):
             rows = sorted(by_recipe.items(), key=lambda kv: (-sum(n for _, n in kv[1]), kv[0]))
             e['single'] = {'entities': s['entities'], 'width': s['width'], 'height': s['height'],
                            'machines': machines_of(total_bom), 'recipes': rows}
-        readme_path = ROOT / 'blueprints' / slug / 'README.md'
-        e['report'] = readme.sections(readme_path.read_text(encoding='utf-8'), slug)
+        e['report'] = {lang: readme.sections((ROOT / 'blueprints' / slug / c['readme'][lang]).read_text(encoding='utf-8'),
+                                             slug)
+                       for lang in i18n.LANGS}
         # search text in every language, so a query in any of them finds the blueprint
         cat = next(x for x in i18n.CATEGORIES if x['id'] == e['category'])
         words = []

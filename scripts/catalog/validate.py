@@ -2,8 +2,8 @@
 """Validate the blueprint catalog and compute its numbers from the blueprint strings.
 
 Each folder blueprints/<slug>/ holds the final blueprint string file(s), a blueprint.toml with the hand-written
-metadata and a README.md. Numbers (entities, size, materials, recipes, blueprints per book) are never written by
-hand: this script computes them from the strings.
+metadata and the README in the site's three languages (README.md, README.en.md, README.es.md). Numbers (entities,
+size, materials, recipes, blueprints per book) are never written by hand: this script computes them from the strings.
 
 usage:
   python3 scripts/catalog/validate.py                          check everything, print the computed stats
@@ -43,17 +43,19 @@ VERSION_STR = re.compile(r'[0-9]+\.[0-9]+\.[0-9]+')
 SCHEMA = {  # key: (required, type)
     'title': (True, str), 'summary': (True, str), 'category': (True, str), 'tags': (True, list),
     'files': (True, list), 'test': (False, dict), 'images': (True, list), 'viewer': (False, str),
-    'credits': (False, str), 'en': (False, dict), 'es': (False, dict),
+    'credits': (False, str), 'en': (True, dict), 'es': (True, dict),
 }
-# The site is in Portuguese (the default, written in the top-level keys), English and Spanish. Translations go in
-# the [en] / [es] tables and in the name_<lang> / alt_<lang> keys; anything missing falls back to Portuguese.
-TRANSLATION = {'title': (False, str), 'summary': (False, str), 'credits': (False, str)}
+# The site shows every text of an entry in Portuguese (the top-level keys and README.md), English and Spanish, and
+# nothing falls back to another language, so every translation is required: the [en] / [es] tables (with `credits`
+# whenever the entry has credits), the name_<lang> / alt_<lang> keys and README.<lang>.md.
+TRANSLATION = {'title': (True, str), 'summary': (True, str), 'credits': (False, str)}
 SUB_SCHEMA = {
-    'files': {'name': (True, str), 'name_en': (False, str), 'name_es': (False, str), 'path': (True, str)},
-    'images': {'path': (True, str), 'alt': (True, str), 'alt_en': (False, str), 'alt_es': (False, str)},
+    'files': {'name': (True, str), 'name_en': (True, str), 'name_es': (True, str), 'path': (True, str)},
+    'images': {'path': (True, str), 'alt': (True, str), 'alt_en': (True, str), 'alt_es': (True, str)},
     'test': {'status': (True, str), 'game_version': (False, str), 'report': (False, str)},
     'en': TRANSLATION, 'es': TRANSLATION,
 }
+READMES = {'pt': 'README.md', 'en': 'README.en.md', 'es': 'README.es.md'}  # the entry's README in each site language
 README_START, README_END = '<!-- catalog:start -->', '<!-- catalog:end -->'
 
 
@@ -101,6 +103,82 @@ def strings_of(value, path):
     elif isinstance(value, list):
         for i, v in enumerate(value):
             yield from strings_of(v, f'{path}[{i}]')
+
+
+FENCE = re.compile(r' {0,3}(`{3,}|~{3,})')
+HEADING = re.compile(r' {0,3}(#{1,6})(?:[ \t]|$)')
+TABLE_RULE = re.compile(r' {0,3}\|?[ \t]*:?-+:?[ \t]*(?:\|[ \t]*:?-+:?[ \t]*)*\|?[ \t]*')
+CODE_SPAN = re.compile(r'(?<!`)(`+)(?!`)((?:(?!\n[ \t]*\n).)+?)(?<!`)\1(?!`)', re.S)  # never across a blank line
+LINK_TARGET = re.compile(r'\]\(\s*<?([^\s)>]+)')
+
+
+def table_cells(row):
+    """The cells of a Markdown table row; an escaped `\\|` does not split one."""
+    row = row.strip()
+    row = row[1:] if row.startswith('|') else row
+    row = row[:-1] if row.endswith('|') and not row.endswith('\\|') else row
+    return re.split(r'(?<!\\)\|', row)
+
+
+def heading_anchor(title):
+    """The anchor of a heading, as site/build.py (slugify) and GitHub make it: lower case, punctuation dropped, spaces to
+    hyphens, accents kept."""
+    return re.sub(r'[^\w\- ]', '', title.strip().lower()).replace(' ', '-')
+
+
+def readme_shape(text):
+    """What a translation of a README keeps from the original: the sequence of heading levels, the rows and columns
+    of each table, the number of code blocks, and (outside code blocks) the link and image targets and the code spans,
+    which hold ids, file names, labels and commands. A link to a heading of the same README (`#anchor`) changes with
+    the translated heading, so only the number of those links is kept; `anchors` lists the headings' anchors so that
+    the caller can check where each one leads. The same parser reads every language, so the comparison holds even where
+    it reads Markdown more simply than the site's renderer."""
+    heads, anchors, tables, blocks, prose = [], Counter(), [], 0, []
+    lines = text.splitlines()
+    fence, i = None, 0
+    while i < len(lines):
+        line = lines[i]
+        m = FENCE.match(line)
+        if fence:
+            if m and m[1][0] == fence[0] and len(m[1]) >= len(fence) and not line.strip()[len(m[1]):]:
+                fence = None
+            i += 1
+            continue
+        if m:
+            fence, blocks = m[1], blocks + 1
+            i += 1
+            continue
+        prose.append(line)
+        m = HEADING.match(line)
+        if m:
+            heads.append(len(m[1]))
+            anchor = heading_anchor(re.sub(r'[ \t]+#+[ \t]*$', '', line[m.end():]))  # without a closing run of #
+            anchors[anchor] += 1
+            if anchors[anchor] > 1:
+                anchors[f'{anchor}-{anchors[anchor] - 1}'] += 1  # a repeated heading gets -1, -2, ... as on the site
+        elif '|' in line and i + 1 < len(lines) and '|' in lines[i + 1] and TABLE_RULE.fullmatch(lines[i + 1]):
+            columns, rows = len(table_cells(line)), 1
+            prose.append(lines[i + 1])
+            i += 2
+            while i < len(lines) and lines[i].strip() and '|' in lines[i]:
+                prose.append(lines[i])
+                rows += 1
+                i += 1
+            tables.append((rows, columns))
+            continue
+        i += 1
+    body = '\n'.join(prose)
+    spans = Counter(re.sub(r'[ \t]*\n[ \t]*', ' ', m[2]) for m in CODE_SPAN.finditer(body))  # a line break is a space
+    found = LINK_TARGET.findall(CODE_SPAN.sub('', body))
+    targets = Counter(t for t in found if not t.startswith('#'))
+    inpage = [t[1:] for t in found if t.startswith('#')]
+    return {'heading levels': heads, 'tables (rows, columns)': tables, 'code blocks': blocks,
+            'link and image targets': targets, 'links to its own headings': len(inpage), 'code spans': spans,
+            'anchors': anchors, 'inpage': inpage}
+
+
+STRUCTURE = ('heading levels', 'tables (rows, columns)', 'code blocks', 'link and image targets',
+             'links to its own headings', 'code spans')  # the keys of readme_shape that a translation keeps
 
 
 def md_cell(text):
@@ -196,6 +274,8 @@ class Checker:
         for key in ('test', 'en', 'es'):
             if key in meta:
                 self.check_fields(f'{where} [{key}]', meta[key], SUB_SCHEMA[key])
+                if key != 'test' and 'credits' in meta and 'credits' not in meta[key]:
+                    self.err(f'{where} [{key}]', 'missing "credits": the entry has credits, and every language shows them')
         test = meta.get('test', {})
         if test.get('status') and test['status'] not in TEST_STATUS:
             self.err(where, f'test.status "{test["status"]}" is not one of {sorted(TEST_STATUS)}')
@@ -322,18 +402,7 @@ class Checker:
             self.err(where, 'folder name must be lower-case words joined by "-"')
         if not (folder / 'blueprint.toml').is_file():
             self.err(where, 'missing blueprint.toml'); return None
-        if not (folder / 'README.md').is_file():
-            self.err(where, 'missing README.md')
-        else:
-            try:
-                found = bad_chars((folder / 'README.md').read_text(encoding='utf-8'))
-            except UnicodeDecodeError:
-                self.err(where, 'README.md is not UTF-8 text')
-            else:
-                if found:
-                    self.err(where, 'README.md holds characters that draw nothing or reorder text (a zero-width joiner and a '
-                                    'byte-order mark included; an emoji selector is allowed only right after a symbol): '
-                                    f'{", ".join(found)}')
+        self.check_readmes(folder)
         meta = self.load_meta(folder)
         if meta is None:
             return None
@@ -350,9 +419,56 @@ class Checker:
             'tags': meta['tags'], 'viewer': meta.get('viewer'), 'test': meta.get('test', {'status': 'untested'}),
             'images': meta.get('images', []), 'credits': meta.get('credits'), 'en': meta.get('en', {}),
             'es': meta.get('es', {}),
-            'readme': 'README.md',
+            'readme': dict(READMES),
             'files': [f for f in files if f],
         }
+
+    def check_readmes(self, folder):
+        """The README in every site language: present, UTF-8 without invisible characters, and each translation with the
+        structure of README.md (readme_shape), so that no section, table row, link or code span is left out."""
+        where = self.where(folder)
+        texts = {}
+        for lang, name in READMES.items():
+            if not (folder / name).is_file():
+                self.err(where, f'missing {name}' + ('' if lang == 'pt' else
+                                                     f' (the translation of README.md: the {lang} pages show it)'))
+                continue
+            try:
+                text = (folder / name).read_text(encoding='utf-8')
+            except UnicodeDecodeError:
+                self.err(where, f'{name} is not UTF-8 text')
+                continue
+            found = bad_chars(text)
+            if found:
+                self.err(where, f'{name} holds characters that draw nothing or reorder text (a zero-width joiner and a '
+                                'byte-order mark included; an emoji selector is allowed only right after a symbol): '
+                                f'{", ".join(found)}')
+            texts[lang] = text
+        shapes = {lang: readme_shape(text) for lang, text in texts.items()}
+        for lang, shape in shapes.items():
+            for anchor in shape['inpage']:
+                if anchor not in shape['anchors']:
+                    self.err(where, f'{READMES[lang]} links to #{anchor}, which is not a heading of that file')
+        if 'pt' not in texts:
+            return
+        base = shapes['pt']
+        for lang, text in texts.items():
+            if lang == 'pt':
+                continue
+            name = READMES[lang]
+            if text.strip() == texts['pt'].strip():
+                self.err(where, f'{name} is a copy of README.md, not its translation')
+                continue
+            for key in STRUCTURE:
+                want, got = base[key], shapes[lang][key]
+                if got == want:
+                    continue
+                if isinstance(want, Counter):
+                    missing, extra = sorted((want - got).elements()), sorted((got - want).elements())
+                    detail = f'missing {missing[:5]}, not in README.md {extra[:5]}'
+                else:
+                    detail = f'README.md has {want}, {name} has {got}'
+                self.err(where, f'{name} must keep the structure of README.md ({key} differ: {detail})')
 
 
 def contents(entry):

@@ -20,7 +20,8 @@ Every blueprint can be copied from there with one click.
 <!-- catalog:end -->
 
 This table is generated from each folder's `blueprint.toml` and the blueprint strings themselves. Every folder has a
-README (in Portuguese) with what was measured, how it was built and known limits.
+README, in Portuguese (`README.md`), English (`README.en.md`) and Spanish (`README.es.md`), with what was
+measured, how it was built and known limits.
 
 ## How to import
 
