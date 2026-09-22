@@ -34,8 +34,9 @@ id_ecdsa*
 /.claude/*
 !/.claude/CLAUDE.md
 !/.claude/rules/
-/.claude/rules/*
-!/.claude/rules/*.md
+/.claude/rules/**/*
+!/.claude/rules/**/
+!/.claude/rules/**/*.md
 !/.claude/agents/
 /.claude/agents/*
 !/.claude/agents/*.md
