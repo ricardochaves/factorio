@@ -55,7 +55,7 @@ En otros regímenes: con gas de sobra en los productores, o con solo el plástic
 
 ## Límites conocidos
 
-- Con todo consumiendo, la demanda de gas (~4800/s) es mayor que la producción (~2160/s + craqueo). Resultado: plástico 49 %,
+- Con todo consumiendo, la demanda de gas (~4800/s) es mayor que la producción (~2160/s + craqueo de petróleo ligero). Resultado: plástico 49 %,
   azufre 66 % y combustible sólido a partir de gas 0 %. No es un cuello de botella de las bombas, es el balance de producción.
 - En ese régimen de escasez, los dos bloques de plástico tienen la misma prioridad (`petroleum-gas > 95000`); el combustible sólido
   a partir de gas (`> 97000`) recibe menos.

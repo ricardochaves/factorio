@@ -55,7 +55,7 @@ In other regimes: with surplus gas at the producers, or with only plastic draini
 
 ## Known limitations
 
-- With everything consuming, gas demand (~4,800/s) exceeds production (~2,160/s + cracking). Result: plastic 49%,
+- With everything consuming, gas demand (~4,800/s) exceeds production (~2,160/s + light oil cracking). Result: plastic 49%,
   sulfur 66% and solid fuel from gas 0%. It is not a pump bottleneck; it is the production balance.
 - In that scarce regime, the two plastic blocks have the same priority (`petroleum-gas > 95000`); solid fuel
   from gas (`> 97000`) gets less.

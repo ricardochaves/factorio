@@ -31,7 +31,7 @@ The reviewers live in `.claude/agents/`. None of them has Edit, Write or Agent, 
 |---|---|
 | `security-reviewer` | anything: it runs last, on the final tree, before every push or PR update |
 | `frontend-reviewer` | `site/`, or anything the site shows (a blueprint entry, `scripts/bp.py`, `scripts/catalog/`) |
-| `language-reviewer` | text that the site shows: one instance per language whose text the change adds or edits, in parallel. Every visible text exists in the three languages, so new or rewritten text needs the three instances, and only a fix to one language's wording needs just that one |
+| `language-reviewer` | text that the site shows, including the README templates and fixed sentences in the Reference section of `.claude/commands/add-blueprint.md`, which become the text of every new entry: one instance per language whose text the change adds or edits, in parallel. Every visible text exists in the three languages, so new or rewritten text needs the three instances, and only a fix to one language's wording needs just that one |
 | `docs-reviewer` | a README (root or `scripts/`), CONTRIBUTING, `.claude/CLAUDE.md`, `.claude/agents/`, `.claude/commands/`, workflows or repository settings. The catalog table that `scripts/catalog/validate.py --readme` generates in the root README does not count, because CI checks it |
 | `blueprint-reviewer` | a blueprint entry: its string, `blueprint.toml`, images or READMEs |
 | `code-reviewer` | code under `scripts/`, the in-game harness or the CI workflows (the site generator is `frontend-reviewer`'s) |

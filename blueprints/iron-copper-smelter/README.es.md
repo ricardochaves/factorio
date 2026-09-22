@@ -15,7 +15,7 @@ Fundición de placas de hierro o de cobre en hornos eléctricos con módulos de 
 | Entidades | 133 |
 | Área | 13 × 47 casillas |
 | Hornos eléctricos | 13 |
-| Faros (beacons) | 31 |
+| Faros | 31 |
 | Insertadores rápidos | 27 |
 | Módulos | 62 × `speed-module-3`, 26 × `productivity-module-3` |
 | Postes eléctricos medianos | 16 |

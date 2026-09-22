@@ -146,6 +146,7 @@ def readme_shape(text):
             continue
         if m:
             fence, blocks = m[1], blocks + 1
+            prose.append('')  # a blank line in place of the block, so no code span joins the text around it
             i += 1
             continue
         prose.append(line)

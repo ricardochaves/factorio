@@ -27,6 +27,7 @@ Game terms use the game's own words in that language. Sources, in order: `script
 - `blueprints/*/blueprint.toml`: the top-level keys are Portuguese; `[en]`, `[es]`, `name_<lang>` and `alt_<lang>` hold the translations.
 - `blueprints/*/README.md` (pt-BR), `README.en.md` and `README.es.md`: each entry's README, which its page shows as the report.
 - `site/content/privacy.<lang>.md`: the privacy page (`pt`, `en`, `es`).
+- `.claude/commands/add-blueprint.md`, its Reference section: the README templates, the fixed sentences and the alt texts in the three languages, which `/add-blueprint` copies into every new entry.
 - Strings built in `site/static/*.js` and the JSON blocks embedded in the pages.
 - The built pages in `build/site/` (`/` is pt-BR, `en/` is en-US, `es/` is es).
 

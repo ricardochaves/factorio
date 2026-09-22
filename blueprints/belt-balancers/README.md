@@ -1,4 +1,4 @@
-# Balanceadores de esteira N×M — livros 24×24
+# Balanceadores de esteira N × M — livros 24 × 24
 
 Três livros de blueprints (strings de blueprint book, Factorio 2.0.77, jogo base sem Space Age), um por tipo de esteira:
 
@@ -45,7 +45,7 @@ Blocos de biblioteca (os originais aprovados + livro do Raynquist, https://githu
 ## Verificação (todas aplicadas ao arquivo final)
 
 1. **Simulação de fluxo com contrapressão** (`scripts/deep_verify.py`): 6,8 milhões de padrões de entrada/saída no total; 577/577 aprovados (saída balanceada com qualquer entrada, entrada balanceada com qualquer saída, vazão total = min(N,M) esteiras, portas contíguas, 0 avisos de sideload/subterrâneo sem par).
-2. **Teste automatizado dentro do jogo** (Factorio 2.0.77 headless, dados isolados em `scripts/ingame/`): cada blueprint é importado, construído, alimentado por loaders e medido em 9 fases (tudo ligado; metade/um terço/aleatório/uma só entrada; metade/um terço/aleatório/uma só saída). Resultado: 577/577 construídos sem colisão e sem subterrâneo sem par; pior diferença entre saídas (ou entre entradas) = **4 itens em 2.700**; déficit de vazão máximo 0,15 %.
+2. **Teste automatizado dentro do jogo** (Factorio 2.0.77 headless, dados isolados em `scripts/ingame/`): cada blueprint é importado, construído, alimentado por carregadores e medido em 9 fases (tudo ligado; metade/um terço/aleatório/uma só entrada; metade/um terço/aleatório/uma só saída). Resultado: 577/577 construídos sem colisão e sem subterrâneo sem par; pior diferença entre saídas (ou entre entradas) = **4 itens em 2.700**; déficit de vazão máximo 0,15 %.
 3. **Verificador de terceiros** (`tzwaan/factorio_balancers`, em `scripts/xcheck/xcheck.py`): 576 PASS, 0 FAIL (`1 to 1` não tem splitter e a ferramenta não o analisa). A mesma ferramenta confirma os 16 originais defeituosos e aprova 143/143 do Raynquist.
 4. A string completa do livro foi importada no jogo: 24 sublivros, 577 blueprints com entidades.
 

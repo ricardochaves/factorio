@@ -185,9 +185,10 @@ local function wire_unreached(source, poles)
   local connector = source.get_wire_connector(defines.wire_connector_id.pole_copper, true)
   local wired, where, done = 0, {}, {}
   for _, o in ipairs(order) do
+    -- a failed wire leaves the group open, so its next-nearest pole is tried
     if not done[o.group] and o.pole.electric_network_id ~= source.electric_network_id then
-      done[o.group] = true
       if connector.connect_to(o.pole.get_wire_connector(defines.wire_connector_id.pole_copper, true), false) then
+        done[o.group] = true
         wired = wired + 1
         if wired <= 3 then where[wired] = string.format("(%.0f, %.0f)", o.pole.position.x, o.pole.position.y) end
       end
