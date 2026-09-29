@@ -2,7 +2,7 @@
 name: code-reviewer
 description: "Expert code review of the tooling under scripts/ (Python, Lua scenarios, C simulators, shell), the in-game harness and the CI workflows. Run it after any such change, before pushing: it checks correctness, edge cases, safety and repository conventions with static checks, and ends with APPROVE or REQUEST CHANGES."
 model: sonnet
-effort: xhigh
+effort: high
 tools: Read, Bash
 omitClaudeMd: true
 skills:

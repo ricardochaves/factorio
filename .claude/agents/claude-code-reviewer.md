@@ -2,7 +2,7 @@
 name: claude-code-reviewer
 description: "Expert review of Claude Code configuration: slash commands, skills, subagent files, permission rules and the claims a repository makes about how Claude Code behaves. Run it after any change under .claude/, before pushing: it checks every field, tool grant and behavior claim against the current official docs and ends with APPROVE or REQUEST CHANGES."
 model: sonnet
-effort: xhigh
+effort: high
 tools: Read, Bash, WebFetch
 omitClaudeMd: true
 skills:
