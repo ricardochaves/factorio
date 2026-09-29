@@ -15,6 +15,7 @@ Every blueprint can be copied from there with one click.
 | [Stone brick smelter](blueprints/stone-brick-smelter/) | Mining & smelting | 73 entities, 11 × 29 tiles | [`stone-brick-smelter.txt`](blueprints/stone-brick-smelter/stone-brick-smelter.txt) | in game, 2.0.77 |
 | [Iron/copper smelter](blueprints/iron-copper-smelter/) | Mining & smelting | 133 entities, 13 × 47 tiles | [`iron-copper-smelter.txt`](blueprints/iron-copper-smelter/iron-copper-smelter.txt) | in game, 2.0.77 |
 | [Oil refinery](blueprints/oil-refinery/) | Oil processing | 9,899 entities, 193 × 129 tiles | [`oil-refinery.txt`](blueprints/oil-refinery/oil-refinery.txt) | in game, 2.0.77 |
+| [40-reactor nuclear power plant](blueprints/nuclear-power-plant-40-reactors-v1/) | Power | 8,574 entities, 370 × 159 tiles | [`nuclear-power-plant-40-reactors-v1.txt`](blueprints/nuclear-power-plant-40-reactors-v1/nuclear-power-plant-40-reactors-v1.txt) | in game, 2.0.77 |
 | [100 × 100 robot-only city block, partial concrete](blueprints/city-block-100x100-partial-concrete/) | City blocks | 120 entities, 100 × 100 tiles | [`city-block-100x100-partial-concrete.txt`](blueprints/city-block-100x100-partial-concrete/city-block-100x100-partial-concrete.txt) | in game, 2.0.77 |
 | [100 × 100 robot-only city block, full concrete](blueprints/city-block-100x100-full-concrete/) | City blocks | 120 entities, 100 × 100 tiles | [`city-block-100x100-full-concrete.txt`](blueprints/city-block-100x100-full-concrete/city-block-100x100-full-concrete.txt) | in game, 2.0.77 |
 <!-- catalog:end -->
@@ -51,6 +52,9 @@ from elsewhere and keep their own terms:
 - Balancer designs taken from Raynquist's balancer book: that repository does not state a license (see Credits below).
 - The iron/copper smelter in [`blueprints/iron-copper-smelter/`](blueprints/iron-copper-smelter/), a design by Nilaus:
   the FactorioBin post it links to does not state a license (see Credits below).
+- The 40-reactor nuclear power plant in
+  [`blueprints/nuclear-power-plant-40-reactors-v1/`](blueprints/nuclear-power-plant-40-reactors-v1/): the repository
+  owner's adaptation of a design by an unknown author, with no known license (see Credits below).
 - The fonts in [`site/static/fonts/`](site/static/fonts/): SIL Open Font License, with the license files next to them.
 - The item, fluid, recipe and entity names in [`scripts/catalog/vanilla-locale.json`](scripts/catalog/vanilla-locale.json)
   and the prototype data in [`scripts/catalog/vanilla-prototypes.json`](scripts/catalog/vanilla-prototypes.json), both
@@ -71,6 +75,11 @@ from elsewhere and keep their own terms:
   its own name in the game and an in-game description written for this catalog (credit, link and figures). The book was
   saved in Factorio 1.0.0, before 2.0; the catalog's copy is saved and tested in 2.0.77. It is published here with
   credit and the link although the source states no license; Nilaus can ask for its removal by opening an issue.
+- The 40-reactor nuclear power plant is the repository owner's adaptation of a ready-made design whose author is
+  unknown; a web search did not find the original author, so no license is known. It is published here by the owner's
+  decision, with the corrections listed in the entry's README
+  ([Corrections made here](blueprints/nuclear-power-plant-40-reactors-v1/README.en.md#corrections-made-here)). Its
+  original author can ask for credit or for its removal by opening an issue.
 - [tzwaan/factorio_balancers](https://github.com/tzwaan/factorio_balancers) (MIT) was used as an independent checker.
   It is not redistributed here.
 

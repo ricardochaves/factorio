@@ -1,0 +1,32 @@
+title = "Usina nuclear de 40 reatores"
+summary = "Usina nuclear de 40 reatores, 640 permutadores de calor e 1.292 turbinas a vapor: até 6.240 MW, com um circuito que protege a usina de sobrecarga."
+credits = "Design do dono do repositório, adaptado de um design pronto de autor desconhecido; nenhuma licença é conhecida. Corrigido aqui: faltava o cano subterrâneo que leva vapor a uma linha de 19 turbinas, que nunca funcionavam; a string ganhou nome e descrição."
+category = "power"
+tags = ["late-game", "bot-only"]
+
+[[files]]
+name = "Usina nuclear de 40 reatores"
+name_en = "40-reactor nuclear power plant"
+name_es = "Central nuclear de 40 reactores"
+path = "nuclear-power-plant-40-reactors-v1.txt"
+
+[test]
+status = "in-game"
+game_version = "2.0.77"
+report = "README.md"
+
+[[images]]
+path = "images/shot-1.webp"
+alt = "Vista geral, capturada no jogo"
+alt_en = "Overview, captured in-game"
+alt_es = "Vista general, captura del juego"
+
+[en]
+title = "40-reactor nuclear power plant"
+summary = "Nuclear power plant with 40 reactors, 640 heat exchangers and 1,292 steam turbines: up to 6,240 MW, with a circuit that protects the plant from overload."
+credits = "The repository owner's design, adapted from a ready-made design by an unknown author; no license is known. Corrected here: the pipe to ground that carries steam to a row of 19 turbines was missing, so they never worked; the string got a name and a description."
+
+[es]
+title = "Central nuclear de 40 reactores"
+summary = "Central nuclear con 40 reactores, 640 intercambiadores de calor y 1292 turbinas de vapor: hasta 6240 MW, con un circuito que protege la central de la sobrecarga."
+credits = "Diseño del dueño del repositorio, adaptado de un diseño ya existente, de autor desconocido; no se conoce ninguna licencia. Corregido aquí: faltaba la tubería subterránea que lleva el vapor a una fila de 19 turbinas, que nunca funcionaban; la cadena recibió nombre y descripción."
