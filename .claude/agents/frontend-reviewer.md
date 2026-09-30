@@ -2,7 +2,7 @@
 name: frontend-reviewer
 description: "Expert front-end review of the GitHub Pages site. Run it after any change under site/ or to what the site displays, before pushing: it tests function, data, WCAG 2.2 AA, performance and layout in a real browser, on the pages, languages and phone, tablet or desktop widths that the change affects, and ends with APPROVE or REQUEST CHANGES."
 model: sonnet
-effort: xhigh
+effort: high
 tools: Read, Bash
 omitClaudeMd: true
 skills:

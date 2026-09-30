@@ -2,7 +2,7 @@
 name: deploy-validator
 description: "Post-merge validation of the GitHub Pages deployment. Run it after every merge into main: it watches the workflow runs for the merge commit, then checks on the live site each item that the merge changed, on the pages, languages and phone, tablet or desktop widths that the merged files affect, and ends with APPROVE or REQUEST CHANGES."
 model: sonnet
-effort: xhigh
+effort: high
 tools: Read, Bash
 omitClaudeMd: true
 skills:

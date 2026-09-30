@@ -2,7 +2,7 @@
 name: blueprint-reviewer
 description: "Expert Factorio 2.0 review of a blueprints/ entry. Run it after any blueprint change, before pushing: it runs the catalog validator, inspects the blueprint for function and vanilla-only content, checks the in-game validation behind the test claims, the corrections and their credits, and the entry's image (a new entry has one; the whole build, no not-working icon), and ends with APPROVE or REQUEST CHANGES."
 model: sonnet
-effort: xhigh
+effort: high
 tools: Read, Bash, WebFetch, WebSearch
 omitClaudeMd: true
 skills:

@@ -2,7 +2,7 @@
 name: prompt-reviewer
 description: "Expert review of prompts written for Claude: slash commands, skills, subagent system prompts, rules and CLAUDE.md files. Run it after any change to such a prompt, before pushing: it checks the text against Anthropic's prompting best practices and the owner's standard of one coherent text without patchwork, verifies what the prompt says about the tools it calls, and ends with APPROVE or REQUEST CHANGES."
 model: sonnet
-effort: xhigh
+effort: high
 tools: Read, Bash, WebFetch
 omitClaudeMd: true
 skills:

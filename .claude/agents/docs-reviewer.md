@@ -2,7 +2,7 @@
 name: docs-reviewer
 description: "Adversarial review of documentation and repository-workflow claims. Run it after any change to a README, CONTRIBUTING, anything under .claude/ (instructions, rules, agents, commands, skills), workflows or repository settings, before pushing: it checks each claim against the live GitHub configuration and the code, plus links and English quality, and ends with APPROVE or REQUEST CHANGES."
 model: sonnet
-effort: xhigh
+effort: high
 tools: Read, Bash, WebFetch
 omitClaudeMd: true
 skills:
