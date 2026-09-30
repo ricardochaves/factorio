@@ -75,7 +75,7 @@ Solo el poste eléctrico grande que está después del interruptor tiene esta pr
 
 ## Resultados medidos en el juego
 
-Medido en Factorio 2.0.77 con la cadena corregida de esta entrada. Cada fila es la media de 18.000 ticks (5 min), después de 18.000 ticks (5 min) con la misma carga; la energía sale de las estadísticas eléctricas del juego; el agua, de sus estadísticas de fluidos; y las células quemadas, del número medio de reactores quemando, dividido entre 200 s (la duración de una célula). La potencia máxima calculada es 6240 MW: 40 reactores de 40 MW con 116 bonificaciones de vecindad del 100 %.
+Medido en Factorio 2.0.77 con la cadena corregida de esta entrada. Cada fila es la media de 18.000 ticks (5 min), después de 18.000 ticks (5 min) con la misma carga; la energía sale de las estadísticas eléctricas del juego; el agua, de sus estadísticas de fluidos; y las células quemadas, del número medio de reactores quemando, dividido entre 200 s (la duración de una célula). La potencia máxima calculada es 6240 MW: 40 reactores de 40 MW con 116 bonificaciones por proximidad del 100 %.
 
 | Carga pedida por la base (MW) | Entregado a la base (MW) | Células quemadas | Agua |
 |---|---|---|---|

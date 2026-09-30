@@ -17,6 +17,7 @@ analytics (and no privacy page) unless it sets its own. An empty value turns ana
 import argparse
 import datetime as dt
 import hashlib
+import html
 import importlib.util
 import json
 import os
@@ -143,22 +144,25 @@ class Readme:
         """Split a README into an intro and its level-2 sections, rendered to HTML."""
         tokens = self.md.parse(text)
         used = Counter()
-        groups, current, skip_h1 = [], {'title': None, 'id': None, 'tokens': []}, False
+        groups, current, skip_h1, h1_plain = [], {'title': None, 'id': None, 'tokens': [], 'plain': ''}, False, ''
         i = 0
         while i < len(tokens):
             tok = tokens[i]
             if tok.type == 'heading_open':
                 title = tokens[i + 1].content
+                # the heading as text, without markdown: it names the regions that hold its tables
+                plain = ''.join(c.content for c in (tokens[i + 1].children or []) if c.type in ('text', 'code_inline'))
                 anchor = slugify(title)
                 used[anchor] += 1
                 if used[anchor] > 1:
                     anchor = f'{anchor}-{used[anchor] - 1}'
                 if tok.tag == 'h1':
+                    h1_plain = plain
                     i += 3
                     continue
                 if tok.tag == 'h2':
                     groups.append(current)
-                    current = {'title': title, 'id': anchor, 'tokens': []}
+                    current = {'title': title, 'id': anchor, 'tokens': [], 'plain': plain}
                     i += 3
                     continue
                 tok.attrSet('id', anchor)
@@ -181,9 +185,18 @@ class Readme:
             if not body:
                 continue
             rows = body.count('<tr>')
-            # scrollable regions must be reachable with the keyboard (WCAG 2.1.1)
-            body = body.replace('<table>', '<div class="table-wrap" tabindex="0"><table>').replace('</table>', '</table></div>')
-            body = body.replace('<pre>', '<pre tabindex="0">')
+            # scrollable regions must be reachable with the keyboard (WCAG 2.1.1) and, being focusable, need a role and
+            # a name: the title of the section that holds them (the README's own title for its intro), numbered from the
+            # second table or code block of a section on so that no two regions of a page share a name
+            name = g['plain'] or h1_plain
+            seen = []
+
+            def region(m, name=name, seen=seen):
+                seen.append(1)
+                text = name if len(seen) == 1 else f'{name} ({len(seen)})'
+                attrs = f' role="region" aria-label="{html.escape(text, quote=True)}"' if name else ''
+                return f'<div class="table-wrap"{attrs} tabindex="0"><table>' if m.group(0) == '<table>' else f'<pre{attrs} tabindex="0">'
+            body = re.sub(r'<table>|<pre>', region, body).replace('</table>', '</table></div>')
             out.append({'title': g['title'] and self.inline(g['title']), 'id': g['id'], 'html': body,
                         'big': rows > BIG_TABLE_ROWS + 1})
         return out
