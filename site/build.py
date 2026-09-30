@@ -17,6 +17,7 @@ analytics (and no privacy page) unless it sets its own. An empty value turns ana
 import argparse
 import datetime as dt
 import hashlib
+import html
 import importlib.util
 import json
 import os
@@ -143,7 +144,7 @@ class Readme:
         """Split a README into an intro and its level-2 sections, rendered to HTML."""
         tokens = self.md.parse(text)
         used = Counter()
-        groups, current, skip_h1 = [], {'title': None, 'id': None, 'tokens': []}, False
+        groups, current, skip_h1, h1_title = [], {'title': None, 'id': None, 'tokens': []}, False, ''
         i = 0
         while i < len(tokens):
             tok = tokens[i]
@@ -154,6 +155,7 @@ class Readme:
                 if used[anchor] > 1:
                     anchor = f'{anchor}-{used[anchor] - 1}'
                 if tok.tag == 'h1':
+                    h1_title = title
                     i += 3
                     continue
                 if tok.tag == 'h2':
@@ -181,8 +183,11 @@ class Readme:
             if not body:
                 continue
             rows = body.count('<tr>')
-            # scrollable regions must be reachable with the keyboard (WCAG 2.1.1)
-            body = body.replace('<table>', '<div class="table-wrap" tabindex="0"><table>').replace('</table>', '</table></div>')
+            # scrollable regions must be reachable with the keyboard (WCAG 2.1.1) and, being focusable, need a role and
+            # a name: the title of the section that holds the table (the README's own title for its intro)
+            name = g['title'] or h1_title
+            label = f' role="region" aria-label="{html.escape(name, quote=True)}"' if name else ''
+            body = body.replace('<table>', f'<div class="table-wrap"{label} tabindex="0"><table>').replace('</table>', '</table></div>')
             body = body.replace('<pre>', '<pre tabindex="0">')
             out.append({'title': g['title'] and self.inline(g['title']), 'id': g['id'], 'html': body,
                         'big': rows > BIG_TABLE_ROWS + 1})

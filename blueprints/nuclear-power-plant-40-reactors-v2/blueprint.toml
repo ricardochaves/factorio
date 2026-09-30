@@ -1,0 +1,31 @@
+title = "Usina nuclear de 40 reatores com energia solar e acumuladores"
+summary = "Usina nuclear de 40 reatores, 640 permutadores de calor e 1.292 turbinas a vapor (6.240 MW calculados), sem circuito de proteção: painéis solares e acumuladores próprios alimentam os insersores de combustível."
+credits = "Design do dono do repositório, adaptado de um design pronto de autor desconhecido; nenhuma licença é conhecida. Corrigido aqui: a string ganhou nome e descrição."
+category = "power"
+tags = ["late-game", "bot-only"]
+
+[[files]]
+name = "Usina nuclear de 40 reatores v2"
+name_en = "40-reactor nuclear power plant v2"
+name_es = "Central nuclear de 40 reactores v2"
+path = "nuclear-power-plant-40-reactors-v2.txt"
+
+[test]
+status = "untested"
+game_version = "2.0.77"
+
+[[images]]
+path = "images/shot-1.webp"
+alt = "Vista geral, capturada no jogo"
+alt_en = "Overview, captured in-game"
+alt_es = "Vista general, captura del juego"
+
+[en]
+title = "40-reactor nuclear power plant with solar panels and accumulators"
+summary = "Nuclear power plant with 40 reactors, 640 heat exchangers and 1,292 steam turbines (6,240 MW calculated), with no protection circuit: its own solar panels and accumulators power the fuel inserters."
+credits = "The repository owner's design, adapted from a ready-made design by an unknown author; no license is known. Corrected here: the string got a name and a description."
+
+[es]
+title = "Central nuclear de 40 reactores con energía solar y acumuladores"
+summary = "Central nuclear con 40 reactores, 640 intercambiadores de calor y 1292 turbinas de vapor (6240 MW calculados), sin circuito de protección: sus propios paneles solares y acumuladores alimentan los insertadores de combustible."
+credits = "Diseño del dueño del repositorio, adaptado de un diseño ya existente, de autor desconocido; no se conoce ninguna licencia. Corregido aquí: la cadena recibió nombre y descripción."
