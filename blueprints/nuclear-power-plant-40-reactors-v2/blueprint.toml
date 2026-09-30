@@ -1,6 +1,6 @@
 title = "Usina nuclear de 40 reatores com energia solar e acumuladores"
-summary = "Usina nuclear de 40 reatores, 640 permutadores de calor e 1.292 turbinas a vapor, sem circuito de proteção: painéis solares e acumuladores próprios mantêm os insersores e a bomba funcionando mesmo com a base pedindo mais do que a usina produz (6.136 MW medidos com 7.000 MW pedidos)."
-credits = "Design do dono do repositório, adaptado de um design pronto de autor desconhecido; nenhuma licença é conhecida. Corrigido e alterado aqui: a string ganhou nome e descrição; a pedido do dono, a rede solar ganhou 32 painéis solares, 90 acumuladores e 28 postes médios ao longo dos tanques."
+summary = "Usina nuclear de 40 reatores sem circuito de proteção, com rede solar própria que mantém os insersores e a bomba ligados mesmo se a base pedir demais (6.136 MW medidos)."
+credits = "Design do dono do repositório, adaptado de um design pronto de autor desconhecido; nenhuma licença é conhecida. Corrigido e alterado aqui: a string ganhou nome e descrição; a pedido do dono, a rede solar ganhou mais 32 painéis solares, 90 acumuladores e 28 postes médios ao longo dos tanques."
 category = "power"
 tags = ["late-game", "bot-only"]
 
@@ -23,10 +23,10 @@ alt_es = "Vista general, captura del juego"
 
 [en]
 title = "40-reactor nuclear power plant with solar panels and accumulators"
-summary = "Nuclear power plant with 40 reactors, 640 heat exchangers and 1,292 steam turbines, with no protection circuit: its own solar panels and accumulators keep the inserters and the pump running even when the base asks for more than the plant produces (6,136 MW measured at a 7,000 MW demand)."
-credits = "The repository owner's design, adapted from a ready-made design by an unknown author; no license is known. Corrected and changed here: the string got a name and a description; at the owner's request, the solar group got 32 more solar panels, 90 more accumulators and 28 more medium electric poles along the tanks."
+summary = "40-reactor nuclear plant with no protection circuit and its own solar network that keeps the inserters and the pump running even if the base demands too much (6,136 MW measured)."
+credits = "The repository owner's design, adapted from a ready-made design by an unknown author; no license is known. Corrected and changed here: the string got a name and a description; at the owner's request, the solar network got 32 more solar panels, 90 more accumulators and 28 more medium electric poles along the tanks."
 
 [es]
 title = "Central nuclear de 40 reactores con energía solar y acumuladores"
-summary = "Central nuclear con 40 reactores, 640 intercambiadores de calor y 1292 turbinas de vapor, sin circuito de protección: sus propios paneles solares y acumuladores mantienen en marcha los insertadores y la bomba aunque la base pida más de lo que produce la central (6136 MW medidos con una demanda de 7000 MW)."
-credits = "Diseño del dueño del repositorio, adaptado de un diseño ya existente, de autor desconocido; no se conoce ninguna licencia. Corregido y modificado aquí: la cadena recibió nombre y descripción; a petición del dueño, el grupo solar recibió 32 paneles solares, 90 acumuladores y 28 postes eléctricos medianos más, a lo largo de las cisternas."
+summary = "Central nuclear de 40 reactores sin circuito de protección y con red solar propia que mantiene los insertadores y la bomba en marcha aunque la base pida de más (6136 MW medidos)."
+credits = "Diseño del dueño del repositorio, adaptado de un diseño ya existente, de autor desconocido; no se conoce ninguna licencia. Corregido y modificado aquí: la cadena recibió nombre y descripción; a petición del dueño, la red solar recibió 32 paneles solares, 90 acumuladores y 28 postes eléctricos medianos más, a lo largo de las cisternas."

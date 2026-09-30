@@ -63,13 +63,13 @@ Comparação com a `nuclear-power-plant-40-reactors-v1`, feita por script sobre 
 | Poste médio | 488 | 493 |
 
 - Sem circuito de proteção: a v2 não tem o combinador de decisão nem o interruptor de energia da v1, então a base se liga direto a um poste grande da rede das turbinas.
-- Uma só bomba de vapor: a v1 tinha 66 bombas entre os tanques e as turbinas, e a v2 tem uma. O vapor fica em duas metades independentes, oeste e leste, e a bomba única liga uma à outra (veja "Como o vapor é distribuído").
+- Uma só bomba: a v1 tinha 66 bombas entre os tanques e as turbinas, e a v2 tem uma. O vapor fica em duas metades independentes, oeste e leste, e a bomba única liga uma à outra (veja "Como o vapor é distribuído").
 - Rede própria para os insersores e a bomba: os 80 insersores de combustível e a bomba ficam num grupo de postes separado do grupo das turbinas, com 53 painéis solares e 97 acumuladores (485 MJ); na v1 havia só 1 painel solar e 2 acumuladores, para o combinador.
 - Igual à v1: os 40 reatores, os 640 permutadores de calor, as 1.292 turbinas, os 68 tanques, os 80 insersores, os 44 roboports, os 80 baús, as 64 entradas de água e a lógica de economia de combustível (as condições dos insersores são as mesmas).
 
 ## Entradas
 
-- Água: 64 canos subterrâneos, 32 na borda norte e 32 na borda sul. Ligue cada um à água; na potência máxima a usina usou cerca de 6.300 unidades de água por segundo (medido: 6.326 por segundo com 7.000 MW pedidos; calculado: 10,3 por segundo em cada um dos 624 permutadores de calor necessários para 6.240 MW, ou 6.430).
+- Água: 64 canos subterrâneos, 32 na borda norte e 32 na borda sul. Ligue cada um à água; na potência máxima a usina usou cerca de 6.300 unidades de água por segundo (medido: 6.326 por segundo com 7.000 MW pedidos; calculado: 10,3 por segundo em cada um dos 624 permutadores de calor necessários para 6.240 MW, no total 6.430).
 - Combustível: 40 baús solicitadores pedem 10 células de combustível de urânio cada; os robôs logísticos dos 44 roboports trazem as células, e as células de urânio vazias saem pelos 40 baús provedores ativos. A blueprint não traz robôs: a rede logística precisa de robôs logísticos, de um baú com células de combustível de urânio e de um baú que receba as células vazias.
 - Base: ligue a base a um dos 19 postes grandes, que pertencem ao grupo das turbinas, por exemplo o do centro, a 12 tiles ao norte da borda sul. Não ligue a base aos postes dos insersores de combustível nem dos painéis solares: isso poria a demanda da base sobre eles e desfaria a separação.
 - Partida: como na v1, um reator só recebe combustível do baú depois que uma célula vazia sai dele, então coloque à mão uma célula de combustível de urânio em cada um dos 40 reatores. Medido: de dia e sem fonte de energia externa, a usina partiu assim e se reabasteceu sozinha, e os acumuladores encheram nos primeiros 10 minutos.
@@ -95,7 +95,7 @@ No jogo base, um reator com combustível queima sem parar, mesmo quando ninguém
 
 ## Como a rede própria mantém os insersores
 
-Na v1, as bombas de vapor e os insersores de combustível usavam a energia da própria usina, e por isso um interruptor cortava a base quando ela pedia mais do que a usina produz. Na v2 não há esse interruptor: o grupo de postes dos insersores não tem fio de cobre para o grupo das turbinas, onde a base se liga. O grupo dos insersores tem os 80 insersores, 53 painéis solares, 97 acumuladores, a bomba única e 7 dos 44 roboports; os outros 37 roboports ficam no grupo das turbinas (contagem feita por script sobre a string e confirmada no jogo).
+Na v1, as bombas e os insersores de combustível usavam a energia da própria usina, e por isso um interruptor cortava a base quando ela pedia mais do que a usina produz. Na v2 não há esse interruptor: os postes da rede solar não têm fio de cobre para o grupo das turbinas, onde a base se liga. A rede solar tem os 80 insersores, 53 painéis solares, 97 acumuladores, a bomba única e 7 dos 44 roboports; os outros 37 roboports ficam no grupo das turbinas (contagem feita por script sobre a string e confirmada no jogo).
 
 A ideia do projeto, segundo o dono do repositório, é manter a usina toda funcionando, na produção máxima o tempo todo, mesmo que a base passe a pedir mais do que ela produz. Os 32 painéis e os 90 acumuladores acrescentados descem ao longo dos tanques até o fim da coluna, e só existem onde nenhum poste nem roboport do grupo das turbinas alcança, para não juntar as duas redes. Com a base parada, os 53 painéis dão até 3.180 kW de dia contra cerca de 400 kW de consumo do grupo (medido), e a sobra recarrega os acumuladores.
 
@@ -119,16 +119,16 @@ Rede solar, medida ao mesmo tempo. Nas linhas da noite, o jogo foi mantido à me
 | Base pedindo 7.000 MW, de dia | 387 | 485, cheios | 0 de 80 | 100 % |
 | Noite, sem carga extra | 397 | 464 → 405 | 0 de 80 | 100 % |
 | Noite, com 1 MW extra | 1.406 | 336 → 125 | 0 de 80 | 100 % |
-| Noite, com 3 MW extra | sem energia | 0 | 40 de 80, em média | 0 % |
+| Noite, com 3 MW extras | sem energia | 0 | 40 de 80, em média | 0 % |
 | Dia de novo, sem carga extra | 391, e 2.789 vão para os acumuladores | 46 → 465 | 0 de 80 | 100 % |
 
 - Sobrecarga da base: com 7.000 MW pedidos, a usina entregou 6.136 MW, com 39,9 dos 40 reatores queimando e as 1.292 turbinas trabalhando. Os 80 insersores e a bomba tiveram energia o tempo todo, o combustível continuou fluindo (0,20 célula por segundo) e os acumuladores ficaram cheios. Na v1, sem o circuito, a mesma carga colapsou a usina (221 MW).
 - De 6.000 a 7.000 MW pedidos, a entrega ficou abaixo do pedido (5.940, 6.080 e 6.136 MW) com a temperatura dos reatores ainda subindo (707 → 735, 753 → 767 e 775 → 783 °C): o máximo sustentado não foi medido em equilíbrio térmico e fica em torno de 6.100 MW ou mais.
 - Partida: sem fonte de energia externa, de dia, com uma célula em cada reator, a usina partiu sozinha e se reabasteceu (40 células trocadas em 10 minutos, com 26,6 dos 40 reatores queimando em média), e os acumuladores foram de 0 a 485 MJ nesse tempo.
-- Noite: os 485 MJ cobrem a carga da rede solar de 397 kW por cerca de 20 minutos (calculado a partir da queda medida) e, com 1 MW extra, por cerca de 6 minutos. Com 3 MW extras, os acumuladores se esgotaram em menos de 1 minuto (calculado), os insersores pararam, os reatores ficaram sem células e a usina apagou (0 MW).
+- Noite: os 485 MJ cobrem a carga da rede solar de 397 kW por cerca de 20 minutos (calculado a partir da queda medida) e, com 1 MW extra, por cerca de 6 minutos. Com 3 MW extras, os cerca de 125 MJ que restavam da fase anterior se esgotaram em cerca de 40 s (calculado; a partir da carga cheia seriam cerca de 2,4 minutos), os insersores pararam, os reatores ficaram sem células e a usina apagou (0 MW). Nessa fase o jogo contou 40 dos 80 insersores sem energia; os outros 40 não foram contados nesse estado, e o que ficou medido foi: nenhuma célula colocada, nenhum reator queimando e 0 MW.
 - Depois da falta total, quando o dia voltou a usina reiniciou sozinha: entre 50 s e 200 s depois, os 40 reatores queimavam de novo e ela entregava 4.957 MW aos 5.000 MW pedidos.
-- Roboports: com 6.000 MW ou mais pedidos, os 37 roboports do grupo das turbinas ficaram todos em baixa energia; os 7 do grupo solar nunca, a não ser enquanto encheram as suas baterias internas, na partida.
-- Vapor: em todas as fases com carga, 646 turbinas trabalharam em cada metade, e nenhuma turbina estava parada aos 40.000 ticks.
+- Roboports: com 6.000 MW ou mais pedidos, os 37 roboports do grupo das turbinas ficaram todos em baixa energia; os 7 da rede solar nunca, a não ser na partida, enquanto encheram as suas baterias internas, e na falta total (5,7 dos 7).
+- Vapor: em todas as fases em que a usina entregou energia, 646 turbinas trabalharam em cada metade, e nenhuma turbina estava parada aos 40.000 ticks.
 
 ## Como foi testado
 
