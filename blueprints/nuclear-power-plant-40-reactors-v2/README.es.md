@@ -87,7 +87,7 @@ Valores medidos a plena potencia, con 39,9 de los 40 reactores quemando (una cé
 
 ## Cómo se distribuye el vapor
 
-En la v1 el vapor formaba una red única. En la v2 son dos mitades independientes, oeste y este, cada una con 320 intercambiadores de calor, 646 turbinas y 34 cisternas, todas alimentadas por la misma red de agua. La bomba única, cerca del borde norte y conectada a la red solar, lleva vapor de la mitad oeste a la este. Los 40 umbrales de ahorro de combustible leen una cisterna de la mitad este; el nivel de vapor de la mitad oeste no se vigila. En las mediciones, las dos mitades trabajaron por igual, con 646 turbinas en cada una, y la bomba trabajó el 100 % del tiempo bajo carga.
+En la v1 el vapor formaba una red única. En la v2 son dos mitades independientes, oeste y este, cada una con 320 intercambiadores de calor, 646 turbinas y 34 cisternas, todas alimentadas por la misma red de agua. La bomba única, cerca del borde norte y conectada a la red solar, lleva vapor de la mitad oeste a la este. Los 40 umbrales de ahorro de combustible leen una cisterna de la mitad este; el nivel de vapor de la mitad oeste no se vigila. En las mediciones, las dos mitades trabajaron por igual (con 646 turbinas en cada una, fuera del arranque y de la falta total), y la bomba trabajó el 100 % del tiempo bajo carga.
 
 ## Cómo la central ahorra combustible
 
@@ -101,7 +101,7 @@ La idea del diseño, según el dueño del repositorio, es mantener toda la centr
 
 ## Resultados medidos en el juego
 
-Medido en Factorio 2.0.77 con la cadena de esta entrada. Cada fila es la media de 18.000 ticks (5 min), después de 18.000 ticks (5 min) con la misma carga; la energía sale de las estadísticas eléctricas del juego; el agua, de sus estadísticas de fluidos; y las células quemadas, del número medio de reactores quemando, dividido entre 200 s (la duración de una célula). La potencia máxima calculada es 6240 MW.
+Medido en Factorio 2.0.77 con el blueprint de esta entrada (mismas entidades y cables; solo cambió después el texto de la descripción). Cada fila es la media de 18.000 ticks (5 min), después de 18.000 ticks (5 min) con la misma carga; la energía sale de las estadísticas eléctricas del juego; el agua, de sus estadísticas de fluidos; y las células quemadas, del número medio de reactores quemando, dividido entre 200 s (la duración de una célula). La potencia máxima calculada es 6240 MW.
 
 | Carga pedida por la base (MW) | Entregado a la base (MW) | Células quemadas | Agua |
 |---|---|---|---|
@@ -112,7 +112,7 @@ Medido en Factorio 2.0.77 con la cadena de esta entrada. Cada fila es la media d
 | 7000 | 6136 | 0,20/s | 6326/s |
 | 5000, después de la sobrecarga | 5000 | 0,18/s | 5291/s |
 
-Red solar, medida al mismo tiempo. En las filas de la noche, el juego se mantuvo a medianoche y la base pedía 5000 MW. Las ventanas medidas de la noche y de la recarga duran 9000 ticks (150 s), salvo la de la carga extra de 3 MW, de 6000 ticks; la de la fila de 7000 MW, de día, es la de 18.000 ticks de la tabla anterior.
+Red solar, medida al mismo tiempo. En las filas de la noche, el juego se mantuvo a medianoche y la base pedía 5000 MW. Las ventanas medidas de la noche y de la recarga duran 9000 ticks (150 s) y empiezan 3000 ticks (50 s) después del inicio de la fase, salvo la de la carga extra de 3 MW, que son los últimos 6000 de los 18.000 ticks de la fase; la de la fila de 7000 MW, de día, es la de 18.000 ticks de la tabla anterior.
 
 | Situación | Carga de la red solar (kW) | Acumuladores (MJ) | Insertadores sin energía | Bomba trabajando |
 |---|---|---|---|---|
@@ -128,7 +128,7 @@ Red solar, medida al mismo tiempo. En las filas de la noche, el juego se mantuvo
 - Noche: los 485 MJ cubren la carga de 397 kW de la red solar durante unos 20 minutos (calculado a partir de la caída medida) y, con 1 MW extra, durante unos 6 minutos. Con 3 MW extra, los 125 MJ (aproximadamente) que quedaban de la fase anterior se agotaron en unos 40 s (calculado; partiendo de los acumuladores llenos habrían sido unos 2,4 minutos), los insertadores se pararon, los reactores se quedaron sin células y la central se apagó (0 MW). En esa fase el juego contó 40 de los 80 insertadores sin energía; los otros 40 no se contaron en ese estado, y lo medido fue: ninguna célula colocada, ningún reactor quemando y 0 MW.
 - Después de la falta total de energía, cuando volvió el día, la central se reinició sola: entre 50 s y 200 s después, los 40 reactores quemaban de nuevo y la central entregaba 4957 MW con los 5000 MW pedidos.
 - Robopuertos: con 6000 MW o más pedidos, los 37 robopuertos del grupo de las turbinas quedaron todos con poca energía; los 7 de la red solar nunca, salvo en el arranque, mientras llenaban sus baterías internas, y en la falta total, con 5,7 de los 7 con poca energía de media.
-- Vapor: en todas las fases en que la central entregó energía, 646 turbinas trabajaron en cada mitad, y ninguna turbina estaba parada a los 40.000 ticks.
+- Vapor: en todas las fases, salvo el arranque y la falta total, 646 turbinas trabajaron en cada mitad, y ninguna turbina estaba parada a los 40.000 ticks.
 
 ## Cómo se probó
 

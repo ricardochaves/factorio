@@ -87,7 +87,7 @@ Valores medidos na potência máxima, com 39,9 dos 40 reatores queimando (uma c�
 
 ## Como o vapor é distribuído
 
-Na v1 o vapor formava uma rede única. Na v2 são duas metades independentes, oeste e leste, cada uma com 320 permutadores de calor, 646 turbinas e 34 tanques, todas alimentadas pela mesma rede de água. A bomba única, perto da borda norte e ligada à rede solar, leva vapor da metade oeste para a leste. Os 40 limites de economia de combustível leem um tanque da metade leste; o nível de vapor da metade oeste não é monitorado. Nas medições, as duas metades trabalharam por igual, com 646 turbinas em cada uma, e a bomba trabalhou 100 % do tempo sob carga.
+Na v1 o vapor formava uma rede única. Na v2 são duas metades independentes, oeste e leste, cada uma com 320 permutadores de calor, 646 turbinas e 34 tanques, todas alimentadas pela mesma rede de água. A bomba única, perto da borda norte e ligada à rede solar, leva vapor da metade oeste para a leste. Os 40 limites de economia de combustível leem um tanque da metade leste; o nível de vapor da metade oeste não é monitorado. Nas medições, as duas metades trabalharam por igual (com 646 turbinas em cada uma, fora da partida e da falta total), e a bomba trabalhou 100 % do tempo sob carga.
 
 ## Como a usina economiza combustível
 
@@ -101,7 +101,7 @@ A ideia do projeto, segundo o dono do repositório, é manter a usina toda funci
 
 ## Resultados medidos no jogo
 
-Medido no Factorio 2.0.77 com a string desta entrada. Cada linha é a média de 18.000 ticks (5 min), depois de 18.000 ticks (5 min) na mesma carga; a energia vem das estatísticas elétricas do jogo; a água, das estatísticas de fluidos; e as células queimadas, do número médio de reatores queimando, dividido por 200 s (a duração de uma célula). A potência máxima calculada é 6.240 MW.
+Medido no Factorio 2.0.77 com a blueprint desta entrada (mesmas entidades e fios; só o texto da descrição foi alterado depois). Cada linha é a média de 18.000 ticks (5 min), depois de 18.000 ticks (5 min) na mesma carga; a energia vem das estatísticas elétricas do jogo; a água, das estatísticas de fluidos; e as células queimadas, do número médio de reatores queimando, dividido por 200 s (a duração de uma célula). A potência máxima calculada é 6.240 MW.
 
 | Carga pedida pela base (MW) | Entregue à base (MW) | Células queimadas | Água |
 |---|---|---|---|
@@ -112,7 +112,7 @@ Medido no Factorio 2.0.77 com a string desta entrada. Cada linha é a média de 
 | 7.000 | 6.136 | 0,20/s | 6.326/s |
 | 5.000, depois da sobrecarga | 5.000 | 0,18/s | 5.291/s |
 
-Rede solar, medida ao mesmo tempo. Nas linhas da noite, o jogo foi mantido à meia-noite e a base pedia 5.000 MW. As janelas medidas da noite e da recarga duram 9.000 ticks (150 s), exceto a da carga extra de 3 MW, de 6.000 ticks; a da linha de 7.000 MW, de dia, é a de 18.000 ticks da tabela anterior.
+Rede solar, medida ao mesmo tempo. Nas linhas da noite, o jogo foi mantido à meia-noite e a base pedia 5.000 MW. As janelas medidas da noite e da recarga duram 9.000 ticks (150 s) e começam 3.000 ticks (50 s) depois do início da fase, exceto a da carga extra de 3 MW, que são os últimos 6.000 dos 18.000 ticks da fase; a da linha de 7.000 MW, de dia, é a de 18.000 ticks da tabela anterior.
 
 | Situação | Carga da rede solar (kW) | Acumuladores (MJ) | Insersores sem energia | Bomba trabalhando |
 |---|---|---|---|---|
@@ -128,7 +128,7 @@ Rede solar, medida ao mesmo tempo. Nas linhas da noite, o jogo foi mantido à me
 - Noite: os 485 MJ cobrem a carga da rede solar de 397 kW por cerca de 20 minutos (calculado a partir da queda medida) e, com 1 MW extra, por cerca de 6 minutos. Com 3 MW extras, os cerca de 125 MJ que restavam da fase anterior se esgotaram em cerca de 40 s (calculado; partindo dos acumuladores cheios seriam cerca de 2,4 minutos), os insersores pararam, os reatores ficaram sem células e a usina apagou (0 MW). Nessa fase o jogo contou 40 dos 80 insersores sem energia; os outros 40 não foram contados nesse estado, e o que se mediu foi que nenhuma célula foi colocada, nenhum reator queimou e a entrega foi de 0 MW.
 - Depois da falta total, quando o dia voltou a usina reiniciou sozinha: entre 50 s e 200 s depois, os 40 reatores queimavam de novo e ela entregava 4.957 MW aos 5.000 MW pedidos.
 - Roboports: com 6.000 MW ou mais pedidos, os 37 roboports do grupo das turbinas ficaram todos em baixa energia; os 7 da rede solar nunca, a não ser na partida, enquanto encheram as suas baterias internas, e na falta total (5,7 dos 7, em média).
-- Vapor: em todas as fases em que a usina entregou energia, 646 turbinas trabalharam em cada metade, e nenhuma turbina estava parada aos 40.000 ticks.
+- Vapor: em todas as fases, exceto na partida e na falta total, 646 turbinas trabalharam em cada metade, e nenhuma turbina estava parada aos 40.000 ticks.
 
 ## Como foi testado
 

@@ -87,7 +87,7 @@ Values measured at full power, with 39.9 of the 40 reactors burning (one cell pe
 
 ## How the steam is distributed
 
-In version 1 the steam formed a single network. In version 2 there are two independent halves, west and east, each with 320 heat exchangers, 646 turbines and 34 tanks, all fed by the same water network. The single pump, near the north edge and powered by the solar network, moves steam from the west half to the east half. The 40 fuel-saving thresholds read a tank of the east half; the steam level of the west half is not monitored. In the measurements, the two halves worked equally, with 646 turbines in each, and the pump worked 100% of the time under load.
+In version 1 the steam formed a single network. In version 2 there are two independent halves, west and east, each with 320 heat exchangers, 646 turbines and 34 tanks, all fed by the same water network. The single pump, near the north edge and powered by the solar network, moves steam from the west half to the east half. The 40 fuel-saving thresholds read a tank of the east half; the steam level of the west half is not monitored. In the measurements, the two halves worked equally (with 646 turbines in each, outside startup and the total blackout), and the pump worked 100% of the time under load.
 
 ## How the plant saves fuel
 
@@ -101,7 +101,7 @@ The idea of the design, according to the repository owner, is to keep the whole 
 
 ## Results measured in-game
 
-Measured in Factorio 2.0.77 with this entry's string. Each row is the average of 18,000 ticks (5 min), after 18,000 ticks (5 min) at the same load; power comes from the game's electric statistics; water, from its fluid statistics; and cells burned, from the average number of reactors burning, divided by 200 s (the life of one cell). The calculated maximum is 6,240 MW.
+Measured in Factorio 2.0.77 with this entry's blueprint (same entities and wires; only the description text was changed afterwards). Each row is the average of 18,000 ticks (5 min), after 18,000 ticks (5 min) at the same load; power comes from the game's electric statistics; water, from its fluid statistics; and cells burned, from the average number of reactors burning, divided by 200 s (the life of one cell). The calculated maximum is 6,240 MW.
 
 | Load requested by the base (MW) | Delivered to the base (MW) | Cells burned | Water |
 |---|---|---|---|
@@ -112,7 +112,7 @@ Measured in Factorio 2.0.77 with this entry's string. Each row is the average of
 | 7,000 | 6,136 | 0.20/s | 6,326/s |
 | 5,000, after the overload | 5,000 | 0.18/s | 5,291/s |
 
-Solar network, measured at the same time. In the night rows, the game was held at midnight and the base asked for 5,000 MW. The measured windows of the night and recharge rows last 9,000 ticks (150 s), except the one with 3 MW of extra load, which lasts 6,000 ticks; the daytime 7,000 MW row uses the 18,000-tick window of the previous table.
+Solar network, measured at the same time. In the night rows, the game was held at midnight and the base asked for 5,000 MW. The measured windows of the night and recharge rows last 9,000 ticks (150 s) and start 3,000 ticks (50 s) into the phase, except the one with 3 MW of extra load, which is the last 6,000 of the phase's 18,000 ticks; the daytime 7,000 MW row uses the 18,000-tick window of the previous table.
 
 | Situation | Solar network load (kW) | Accumulators (MJ) | Inserters without power | Pump working |
 |---|---|---|---|---|
@@ -128,7 +128,7 @@ Solar network, measured at the same time. In the night rows, the game was held a
 - Night: the 485 MJ covers the solar network's 397 kW load for about 20 minutes (calculated from the measured drop) and, with 1 MW extra, for about 6 minutes. With 3 MW extra, the roughly 125 MJ left from the previous phase ran out in about 40 s (calculated; starting from full accumulators it would be about 2.4 minutes), the inserters stopped, the reactors ran out of cells and the plant went dark (0 MW). In that phase the game counted 40 of the 80 inserters as unpowered, on average, and did not count the other 40 that way; what was measured is the outcome: no cell delivered, no reactor burning and 0 MW.
 - After the total shortage, when daylight returned the plant restarted by itself: between 50 s and 200 s later, the 40 reactors were burning again and it delivered 4,957 MW against the 5,000 MW requested.
 - Roboports: with 6,000 MW or more requested, the 37 roboports of the turbines' group were all at low power; the 7 of the solar network never were, except at startup, while they filled their internal batteries, and in the total blackout (5.7 of the 7 at low power, on average).
-- Steam: in every phase in which the plant delivered power, 646 turbines worked in each half, and no turbine was idle at tick 40,000.
+- Steam: in every phase except startup and the total blackout, 646 turbines worked in each half, and no turbine was idle at tick 40,000.
 
 ## How it was tested
 
