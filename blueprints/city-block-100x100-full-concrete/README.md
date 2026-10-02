@@ -6,7 +6,7 @@ encaixam sem emenda, e o interior do lote fica livre para o que você quiser con
 energia nem robôs: é só a base de robôs.
 
 - Arquivo: [`city-block-100x100-full-concrete.txt`](city-block-100x100-full-concrete.txt) (concreto total: concreto refinado no lote inteiro). No jogo o nome é `City block 100x100 (full concrete)`.
-- A outra variante, [concreto parcial](../city-block-100x100-partial-concrete/), é uma blueprint à parte: as entidades e os fios são idênticos e só o piso muda. As duas podem ser postas lado a lado (ver "Fronteira entre blocos vizinhos").
+- A outra variante, [concreto parcial](../city-block-100x100-partial-concrete/), é um blueprint à parte: as entidades e os fios são idênticos e só o piso muda. As duas podem ser postas lado a lado (ver "Fronteira entre blocos vizinhos").
 - Esta é sempre a versão atual. Versões anteriores ficam no histórico do git (`git log -p -- blueprints/city-block-100x100-full-concrete/`).
 
 ![Bloco com concreto total](images/overview.webp)
@@ -17,7 +17,7 @@ energia nem robôs: é só a base de robôs.
 |---|---|
 | Entidades | 120 |
 | Área | 100 × 100 tiles |
-| Roboports | 4, em (25, 25), (75, 25), (25, 75) e (75, 75) (coordenadas da blueprint, em tiles a partir do canto noroeste do bloco) |
+| Roboports | 4, em (25, 25), (75, 25), (25, 75) e (75, 75) (coordenadas do blueprint, em tiles a partir do canto noroeste do bloco) |
 | Postes grandes | 16: 12 na borda, a cada 30 tiles, e 4 ao lado dos roboports |
 | Lâmpadas | 24: 2 em cada canto, 1 em cada poste intermediário da borda e 2 em cada roboport |
 | Baús de armazenagem, sem filtro | 76, vazios: 14 ao redor de cada roboport e 20 junto aos postes da borda |
@@ -38,7 +38,7 @@ O resto dos materiais: 76 baús de armazenagem, 24 lâmpadas, 16 postes grandes 
 
 ## Como o bloco é montado
 
-- **Alinhamento**: a blueprint usa alinhamento absoluto à grade de 100 × 100. Cada cópia cai na célula de 100 × 100 sob o cursor, então blocos vizinhos não se sobrepõem.
+- **Alinhamento**: o blueprint usa alinhamento absoluto à grade de 100 × 100. Cada cópia cai na célula de 100 × 100 sob o cursor, então blocos vizinhos não se sobrepõem.
 - **Borda**: uma faixa de 6 tiles em cada lado. Da parte de fora para a de dentro: 2 de concreto refinado, 1 de concreto refinado com marca de perigo, 1 de calçada de pedra e 2 de concreto refinado. Dois blocos vizinhos juntam as bordas e deixam uma rua de 12 tiles entre eles.
 - **Bases dos roboports**: cada roboport fica numa base de 12 × 12 tiles: um miolo de 6 × 6 de concreto refinado com marca de perigo, onde ficam o roboport, os baús, o poste e as lâmpadas, cercado por 1 tile de calçada de pedra e mais 2 de concreto refinado.
 - **Bases dos postes**: cada um dos 12 postes da borda tem uma base própria, no mesmo desenho das bases dos roboports em escala menor: miolo de concreto refinado com marca de perigo, 1 tile de calçada de pedra e 2 de concreto refinado em volta. Ela cobre o poste, as lâmpadas e os baús e avança para dentro do lote além da faixa de 6 tiles: 3 tiles nos postes intermediários e 4 nos cantos, igual nos quatro cantos.
@@ -58,7 +58,7 @@ Testado no jogo tile a tile, com blocos em 2 × 1, 1 × 2, 2 × 2 e 3 × 3, e ta
 |---|---|
 | Emendas | em cada emenda, o tile a N tiles de um lado é o espelho do tile a N tiles do outro lado: 0 diferenças em 35 emendas (18 só com este bloco, olhando 50 tiles para dentro de cada lado, ou seja, até o meio de cada bloco; 17 no xadrez, olhando só a borda de 6 tiles) |
 | Rua | os 12 tiles da rua estão todos pavimentados, sem nenhuma falha, em todas as emendas |
-| Construção | com 1, 2, 4 e 9 blocos: todas as entidades e tiles nas posições da blueprint, 0 fantasmas sobrando, sem sobreposição |
+| Construção | com 1, 2, 4 e 9 blocos: todas as entidades e tiles nas posições do blueprint, 0 fantasmas sobrando, sem sobreposição |
 | Energia | os postes de todos os blocos formam 1 rede elétrica, com 4 fios de cobre em cada lado compartilhado (no 3 × 3: 180 dos blocos mais 48 entre eles) |
 | Rede logística | os roboports de todos os blocos formam 1 rede (36 no 3 × 3) e os baús estão todos dentro dela (684) |
 | Robôs | construíram 4 de 4 fantasmas de baú de madeira em cima da emenda, com os baús de madeira guardados num baú de armazenagem de um dos blocos |
@@ -72,7 +72,7 @@ Teste automatizado no Factorio 2.0.77 headless (`scenarios/city-test`, 254 checa
 | Verificação | Resultado |
 |---|---|
 | Importação | a string importa sem erros: 120 entidades e 10.000 tiles, com alinhamento absoluto à grade de 100 × 100 |
-| Construção | todas as entidades e tiles nas posições da blueprint e os fios em número igual ao dela (por bloco: 20 de cobre, 12 vermelhos e 12 verdes), 0 fantasmas sobrando, com 1 e com 4 blocos, sem sobreposição; com 4 blocos, mais 16 fios de cobre entre blocos vizinhos |
+| Construção | todas as entidades e tiles nas posições do blueprint e os fios em número igual ao dele (por bloco: 20 de cobre, 12 vermelhos e 12 verdes), 0 fantasmas sobrando, com 1 e com 4 blocos, sem sobreposição; com 4 blocos, mais 16 fios de cobre entre blocos vizinhos |
 | Rede elétrica | os 16 postes formam 1 rede; os 64 postes dos 4 blocos também formam 1 só, ligada sozinha; roboports e lâmpadas estão nela |
 | Roboports | cada roboport novo começa com 10 MJ dos 100 MJ do buffer e sobe cerca de 5 MJ por segundo: 19,9 MJ com 2 s, 59,5 MJ com 10 s, cheio com 20 s. Até lá o status é "Pouca energia"; com o buffer cheio, todos ficam "Trabalhando" |
 | Lâmpadas | 24 de 24 acesas à noite (96 de 96 nos 4 blocos) |
@@ -92,7 +92,7 @@ Teste automatizado no Factorio 2.0.77 headless (`scenarios/city-test`, 254 checa
 
 ## Histórico
 
-- **Publicação** — as entidades, os fios e os pisos são os exportados do jogo. Só o nome e a descrição da blueprint foram reescritos (erros de digitação e nomes alinhados aos do site).
+- **Publicação** — as entidades, os fios e os pisos são os exportados do jogo. Só o nome e a descrição do blueprint foram reescritos (erros de digitação e nomes alinhados aos do site).
 
 ## Como testar
 
