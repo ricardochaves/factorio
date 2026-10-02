@@ -22,7 +22,7 @@ Usina nuclear com 40 reatores em duas colunas de 20, 640 permutadores de calor e
 
 ## Lista de materiais
 
-Tudo o que a blueprint usa, contado pelo validador do catálogo a partir da string:
+Tudo o que o blueprint usa, contado pelo validador do catálogo a partir da string:
 
 | Item | Quantidade |
 |---|---|
@@ -70,7 +70,7 @@ Comparação com a `nuclear-power-plant-40-reactors-v1`, feita por script sobre 
 ## Entradas
 
 - Água: 64 canos subterrâneos, 32 na borda norte e 32 na borda sul. Ligue cada um à água; na potência máxima a usina usou cerca de 6.300 unidades de água por segundo (medido: 6.326 por segundo com 7.000 MW pedidos; calculado: 10,3 por segundo em cada um dos 624 permutadores de calor necessários para 6.240 MW, ou 6.430 no total).
-- Combustível: 40 baús solicitadores pedem 10 células de combustível de urânio cada; os robôs logísticos dos 44 roboports trazem as células, e as células de urânio vazias saem pelos 40 baús provedores ativos. A blueprint não traz robôs: a rede logística precisa de robôs logísticos, de um baú com células de combustível de urânio e de um baú que receba as células vazias.
+- Combustível: 40 baús solicitadores pedem 10 células de combustível de urânio cada; os robôs logísticos dos 44 roboports trazem as células, e as células de urânio vazias saem pelos 40 baús provedores ativos. O blueprint não traz robôs: a rede logística precisa de robôs logísticos, de um baú com células de combustível de urânio e de um baú que receba as células vazias.
 - Base: ligue a base a um dos 19 postes grandes, que pertencem ao grupo das turbinas, por exemplo o do centro, a 12 tiles ao norte da borda sul. Não ligue a base aos postes dos insersores de combustível nem dos painéis solares: isso poria a demanda da base sobre eles e desfaria a separação.
 - Partida: como na v1, um reator só recebe combustível do baú depois que uma célula vazia sai dele, então coloque à mão uma célula de combustível de urânio em cada um dos 40 reatores. Medido: de dia e sem fonte de energia externa, a usina partiu assim e se reabasteceu sozinha, e os acumuladores encheram nos primeiros 10 minutos.
 
@@ -101,7 +101,7 @@ A ideia do projeto, segundo o dono do repositório, é manter a usina toda funci
 
 ## Resultados medidos no jogo
 
-Medido no Factorio 2.0.77 com a blueprint desta entrada (mesmas entidades e fios; só o texto da descrição foi alterado depois). Cada linha é a média de 18.000 ticks (5 min), depois de 18.000 ticks (5 min) na mesma carga; a energia vem das estatísticas elétricas do jogo; a água, das estatísticas de fluidos; e as células queimadas, do número médio de reatores queimando, dividido por 200 s (a duração de uma célula). A potência máxima calculada é 6.240 MW.
+Medido no Factorio 2.0.77 com o blueprint desta entrada (mesmas entidades e fios; só o texto da descrição foi alterado depois). Cada linha é a média de 18.000 ticks (5 min), depois de 18.000 ticks (5 min) na mesma carga; a energia vem das estatísticas elétricas do jogo; a água, das estatísticas de fluidos; e as células queimadas, do número médio de reatores queimando, dividido por 200 s (a duração de uma célula). A potência máxima calculada é 6.240 MW.
 
 | Carga pedida pela base (MW) | Entregue à base (MW) | Células queimadas | Água |
 |---|---|---|---|
@@ -132,9 +132,9 @@ Rede solar, medida ao mesmo tempo. Nas linhas da noite, o jogo foi mantido à me
 
 ## Como foi testado
 
-Duas execuções no jogo. Na primeira, o executor de fotos do catálogo importou e construiu as 8.809 entidades da blueprint e a ligou a uma fonte de energia; 1 dos 2 grupos de postes ficou fora do alcance dessa fonte, e o teste ligou esse grupo a ela com um fio adicionado, o que junta as duas redes só no teste. A imagem vem dessa execução e mostra a blueprint construída, não em funcionamento.
+Duas execuções no jogo. Na primeira, o executor de fotos do catálogo importou e construiu as 8.809 entidades do blueprint e o ligou a uma fonte de energia; 1 dos 2 grupos de postes ficou fora do alcance dessa fonte, e o teste ligou esse grupo a ela com um fio adicionado, o que junta as duas redes só no teste. A imagem vem dessa execução e mostra o blueprint construído, não em funcionamento.
 
-Na segunda, um cenário de teste feito para esta entrada (não incluído no repositório) construiu a blueprint numa superfície de laboratório, de dia, pôs água infinita nas 64 entradas e fez o papel dos robôs logísticos: a cada segundo completou 10 células de combustível de urânio em cada baú solicitador e esvaziou os baús provedores ativos. O cenário colocou uma célula em cada reator, sem nenhuma fonte de energia externa. A base foi uma carga elétrica ajustável ligada a um poste grande da rede das turbinas; uma segunda carga, ligada a um poste da rede solar, simulou o consumo extra de robôs; e a noite foi mantida fixando o horário da superfície à meia-noite. O jogo confirmou que as duas redes são separadas e que a rede solar tem os 80 insersores, os 53 painéis, os 97 acumuladores, a bomba, 7 roboports e nenhuma turbina. Foi uma execução só de cada medida. O validador do catálogo confirmou que a string é válida e só usa itens do jogo base (versão 2.0.77).
+Na segunda, um cenário de teste feito para esta entrada (não incluído no repositório) construiu o blueprint numa superfície de laboratório, de dia, pôs água infinita nas 64 entradas e fez o papel dos robôs logísticos: a cada segundo completou 10 células de combustível de urânio em cada baú solicitador e esvaziou os baús provedores ativos. O cenário colocou uma célula em cada reator, sem nenhuma fonte de energia externa. A base foi uma carga elétrica ajustável ligada a um poste grande da rede das turbinas; uma segunda carga, ligada a um poste da rede solar, simulou o consumo extra de robôs; e a noite foi mantida fixando o horário da superfície à meia-noite. O jogo confirmou que as duas redes são separadas e que a rede solar tem os 80 insersores, os 53 painéis, os 97 acumuladores, a bomba, 7 roboports e nenhuma turbina. Foi uma execução só de cada medida. O validador do catálogo confirmou que a string é válida e só usa itens do jogo base (versão 2.0.77).
 
 ## Correções feitas aqui
 

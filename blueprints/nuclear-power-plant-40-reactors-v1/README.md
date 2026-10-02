@@ -22,7 +22,7 @@ Usina nuclear com 40 reatores em duas colunas de 20, 640 permutadores de calor e
 
 ## Lista de materiais
 
-Tudo o que a blueprint usa, contado pelo validador do catálogo a partir da string:
+Tudo o que o blueprint usa, contado pelo validador do catálogo a partir da string:
 
 | Item | Quantidade |
 |---|---|
@@ -52,9 +52,9 @@ As quatro bordas terminam numa faixa de concreto com sinal de perigo de um tile 
 ## Entradas
 
 - Água: 64 canos subterrâneos, 32 na borda norte e 32 na borda sul. Ligue cada um à água; na potência máxima a usina precisa de cerca de 6.430 unidades de água por segundo (calculado: 10,3 por segundo em cada um dos 624 permutadores de calor necessários para 6.240 MW).
-- Combustível: 40 baús solicitadores pedem 10 células de combustível de urânio cada; os robôs logísticos dos 44 roboports trazem as células, e as células de urânio vazias saem pelos 40 baús provedores ativos. A blueprint não traz robôs: a rede logística precisa de robôs logísticos, de um baú com células de combustível de urânio e de um baú que receba as células vazias.
+- Combustível: 40 baús solicitadores pedem 10 células de combustível de urânio cada; os robôs logísticos dos 44 roboports trazem as células, e as células de urânio vazias saem pelos 40 baús provedores ativos. O blueprint não traz robôs: a rede logística precisa de robôs logísticos, de um baú com células de combustível de urânio e de um baú que receba as células vazias.
 - Base: ligue a base somente ao poste grande no centro da borda sul, que fica depois do interruptor de energia (veja a próxima seção).
-- Partida: um reator só recebe combustível do baú depois que uma célula vazia sai dele, então a usina não parte sozinha. Coloque à mão uma célula de combustível de urânio em cada um dos 40 reatores e ligue uma fonte de energia a um poste da usina (não ao poste de saída): a blueprint vem com o interruptor aberto e os acumuladores vazios, e as bombas de vapor e os insersores só funcionam com energia. No teste, a fonte ficou ligada 20 minutos, até o acumulador da usina encher.
+- Partida: um reator só recebe combustível do baú depois que uma célula vazia sai dele, então a usina não parte sozinha. Coloque à mão uma célula de combustível de urânio em cada um dos 40 reatores e ligue uma fonte de energia a um poste da usina (não ao poste de saída): o blueprint vem com o interruptor aberto e os acumuladores vazios, e as bombas de vapor e os insersores só funcionam com energia. No teste, a fonte ficou ligada 20 minutos, até o acumulador da usina encher.
 
 ## Como a usina economiza combustível
 
@@ -93,9 +93,9 @@ Medido no Factorio 2.0.77, com a string corrigida desta entrada. Cada linha é a
 
 ## Como foi testado
 
-Três execuções no jogo. Na primeira, o executor de fotos do catálogo importou e construiu a blueprint e a ligou a uma fonte de energia; 1 grupo de postes ficou fora do alcance da fonte, e o teste o ligou a ela com um fio adicionado. A imagem vem dessa execução e mostra a blueprint construída, não em funcionamento.
+Três execuções no jogo. Na primeira, o executor de fotos do catálogo importou e construiu o blueprint e o ligou a uma fonte de energia; 1 grupo de postes ficou fora do alcance da fonte, e o teste o ligou a ela com um fio adicionado. A imagem vem dessa execução e mostra o blueprint construído, não em funcionamento.
 
-Na segunda, um cenário de teste feito para esta entrada (não incluído no repositório) construiu a blueprint numa superfície de laboratório sempre de dia, pôs água infinita nos 64 canos subterrâneos de entrada, e fez o papel dos robôs logísticos: a cada segundo completou 10 células de combustível de urânio em cada baú solicitador e esvaziou os baús provedores ativos. O cenário colocou uma célula em cada reator e ligou uma fonte de energia temporária, retirada antes das medições. Na terceira, com os reatores vazios, a mesma fonte e combustível nos baús, nenhum reator queimou em 5 minutos; com uma célula à mão em cada reator, a usina partiu e depois se reabasteceu sozinha. A base foi uma carga elétrica ajustável ligada ao poste grande de saída. O validador do catálogo confirmou que a string é válida e só usa itens do jogo base (versão 2.0.77).
+Na segunda, um cenário de teste feito para esta entrada (não incluído no repositório) construiu o blueprint numa superfície de laboratório sempre de dia, pôs água infinita nos 64 canos subterrâneos de entrada, e fez o papel dos robôs logísticos: a cada segundo completou 10 células de combustível de urânio em cada baú solicitador e esvaziou os baús provedores ativos. O cenário colocou uma célula em cada reator e ligou uma fonte de energia temporária, retirada antes das medições. Na terceira, com os reatores vazios, a mesma fonte e combustível nos baús, nenhum reator queimou em 5 minutos; com uma célula à mão em cada reator, a usina partiu e depois se reabasteceu sozinha. A base foi uma carga elétrica ajustável ligada ao poste grande de saída. O validador do catálogo confirmou que a string é válida e só usa itens do jogo base (versão 2.0.77).
 
 ## Correções feitas aqui
 

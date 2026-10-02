@@ -2,7 +2,7 @@ title = "Fundição de ferro/cobre"
 summary = "Fundição de chapas de ferro ou de cobre em fornalhas elétricas com módulos de produtividade 3, aceleradas por transmissores com módulos de velocidade 3, alimentada por uma linha de minério em esteira expressa."
 category = "mining-smelting"
 tags = ["blue-belt", "late-game", "modules", "beacons"]
-credits = "Design de Nilaus, da série Master Class (“Advanced Smelting (8 Beacon) 45 / sec output”), publicado por ele [neste post do FactorioBin](https://factoriobin.com/post/SnAX6v23). O post não declara licença. A blueprint do catálogo tem as mesmas 133 entidades (posições e módulos), gravada no Factorio 2.0.77, com nome e descrição próprios."
+credits = "Design de Nilaus, da série Master Class (“Advanced Smelting (8 Beacon) 45 / sec output”), publicado por ele [neste post do FactorioBin](https://factoriobin.com/post/SnAX6v23). O post não declara licença. O blueprint do catálogo tem as mesmas 133 entidades (posições e módulos), gravado no Factorio 2.0.77, com nome e descrição próprios."
 
 [[files]]
 name = "Fundição de ferro/cobre"

@@ -1,6 +1,6 @@
 # Fornalha de tijolos de pedra
 
-Blueprint que transforma pedra em tijolos de pedra: oito fornalhas elétricas com módulos de produtividade 3, cercadas por dezoito transmissores com módulos de velocidade 3. Ela é alimentada por uma esteira expressa cheia de pedra e entrega os tijolos em outra esteira expressa.
+Blueprint que transforma pedra em tijolos de pedra: oito fornalhas elétricas com módulos de produtividade 3, cercadas por dezoito transmissores com módulos de velocidade 3. Ele é alimentado por uma esteira expressa cheia de pedra e entrega os tijolos em outra esteira expressa.
 
 - Arquivo: [`stone-brick-smelter.txt`](stone-brick-smelter.txt) — string de blueprint; no jogo o nome é `Stone smelter`.
 - Esta é sempre a versão atual. Versões anteriores ficam no histórico do git.
@@ -21,11 +21,11 @@ Blueprint que transforma pedra em tijolos de pedra: oito fornalhas elétricas co
 
 ## Entradas e saídas
 
-A blueprint tem uma entrada e uma saída, ambas em esteiras expressas que correm para o norte (coordenadas da blueprint, sem girar):
+O blueprint tem uma entrada e uma saída, ambas em esteiras expressas que correm para o norte (coordenadas do blueprint, sem girar):
 
-- Entrada: pedra, pela extremidade sul da coluna da direita. Ligue uma esteira que leve só pedra: nenhum insersor da blueprint tem filtro, então, se outro item que as fornalhas aceitem estiver na esteira, nada impede que os insersores o coloquem nas fornalhas.
+- Entrada: pedra, pela extremidade sul da coluna da direita. Ligue uma esteira que leve só pedra: nenhum insersor do blueprint tem filtro, então, se outro item que as fornalhas aceitem estiver na esteira, nada impede que os insersores o coloquem nas fornalhas.
 - Saída: tijolos de pedra, pela extremidade norte da coluna da esquerda (a esteira subterrânea expressa de saída).
-- Energia: a blueprint não inclui geração de energia. A subestação (`substation`) na ponta sul é o ponto de ligação à rede elétrica.
+- Energia: o blueprint não inclui geração de energia. A subestação (`substation`) na ponta sul é o ponto de ligação à rede elétrica.
 - Módulos: vêm como pedidos de itens (36 × `speed-module-3` e 16 × `productivity-module-3`); é preciso entregá-los com robôs ou colocá-los à mão.
 
 ## Consumo e produção
@@ -41,7 +41,7 @@ O consumo de 45/s é o limite de uma esteira expressa. A produção vem de 45 ÷
 
 ## Resultados medidos no jogo
 
-Teste automatizado no Factorio 2.0.77 sem interface gráfica (cenário `smelter-test`): uma esteira de pedra sempre cheia (baú infinito e carregador expresso), a saída escoando e a energia vinda de uma interface de energia elétrica, com 60 s de aquecimento e 60 s de medição. A potência elétrica é lida depois disso: a interface de energia elétrica para de produzir e o teste mede, durante 10 s, quanto do buffer da interface a blueprint consome. O teste roda em duas superfícies ao mesmo tempo: com todas as tecnologias pesquisadas e sem nenhuma.
+Teste automatizado no Factorio 2.0.77 sem interface gráfica (cenário `smelter-test`): uma esteira de pedra sempre cheia (baú infinito e carregador expresso), a saída escoando e a energia vinda de uma interface de energia elétrica, com 60 s de aquecimento e 60 s de medição. A potência elétrica é lida depois disso: a interface de energia elétrica para de produzir e o teste mede, durante 10 s, quanto do buffer da interface o blueprint consome. O teste roda em duas superfícies ao mesmo tempo: com todas as tecnologias pesquisadas e sem nenhuma.
 
 | Indicador | Todas as tecnologias | Nenhuma tecnologia |
 |---|---|---|
@@ -59,10 +59,10 @@ Teste no jogo, com o cenário `smelter-test`: 17 verificações, todas passaram.
 
 - A string é importada sem erro, e o jogo lê o nome e a descrição dela.
 - As 73 entidades e os 52 módulos batem com a string, contados a partir do JSON decodificado.
-- Uma única rede elétrica liga a blueprint à fonte de energia, e nenhuma máquina fica sem energia.
+- Uma única rede elétrica liga o blueprint à fonte de energia, e nenhuma máquina fica sem energia.
 - A esteira cheia resulta no consumo e na produção calculados acima, e todas as fornalhas trabalham.
 
-A imagem principal foi capturada no jogo, com interface gráfica, num cenário de laboratório com a blueprint construída, energizada e alimentada, no instante em que as oito fornalhas estavam em funcionamento. Esse cenário de captura não faz parte do repositório.
+A imagem principal foi capturada no jogo, com interface gráfica, num cenário de laboratório com o blueprint construído, energizado e alimentado, no instante em que as oito fornalhas estavam em funcionamento. Esse cenário de captura não faz parte do repositório.
 
 O validador do catálogo também confirmou que a string é válida e só usa itens do jogo base (versão 2.0.77).
 
@@ -78,6 +78,6 @@ O script exporta a string, roda o cenário sem interface gráfica (o servidor s�
 
 ## Limites conhecidos
 
-- A blueprint precisa de tecnologias pesquisadas: sem nenhuma, a saída cai para 13,12 tijolos/s. O teste não separa qual tecnologia faz a diferença.
+- O blueprint precisa de tecnologias pesquisadas: sem nenhuma, a saída cai para 13,12 tijolos/s. O teste não separa qual tecnologia faz a diferença.
 - A última fornalha da fila, a do norte, no fim da esteira de pedra, recebe só a pedra que sobra: com todas as tecnologias pesquisadas ela trabalhou 53,9 % do tempo, contra 93,4 % a 100 % nas outras sete.
-- A blueprint não inclui geração de energia; em plena produção ela consome 20,53 MW.
+- O blueprint não inclui geração de energia; em plena produção ele consome 20,53 MW.

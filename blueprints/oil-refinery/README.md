@@ -1,6 +1,6 @@
 # Refinaria de petróleo
 
-Blueprint única de uma refinaria completa para o Factorio 2.0.77, jogo base (sem Space Age).
+Blueprint único de uma refinaria completa para o Factorio 2.0.77, jogo base (sem Space Age).
 
 - Arquivo: [`oil-refinery.txt`](oil-refinery.txt) — string de blueprint; no jogo o nome é `refinaria v3 (plastic feed + acid water)`.
 - Esta é sempre a versão atual. Versões anteriores ficam no histórico do git (`git log -p -- blueprints/oil-refinery/`).
@@ -29,7 +29,7 @@ Cada bloco de plástico tem 48 usinas químicas (1 `speed-module-3` + 2 `product
 
 ## Entradas
 
-A blueprint tem 9 entradas externas, todas na borda sul (coordenadas da blueprint):
+O blueprint tem 9 entradas externas, todas na borda sul (coordenadas do blueprint):
 
 - Petróleo bruto: 2 subterrâneos em (-275.5, 499.5), que passa pelos tanques, e (-273.5, 499.5), direto ao banco oeste,
   e a linha do banco leste (x entre -176.5 e -120.5). **Ligue os dois subterrâneos.** As 36 refinarias só chegam a 100 %
@@ -71,7 +71,7 @@ As mudanças futuras ficam no histórico do git. Resumo das versões anteriores 
 - **v2 — alimentação de gás do bloco direito de plástico** (7 entidades novas, 2 alteradas, 3 fios). O bloco direito só
   recebia gás por uma bomba com condição `petroleum-gas > 99000`, e os tanques ficavam em ~97k: no regime escasso ele parava
   (0 %) enquanto o esquerdo ficava em 100 %. Duas bombas paralelas com `> 95000`, igual ao bloco esquerdo, e um poste médio.
-- **Original** — blueprint base da qual as duas mudanças partiram.
+- **Original** — blueprint base do qual as duas mudanças partiram.
 
 Cada mudança foi verificada pelo modelo de fluidos (nenhum segmento ganhou tubo ou porta além dos previstos, nenhum tile
 sobreposto) e no jogo (0 segmentos com mistura de fluidos).
