@@ -1,0 +1,29 @@
+title = "Fábrica de estrutura de baixa densidade"
+summary = "18 máquinas de montagem 3 com módulos de produtividade 3, aceleradas por 21 transmissores com módulos de velocidade 3, que fazem 6,28 estruturas de baixa densidade por segundo a partir de chapas de cobre, vigas de aço e barras de plástico."
+category = "production"
+tags = ["late-game", "modules", "beacons"]
+
+[[files]]
+name = "Fábrica de estrutura de baixa densidade"
+name_en = "Low density structure factory"
+name_es = "Fábrica de estructura de baja densidad"
+path = "low-density-structure-factory.txt"
+
+[test]
+status = "in-game"
+game_version = "2.0.77"
+report = "README.md"
+
+[[images]]
+path = "images/shot-1.webp"
+alt = "Vista geral, capturada no jogo"
+alt_en = "Overview, captured in-game"
+alt_es = "Vista general, captura del juego"
+
+[en]
+title = "Low density structure factory"
+summary = "18 assembling machines 3 with productivity modules 3, sped up by 21 beacons with speed modules 3, that make 6.28 low density structures per second from copper plates, steel plates and plastic bars."
+
+[es]
+title = "Fábrica de estructura de baja densidad"
+summary = "18 máquinas de ensamblaje 3 con módulos de productividad 3, aceleradas por 21 faros con módulos de velocidad 3, que hacen 6,28 estructuras de baja densidad por segundo a partir de placas de cobre, barras de acero y barras de plástico."
