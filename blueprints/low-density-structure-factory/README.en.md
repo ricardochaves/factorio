@@ -49,6 +49,7 @@ Tested in-game, as described above, in a scripted setup that differs from a play
 ## Corrections made here
 
 - The string arrived with no name and no description. The catalog gave it the name `Low density structure factory` and a description with what it consumes and produces, measured in-game. The 255 entities and the wires are the same as in the original string (checked by script).
+- The in-game description was longer than the 500 bytes that the game keeps when it imports a string, and the game cut the rest without warning. It was shortened so that it fits in full (checked in-game), with every number kept.
 
 ## Known limitations
 

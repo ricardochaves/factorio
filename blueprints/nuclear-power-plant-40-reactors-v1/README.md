@@ -102,6 +102,7 @@ Na segunda, um cenário de teste feito para esta entrada (não incluído no repo
 - Na coluna leste, a linha de turbinas da altura y = −157,5 não tinha o cano subterrâneo de entrada na borda: as 19 turbinas dessa linha nunca recebiam vapor. O teste da string original confirmou isso (1.273 de 1.292 turbinas funcionando); com o cano subterrâneo adicionado, as 1.292 funcionam.
 - A string não tinha nome nem descrição. Agora o nome é `Nuclear power plant - 40 reactors`, e a descrição, em inglês, traz a potência e o consumo medidos, as entradas e como ligar a base.
 - A string original é a que o dono do repositório forneceu; o resto do conteúdo decodificado é idêntico ao dela, conferido por script.
+- A descrição no jogo passava dos 500 bytes que o jogo guarda ao importar uma string, e o jogo cortava o resto sem avisar. Ela foi encurtada para caber inteira (conferido no jogo); os detalhes que saíram dela estão neste relatório.
 
 ## Limites conhecidos
 

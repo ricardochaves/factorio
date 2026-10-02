@@ -25,7 +25,9 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent))
 sys.path.insert(0, str(HERE))  # site/build.py loads this file by path, so its own folder is not on sys.path
 import bp  # noqa: E402  (scripts/bp.py)
-from extract_blueprint import is_blank  # noqa: E402  (the characters that draw nothing although their category is visible)
+# is_blank: the characters that draw nothing although their category is visible; texts_over_limit: the labels and
+# descriptions that the game would cut on import
+from extract_blueprint import is_blank, texts_over_limit  # noqa: E402
 from outpath import OutPath  # noqa: E402  (scripts/catalog/outpath.py)
 
 CATEGORIES = {
@@ -371,6 +373,8 @@ class Checker:
         except Exception as e:  # noqa: BLE001 - any failure here means "not a blueprint string"
             self.err(where, f'not a valid blueprint string ({type(e).__name__}: {e})'); return None
         self.check_tree(where, data)
+        for message in texts_over_limit(data):
+            self.err(where, message)
         top = data[kind]
         prints = [self.blueprint_stats(where, b, labels) for labels, b in bp.walk(data)] if kind in (
             'blueprint', 'blueprint_book') else []

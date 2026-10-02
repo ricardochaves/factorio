@@ -102,6 +102,7 @@ In the second, a test scenario made for this entry (not included in the reposito
 - In the east column, the turbine row at y = −157.5 had no input pipe to ground at the edge: the 19 turbines of that row never got steam. The test of the original string confirmed it (1,273 of 1,292 turbines working); with the pipe to ground added, all 1,292 work.
 - The string had no name and no description. Its name is now `Nuclear power plant - 40 reactors`, and the description, in English, gives the measured power and consumption, the inputs and how to connect the base.
 - The original string is the one the repository owner provided; the rest of the decoded content is identical to it, checked by script.
+- The in-game description was longer than the 500 bytes that the game keeps when it imports a string, and the game cut the rest without warning. It was shortened so that it fits in full (checked in-game); the details that were cut are in this report.
 
 ## Known limitations
 

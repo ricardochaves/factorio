@@ -68,6 +68,9 @@ BLANK_RANGES = ((0x034F, 0x034F), (0x115F, 0x1160), (0x17B4, 0x17B5), (0x180B, 0
                 (0x3164, 0x3164), (0xFE00, 0xFE0F), (0xFFA0, 0xFFA0), (0xFFF0, 0xFFF8), (0xE0000, 0xE0000), (0xE0002, 0xE001F),
                 (0xE0080, 0xE00FF), (0xE0100, 0xE01EF), (0xE01F0, 0xE0FFF))
 NON_ASCII = re.compile('[\x7f-\U0010ffff]')
+# What the game keeps of a label and of a description when it imports a string, in UTF-8 bytes: it cuts the rest and reports
+# no error (measured with LuaItemStack.import_stack in Factorio 2.0.77).
+TEXT_MAX_BYTES = {'label': 200, 'description': 500}
 
 
 class Refuse(Exception):
@@ -92,6 +95,37 @@ def make_visible(text):
 
 def game_version(v):
     return f'{v >> 48}.{(v >> 32) & 0xffff}.{(v >> 16) & 0xffff}'
+
+
+def texts_over_limit(obj):
+    """Yield one message for every label and description that the game would cut on import, in the item itself and in every
+    item of a book, at any depth. The message names the item by its label after the labels of the books that hold it. A
+    label comes from the source, so each one is written as a JSON string of at most 60 characters: a line break or a control
+    character in it cannot start a new line where the message is printed."""
+    stack = [(obj, ())]
+    while stack:
+        node, books = stack.pop()
+        item = next((node[k] for k in ALL_KINDS if isinstance(node.get(k), dict)), None) if isinstance(node, dict) else None
+        if item is None:
+            continue
+        label = item.get('label')
+        if isinstance(label, str) and label:
+            shown = json.dumps(label[:60] + ('...' if len(label) > 60 else ''))
+        else:
+            index = node.get('index')
+            shown = f'(no label, index {index})' if isinstance(index, int) else '(no label)'
+        path = books + (shown,)
+        for key, limit in TEXT_MAX_BYTES.items():
+            text = item.get(key)
+            if not isinstance(text, str):
+                continue
+            size = len(text.encode('utf-8', 'surrogatepass'))  # JSON can hold a lone surrogate, which plain UTF-8 refuses
+            if size > limit:
+                yield (f'the {key} of {" > ".join(path)} has {size} bytes: the game keeps only the first {limit} when it '
+                       'imports the string and cuts the rest without an error')
+        children = item.get('blueprints')
+        if isinstance(children, list):
+            stack.extend((child, path) for child in reversed(children))
 
 
 def check_public(url, allow_private):
@@ -317,6 +351,7 @@ def summarize(obj, kind, s, source, found_in, reencoded, out):
     if same:
         warnings.append(f'this design is already in the catalog as {same}; only its label, description, icons or '
                         'game version differ')
+    warnings.extend(f'{message}; the catalog refuses it' for message in texts_over_limit(obj))
     return {
         'source': source, 'found_in': found_in, 'kind': kind, 'duplicate_of': dup, 'same_design_as': same,
         'label': top.get('label') or '',
