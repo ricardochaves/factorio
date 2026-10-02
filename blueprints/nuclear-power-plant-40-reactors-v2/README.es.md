@@ -141,6 +141,7 @@ En la segunda, un escenario de prueba hecho para esta entrada (no incluido en el
 - La cadena no tenía nombre ni descripción. Ahora el nombre es `Nuclear power plant - 40 reactors v2`, y la descripción, en inglés, da la potencia, el consumo y el comportamiento de la red solar medidos, las entradas, cómo conectar la base y cómo arrancarla.
 - Cambio pedido por el dueño del repositorio: la red solar recibió 32 paneles solares, 90 acumuladores y 28 postes eléctricos medianos, en una franja entre la columna este de cisternas y las turbinas, hasta el final de las cisternas. Ninguno de ellos es alcanzado por postes ni robopuertos del grupo de las turbinas, y las dos redes siguen separadas (comprobado por script y en el juego).
 - La cadena original es la que proporcionó el dueño del repositorio; la comparación por script muestra solo el nombre, la descripción y estas adiciones (150 entidades y 28 cables).
+- La descripción en el juego superaba los 500 bytes que el juego conserva al importar una cadena, y el juego cortaba el resto sin avisar. Se acortó para que quepa entera (comprobado en el juego); los detalles que salieron de ella están en este informe.
 
 ## Límites conocidos
 

@@ -102,6 +102,7 @@ En la segunda, un escenario de prueba hecho para esta entrada (no incluido en el
 - En la columna este, a la fila de turbinas de la altura y = −157,5 le faltaba la tubería subterránea de entrada en el borde: las 19 turbinas de esa fila nunca recibían vapor. La prueba de la cadena original lo confirmó (1273 de 1292 turbinas funcionando); con la tubería subterránea añadida, funcionan las 1292.
 - La cadena no tenía nombre ni descripción. Ahora el nombre es `Nuclear power plant - 40 reactors`, y la descripción, en inglés, da la potencia y el consumo medidos, las entradas y cómo conectar la base.
 - La cadena original es la que proporcionó el dueño del repositorio; el resto del contenido decodificado es idéntico al de ella, comprobado por script.
+- La descripción en el juego superaba los 500 bytes que el juego conserva al importar una cadena, y el juego cortaba el resto sin avisar. Se acortó para que quepa entera (comprobado en el juego); los detalles que salieron de ella están en este informe.
 
 ## Límites conocidos
 

@@ -141,6 +141,7 @@ Na segunda, um cenário de teste feito para esta entrada (não incluído no repo
 - A string não tinha nome nem descrição. Agora o nome é `Nuclear power plant - 40 reactors v2`, e a descrição, em inglês, traz a potência, o consumo e o comportamento da rede solar medidos, as entradas, como ligar a base e como dar a partida.
 - Alteração pedida pelo dono do repositório: a rede solar ganhou 32 painéis solares, 90 acumuladores e 28 postes médios, numa faixa entre a coluna leste de tanques e as turbinas, até o fim dos tanques. Nada disso alcança postes ou roboports do grupo das turbinas, e as duas redes continuam separadas (conferido por script e no jogo).
 - A string original é a que o dono do repositório forneceu; a comparação por script mostra só o nome, a descrição e essas adições (150 entidades e 28 fios).
+- A descrição no jogo passava dos 500 bytes que o jogo guarda ao importar uma string, e o jogo cortava o resto sem avisar. Ela foi encurtada para caber inteira (conferido no jogo); os detalhes que saíram dela estão neste relatório.
 
 ## Limites conhecidos
 

@@ -49,6 +49,7 @@ Testado no jogo, como descrito acima, em um cenário com scripts que difere da c
 ## Correções feitas aqui
 
 - A string chegou sem nome e sem descrição. O catálogo deu a ela o nome `Low density structure factory` e uma descrição com o que ela consome e produz, medida no jogo. As 255 entidades e os fios são os mesmos da string original (conferido por script).
+- A descrição no jogo passava dos 500 bytes que o jogo guarda ao importar uma string, e o jogo cortava o resto sem avisar. Ela foi encurtada para caber inteira (conferido no jogo), sem perder nenhum número.
 
 ## Limites conhecidos
 

@@ -49,6 +49,7 @@ Probado en el juego, como se describe arriba, en un escenario con scripts que di
 ## Correcciones hechas aquí
 
 - La cadena llegó sin nombre y sin descripción. El catálogo le dio el nombre `Low density structure factory` y una descripción con lo que consume y produce, medido en el juego. Las 255 entidades y los cables son los mismos que en la cadena original (comprobado por script).
+- La descripción en el juego superaba los 500 bytes que el juego conserva al importar una cadena, y el juego cortaba el resto sin avisar. Se acortó para que quepa entera (comprobado en el juego), sin perder ninguna cifra.
 
 ## Límites conocidos
 

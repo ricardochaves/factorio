@@ -141,6 +141,7 @@ In the second, a test scenario made for this entry (not included in the reposito
 - The string had no name and no description. Its name is now `Nuclear power plant - 40 reactors v2`, and the description, in English, gives the measured power, consumption and solar-network behavior, the inputs, how to connect the base and how to start it.
 - Change asked for by the repository owner: the solar network got 32 solar panels, 90 accumulators and 28 medium electric poles, in a strip between the east column of tanks and the turbines, down to the end of the tanks. None of them is reached by a pole or roboport of the turbines' group, and the two networks are still separate (checked by script and in the game).
 - The original string is the one the repository owner provided; the comparison by script shows only the name, the description and these additions (150 entities and 28 wires).
+- The in-game description was longer than the 500 bytes that the game keeps when it imports a string, and the game cut the rest without warning. It was shortened so that it fits in full (checked in-game); the details that were cut are in this report.
 
 ## Known limitations
 
