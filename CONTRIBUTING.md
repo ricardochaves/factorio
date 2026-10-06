@@ -117,7 +117,9 @@ python3 -m http.server -d build/site 8000     # http://localhost:8000/
 It supports three languages, always kept in sync: Brazilian Portuguese at `/`, US English at `/en/` and Spanish at
 `/es/`. Interface text lives in [`site/i18n.py`](site/i18n.py); names of items and recipes come from the game's own
 translations ([`scripts/catalog/vanilla-locale.json`](scripts/catalog/vanilla-locale.json), refreshed by
-`scripts/catalog/dump_locale.py`). Each blueprint page shows the README of its language (`README.md`, `README.en.md` or `README.es.md`), and the build
+`scripts/catalog/dump_locale.py`), and their icons come from the game too
+([`scripts/catalog/vanilla-icons/`](scripts/catalog/vanilla-icons/), refreshed by `scripts/catalog/dump_icons.sh`).
+Each blueprint page shows the README of its language (`README.md`, `README.en.md` or `README.es.md`), and the build
 fails when a translation is missing.
 
 Visits are measured with Google Analytics 4, but only after the visitor accepts the banner

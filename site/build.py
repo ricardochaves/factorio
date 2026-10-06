@@ -2,8 +2,8 @@
 """Build the GitHub Pages site from blueprints/ into build/site/.
 
 Everything on the site comes from the repository: blueprint.toml (hand-written metadata), the blueprint strings
-(numbers, materials, recipes, book contents), each entry's README in the three languages (the report), the images and
-the git history (dates, changes). Nothing is typed twice.
+(numbers, materials, recipes, book contents), each entry's README in the three languages (the report), the images, the
+game's icons (scripts/catalog/vanilla-icons) and the git history (dates, changes). Nothing is typed twice.
 
 usage (from the repository root, inside the virtual environment with site/requirements.txt installed):
   python3 site/build.py                    build into build/site/
@@ -19,6 +19,7 @@ import datetime as dt
 import hashlib
 import html
 import importlib.util
+import io
 import json
 import os
 import posixpath
@@ -51,6 +52,9 @@ if GA_ID and not re.fullmatch(r'G-[A-Z0-9]{4,12}', GA_ID):
     raise SystemExit(f'GA_MEASUREMENT_ID must look like G-XXXXXXXXXX, got {GA_ID!r}')
 IMAGE_WIDTHS = (320, 640, 1280, 1920)
 IMAGE_QUALITY = {1920: 72}  # WebP quality per width (default 80); the largest one is the page's LCP image
+ICON_CELL = 56  # px of one sprite cell: twice the largest size the CSS draws an icon at (28 px), so it is sharp on 2x screens
+ICON_COLS = 10
+ICON_QUALITY = 82  # lossy WebP; the alpha channel stays lossless
 CACHE_VERSION = 2  # bump when the image or string output changes, so build/.cache is not reused
 CACHE = ROOT / 'build' / '.cache'
 NXM_LABEL = re.compile(r'^(\d+) to (\d+)(?: \(([^)]+)\))?$')
@@ -490,6 +494,59 @@ def build_model(out):
     return entries, news[:4], locale
 
 
+class Icons:
+    """The game's own icons in front of the recipes and materials of a blueprint page (scripts/catalog/dump_icons.py).
+    Each single-blueprint page gets ONE sprite with only the icons it shows, so the page costs one request and
+    downloads no icon that it does not draw; pages with the same icons share the file. The CSS cuts a cell out of the
+    sprite with --x and --y (column and row)."""
+    FILE_NAME = re.compile(r'(item|fluid|recipe)-[a-z0-9_-]+\.webp')
+
+    def __init__(self, entries):
+        self.dir = ROOT / 'scripts' / 'catalog' / 'vanilla-icons'
+        self.index = json.loads((self.dir.parent / 'vanilla-icons.json').read_text(encoding='utf-8'))
+        for names in self.index.values():  # the file names become paths: only what dump_icons.py writes
+            for name in names.values():
+                if not self.FILE_NAME.fullmatch(name):
+                    raise SystemExit(f'vanilla-icons.json: bad icon file name {name!r}')
+                if not (self.dir / name).is_file():
+                    raise SystemExit(f'vanilla-icons.json lists {name}, which is not in {self.dir}')
+        self.sprites = {}
+        for e in entries:
+            if e['single']:
+                used = [('recipe', recipe) for recipe, _machines in e['single']['recipes']]
+                used += [('item', name) for name, _n in e['bom'] + e['requests']]
+                for kind, name in sorted(set(used)):
+                    if self.file(kind, name) is None:
+                        # repr, because the name comes from a blueprint and must not carry control characters into the log
+                        print(f'warning: no icon for {kind!r} {name!r} ({e["slug"]!r})', file=sys.stderr)
+                self.sprites[e['slug']] = self.pack(sorted({self.file(kind, name) for kind, name in used} - {None}))
+
+    def pack(self, files):
+        cols, rows = ICON_COLS, -(-len(files) // ICON_COLS)
+        cells = {name: (i % ICON_COLS, i // ICON_COLS) for i, name in enumerate(files)}
+        sheet = Image.new('RGBA', (cols * ICON_CELL, rows * ICON_CELL))
+        for name, (col, row) in cells.items():
+            icon = Image.open(self.dir / name).convert('RGBA').resize((ICON_CELL, ICON_CELL), Image.LANCZOS)
+            sheet.paste(icon, (col * ICON_CELL, row * ICON_CELL))
+        buffer = io.BytesIO()
+        sheet.save(buffer, 'WEBP', quality=ICON_QUALITY, method=6)
+        data = buffer.getvalue()
+        return {'cols': cols, 'rows': rows, 'cells': cells, 'data': data,
+                'url': f'assets/icons.{hashlib.sha256(data).hexdigest()[:10]}.webp'}
+
+    def file(self, kind, name):
+        """The icon file of a recipe, or of an item (falling back to the fluid of that name), or None."""
+        for k in ('item', 'fluid') if kind == 'item' else (kind,):
+            if name in self.index[k]:
+                return self.index[k][name]
+        return None
+
+    def cell(self, slug, kind, name):
+        """(column, row) of the icon in the page's sprite, or None when the game has no icon with that name."""
+        file = self.file(kind, name)
+        return self.sprites[slug]['cells'][file] if file else None
+
+
 # ---------------------------------------------------------------- rendering
 class DataEnvironment(Environment):
     """In templates, d.key reads the dict key first. Plain Jinja tries the attribute first, so t.clear printed the
@@ -508,10 +565,13 @@ class Site:
                                    undefined=StrictUndefined, trim_blocks=True, lstrip_blocks=True)
         self.assets = {}
         self.pages = []
+        self.icons = Icons(entries)
 
     def copy_static(self):
         dest = self.out / 'assets'
         shutil.copytree(SITE / 'static' / 'fonts', dest / 'fonts')
+        for sprite in self.icons.sprites.values():  # pages with the same icons share one file
+            (self.out / sprite['url']).write_bytes(sprite['data'])
         for name in ('site.css', 'site.js', 'catalog.js', 'book.js') + (('analytics.js',) if GA_ID else ()):
             src = SITE / 'static' / name
             digest = hashlib.sha256(src.read_bytes()).hexdigest()[:10]
@@ -596,6 +656,7 @@ class Site:
             'item_name': lambda i: game['item'].get(i) or game['entity'].get(i) or game_en['item'].get(i, i),
             'categories': i18n.CATEGORIES, 'origins': i18n.ORIGINS,
             'phases': i18n.PHASES, 'city': i18n.CITY, 'uses': i18n.USES,
+            'icons': self.icons, 'icon_cell': self.icons.cell,
             'entries': self.entries, 'news': self.news,
         }
 
