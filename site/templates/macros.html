@@ -33,9 +33,19 @@
 {%- endmacro %}
 
 {# A game icon (item, fluid or recipe) cut out of the sprite that build.py packs. Decorative: the name follows it. #}
-{% macro ic(kind, name) -%}
-{% set cell = icon_cell(kind, name) %}
+{% macro ic(slug, kind, name) -%}
+{% set cell = icon_cell(slug, kind, name) %}
 <span class="ic{{ '' if cell else ' ic-none' }}"{% if cell %} style="--x:{{ cell[0] }};--y:{{ cell[1] }}"{% endif %} aria-hidden="true"></span>
+{%- endmacro %}
+
+{# One row of the recipes list: the recipe's icon and name, and the machines that run it. #}
+{% macro recipe_row(slug, recipe, machines) -%}
+<li><span class="row-name">{{ ic(slug, 'recipe', recipe) }}<span>{{ recipe_name(recipe) }}</span></span><span class="row-value">{% for machine, n in machines %}{{ fmt_int(n) }} {{ machine_label(machine, n) }}{{ ', ' if not loop.last }}{% endfor %}</span></li>
+{%- endmacro %}
+
+{# One row of a materials list: the item's icon and name, and its count. #}
+{% macro item_row(slug, name, n, cls='mono') -%}
+<li><span class="row-name">{{ ic(slug, 'item', name) }}<span>{{ item_name(name) }}</span></span><span class="{{ cls }}">{{ fmt_int(n) }}</span></li>
 {%- endmacro %}
 
 {% macro logo() -%}

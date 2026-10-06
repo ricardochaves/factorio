@@ -1,10 +1,13 @@
 #!/bin/zsh
 # usage: catalog/dump_icons.sh
 # Runs the game headless with the base mod only and --dump-icon-sprites, then packs the icons of items, fluids and
-# recipes into catalog/vanilla-icons/ and catalog/vanilla-icons.json (see dump_icons.py). Needs Pillow: it uses the
-# .venv at the repository root when there is one. Re-run after a Factorio update.
+# recipes into catalog/vanilla-icons/ and catalog/vanilla-icons.json (see dump_icons.py). Needs Pillow, so it stops
+# before it starts the game when the repository's .venv (python3 -m venv .venv && .venv/bin/pip install -r
+# site/requirements.txt) does not exist. Re-run after a Factorio update.
 CAT=${0:A:h}
 HERE=${CAT:h}
+PY=${HERE:h}/.venv/bin/python
+[ -x "$PY" ] || { echo "no virtual environment at ${HERE:h}/.venv: create it and install site/requirements.txt (Pillow)"; exit 1; }
 source "$HERE/factorio_env.sh"
 # An open Steam client that is not logged in restarts the game and drops its arguments; SteamAppId avoids that.
 export SteamAppId=427520
@@ -16,6 +19,4 @@ if [ "$mods" != "base core " ]; then
   echo "refusing to save: mods loaded are $mods, expected only base"
   exit 1
 fi
-PY=${HERE:h}/.venv/bin/python
-[ -x "$PY" ] || PY=python3
 "$PY" "$CAT/dump_icons.py" "$PWD/data/script-output" "$CAT"

@@ -5,15 +5,18 @@ The site puts an icon in front of every material and recipe it lists. The game b
 cracking, barrel filling...), so this takes the images the game itself dumps with --dump-icon-sprites instead of
 redrawing them. Icons that look the same (a recipe and the item it makes) share one file. The result is committed,
 because the CI has no game: catalog/vanilla-icons/*.webp (64x64, lossless) and catalog/vanilla-icons.json (prototype
-name -> file, per kind). site/build.py packs the ones a page shows into one small sprite.
+kind -> name -> file). site/build.py packs the ones a page shows into one small sprite per page.
 
-Run catalog/dump_icons.sh, which runs the game with the base mod only and then this script. Needs Pillow.
+Run catalog/dump_icons.sh, which runs the game with the base mod only and then this script with the repository's
+.venv. Re-run it with the Pillow version pinned in site/requirements.txt: another version can encode the same pixels
+to different bytes and rewrite every file in git.
 
 usage:
-  python3 scripts/catalog/dump_icons.py <script-output dir of the dump> [<catalog dir>]
+  .venv/bin/python scripts/catalog/dump_icons.py <script-output dir of the dump> [<catalog dir>]
 """
 import hashlib
 import json
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -22,6 +25,7 @@ from PIL import Image
 
 SIZE = 64
 KINDS = ('item', 'fluid', 'recipe')  # a file shared by several prototypes is named after the first one in this order
+FILE_NAME = re.compile(r'(item|fluid|recipe)-[a-z0-9_-]+\.webp')  # the same pattern site/build.py accepts
 
 
 def main():
@@ -38,18 +42,26 @@ def main():
             if not path.exists():
                 sys.exit(f'{path} is missing: the dump does not match vanilla-prototypes.json')
             image = Image.open(path).convert('RGBA')
-            if image.size != (SIZE, SIZE):
-                image = image.resize((SIZE, SIZE), Image.LANCZOS)  # the three wire icons are 56 px in the game data
+            if image.size != (SIZE, SIZE):  # the three wire icons are 56 px: centre them, as the game draws them
+                canvas = Image.new('RGBA', (SIZE, SIZE))
+                canvas.paste(image, ((SIZE - image.width) // 2, (SIZE - image.height) // 2))
+                image = canvas
             digest = hashlib.sha256(image.tobytes()).hexdigest()
             if digest not in by_pixels:
-                by_pixels[digest] = f'{kind}-{name}.webp'
-                files[by_pixels[digest]] = image
+                file_name = f'{kind}-{name}.webp'
+                if not FILE_NAME.fullmatch(file_name):
+                    sys.exit(f'{file_name}: a prototype name that site/build.py would refuse as a file name')
+                by_pixels[digest] = file_name
+                files[file_name] = image
             index[kind][name] = by_pixels[digest]
-    out = catalog / 'vanilla-icons'
-    shutil.rmtree(out, ignore_errors=True)
-    out.mkdir()
+    # write next to the final folder and swap at the end, so a failure leaves the committed icons and index untouched
+    out, tmp = catalog / 'vanilla-icons', catalog / 'vanilla-icons.tmp'
+    shutil.rmtree(tmp, ignore_errors=True)
+    tmp.mkdir()
     for name, image in files.items():
-        image.save(out / name, 'WEBP', lossless=True, quality=100, method=6)
+        image.save(tmp / name, 'WEBP', lossless=True, quality=100, method=6)
+    shutil.rmtree(out, ignore_errors=True)
+    tmp.rename(out)
     (catalog / 'vanilla-icons.json').write_text(
         json.dumps(index, indent=1, sort_keys=True, ensure_ascii=False) + '\n', encoding='utf-8')
     total = sum(p.stat().st_size for p in out.iterdir())

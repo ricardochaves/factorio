@@ -496,38 +496,42 @@ def build_model(out):
 
 class Icons:
     """The game's own icons in front of the recipes and materials of a blueprint page (scripts/catalog/dump_icons.py).
-    They are packed into ONE sprite that holds only the icons the pages show, so a page costs one request and no icon
-    it does not use. The CSS cuts a cell out of it with --x and --y (column and row)."""
+    Each blueprint page gets ONE sprite with only the icons it shows, so the page costs one request and downloads no
+    icon that it does not draw; pages with the same icons share the file. The CSS cuts a cell out of the sprite with
+    --x and --y (column and row)."""
+    FILE_NAME = re.compile(r'(item|fluid|recipe)-[a-z0-9_-]+\.webp')
 
     def __init__(self, entries):
-        catalog = ROOT / 'scripts' / 'catalog'
-        self.index = json.loads((catalog / 'vanilla-icons.json').read_text(encoding='utf-8'))
+        self.dir = ROOT / 'scripts' / 'catalog' / 'vanilla-icons'
+        self.index = json.loads((self.dir.parent / 'vanilla-icons.json').read_text(encoding='utf-8'))
         for names in self.index.values():  # the file names become paths: only what dump_icons.py writes
             for name in names.values():
-                if not re.fullmatch(r'(item|fluid|recipe)-[a-z0-9_-]+\.webp', name):
+                if not self.FILE_NAME.fullmatch(name):
                     raise SystemExit(f'vanilla-icons.json: bad icon file name {name!r}')
-        used = []
+                if not (self.dir / name).is_file():
+                    raise SystemExit(f'vanilla-icons.json lists {name}, which is not in {self.dir}')
+        self.sprites = {}
         for e in entries:
             if e['single']:
-                used += [('recipe', recipe) for recipe, _machines in e['single']['recipes']]
+                used = [('recipe', recipe) for recipe, _machines in e['single']['recipes']]
                 used += [('item', name) for name, _n in e['bom'] + e['requests']]
-        for kind, name in sorted(set(used)):
-            if self.file(kind, name) is None:
-                print(f'warning: no icon for {kind} {name}', file=sys.stderr)
-        files = sorted({self.file(kind, name) for kind, name in used} - {None})
-        self.cols, self.rows = ICON_COLS, -(-len(files) // ICON_COLS)
-        self.cells = {name: (i % ICON_COLS, i // ICON_COLS) for i, name in enumerate(files)}
-        self.url = self.data = None
-        if files:
-            sheet = Image.new('RGBA', (self.cols * ICON_CELL, self.rows * ICON_CELL))
-            for name, (col, row) in self.cells.items():
-                icon = Image.open(catalog / 'vanilla-icons' / name).convert('RGBA').resize((ICON_CELL, ICON_CELL),
-                                                                                           Image.LANCZOS)
-                sheet.paste(icon, (col * ICON_CELL, row * ICON_CELL))
-            buffer = io.BytesIO()
-            sheet.save(buffer, 'WEBP', quality=ICON_QUALITY, method=6)
-            self.data = buffer.getvalue()
-            self.url = f'assets/icons.{hashlib.sha256(self.data).hexdigest()[:10]}.webp'
+                for kind, name in sorted(set(used)):
+                    if self.file(kind, name) is None:
+                        print(f'warning: no icon for {kind} {name} ({e["slug"]})', file=sys.stderr)
+                self.sprites[e['slug']] = self.pack(sorted({self.file(kind, name) for kind, name in used} - {None}))
+
+    def pack(self, files):
+        cols, rows = ICON_COLS, -(-len(files) // ICON_COLS)
+        cells = {name: (i % ICON_COLS, i // ICON_COLS) for i, name in enumerate(files)}
+        sheet = Image.new('RGBA', (cols * ICON_CELL, rows * ICON_CELL))
+        for name, (col, row) in cells.items():
+            icon = Image.open(self.dir / name).convert('RGBA').resize((ICON_CELL, ICON_CELL), Image.LANCZOS)
+            sheet.paste(icon, (col * ICON_CELL, row * ICON_CELL))
+        buffer = io.BytesIO()
+        sheet.save(buffer, 'WEBP', quality=ICON_QUALITY, method=6)
+        data = buffer.getvalue()
+        return {'cols': cols, 'rows': rows, 'cells': cells, 'data': data,
+                'url': f'assets/icons.{hashlib.sha256(data).hexdigest()[:10]}.webp'}
 
     def file(self, kind, name):
         """The icon file of a recipe, or of an item (falling back to the fluid of that name), or None."""
@@ -536,10 +540,10 @@ class Icons:
                 return self.index[k][name]
         return None
 
-    def cell(self, kind, name):
-        """(column, row) of the icon in the sprite, or None when the game has no icon with that name."""
-        name = self.file(kind, name)
-        return self.cells[name] if name else None
+    def cell(self, slug, kind, name):
+        """(column, row) of the icon in the page's sprite, or None when the game has no icon with that name."""
+        file = self.file(kind, name)
+        return self.sprites[slug]['cells'][file] if file else None
 
 
 # ---------------------------------------------------------------- rendering
@@ -565,8 +569,8 @@ class Site:
     def copy_static(self):
         dest = self.out / 'assets'
         shutil.copytree(SITE / 'static' / 'fonts', dest / 'fonts')
-        if self.icons.url:
-            (self.out / self.icons.url).write_bytes(self.icons.data)
+        for sprite in self.icons.sprites.values():  # pages with the same icons share one file
+            (self.out / sprite['url']).write_bytes(sprite['data'])
         for name in ('site.css', 'site.js', 'catalog.js', 'book.js') + (('analytics.js',) if GA_ID else ()):
             src = SITE / 'static' / name
             digest = hashlib.sha256(src.read_bytes()).hexdigest()[:10]

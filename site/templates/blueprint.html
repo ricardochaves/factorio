@@ -3,7 +3,7 @@
 {% import '_blueprint_parts.html' as parts with context %}
 {% block title %}{{ loc(e.title) }} · {{ t.site_name }}{% endblock %}
 {% block description %}{{ loc(e.summary) }}{% endblock %}
-{% block head %}{% if e.single and icons.url %}<style>.ic{--ic-cols:{{ icons.cols }};--ic-rows:{{ icons.rows }};background-image:url("{{ root ~ icons.url }}")}</style>{% endif %}{% endblock %}
+{% block head %}{% if e.single %}{% set sprite = icons.sprites[e.slug] %}<style>.ic{--ic-cols:{{ sprite.cols }};--ic-rows:{{ sprite.rows }};background-image:url("{{ root ~ sprite.url }}")}</style>{% endif %}{% endblock %}
 {% block main %}
 {{ parts.head(e, false) }}
 <section class="container">
@@ -30,7 +30,7 @@
     {{ m.panel_head(t.produces, t.from_string) }}
     <ul class="rows rows-icons">
       {% for recipe, machines in e.single.recipes[:12] %}
-      <li><span class="row-name">{{ m.ic('recipe', recipe) }}<span>{{ recipe_name(recipe) }}</span></span><span class="row-value">{% for machine, n in machines %}{{ fmt_int(n) }} {{ machine_label(machine, n) }}{{ ', ' if not loop.last }}{% endfor %}</span></li>
+      {{ m.recipe_row(e.slug, recipe, machines) }}
       {% endfor %}
     </ul>
     {% if e.single.recipes|length > 12 %}
@@ -38,7 +38,7 @@
       <summary>{{ t.more_recipes.format(n=e.single.recipes|length) }}</summary>
       <ul class="rows rows-icons">
         {% for recipe, machines in e.single.recipes[12:] %}
-        <li><span class="row-name">{{ m.ic('recipe', recipe) }}<span>{{ recipe_name(recipe) }}</span></span><span class="row-value">{% for machine, n in machines %}{{ fmt_int(n) }} {{ machine_label(machine, n) }}{{ ', ' if not loop.last }}{% endfor %}</span></li>
+        {{ m.recipe_row(e.slug, recipe, machines) }}
         {% endfor %}
       </ul>
     </details>
@@ -50,7 +50,7 @@
     <p class="muted small">{{ t.materials_note }}</p>
     <ul class="rows rows-tight rows-icons">
       {% for name, n in e.bom[:18] %}
-      <li><span class="row-name">{{ m.ic('item', name) }}<span>{{ item_name(name) }}</span></span><span class="mono">{{ fmt_int(n) }}</span></li>
+      {{ m.item_row(e.slug, name, n) }}
       {% endfor %}
     </ul>
     {% if e.bom|length > 18 %}
@@ -58,7 +58,7 @@
       <summary>{{ t.more_items.format(n=e.bom|length) }}</summary>
       <ul class="rows rows-tight rows-icons">
         {% for name, n in e.bom[18:] %}
-        <li><span class="row-name">{{ m.ic('item', name) }}<span>{{ item_name(name) }}</span></span><span class="mono">{{ fmt_int(n) }}</span></li>
+        {{ m.item_row(e.slug, name, n) }}
         {% endfor %}
       </ul>
     </details>
@@ -67,7 +67,7 @@
     <h3 class="rows-title">{{ t.inserted }}</h3>
     <ul class="rows rows-tight rows-icons">
       {% for name, n in e.requests %}
-      <li><span class="row-name">{{ m.ic('item', name) }}<span>{{ item_name(name) }}</span></span><span class="mono accent">{{ fmt_int(n) }}</span></li>
+      {{ m.item_row(e.slug, name, n, 'mono accent') }}
       {% endfor %}
     </ul>
     {% endif %}
