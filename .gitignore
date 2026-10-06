@@ -59,6 +59,8 @@ __pycache__/
 *.log
 /scripts/*.json
 /scripts/ingame_analysis*.txt
+# Work folder of scripts/catalog/dump_icons.py; a killed run can leave it behind.
+/scripts/catalog/vanilla-icons.tmp/
 /scripts/lib_*.txt
 
 # Third-party inputs (fetch them as described in scripts/README.md).

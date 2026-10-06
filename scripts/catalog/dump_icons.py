@@ -38,19 +38,21 @@ def main():
     for kind in KINDS:
         index[kind] = {}
         for name in sorted(protos[kind]):
+            file_name = f'{kind}-{name}.webp'
+            if not FILE_NAME.fullmatch(file_name):  # before the name becomes a path
+                sys.exit(f'{file_name}: a prototype name that site/build.py would refuse as a file name')
             path = dump / kind / f'{name}.png'
             if not path.exists():
                 sys.exit(f'{path} is missing: the dump does not match vanilla-prototypes.json')
             image = Image.open(path).convert('RGBA')
+            if image.width > SIZE or image.height > SIZE:
+                sys.exit(f'{path} is {image.width}x{image.height}, larger than {SIZE}x{SIZE}: it would be cropped')
             if image.size != (SIZE, SIZE):  # the three wire icons are 56 px: centre them, as the game draws them
                 canvas = Image.new('RGBA', (SIZE, SIZE))
                 canvas.paste(image, ((SIZE - image.width) // 2, (SIZE - image.height) // 2))
                 image = canvas
             digest = hashlib.sha256(image.tobytes()).hexdigest()
             if digest not in by_pixels:
-                file_name = f'{kind}-{name}.webp'
-                if not FILE_NAME.fullmatch(file_name):
-                    sys.exit(f'{file_name}: a prototype name that site/build.py would refuse as a file name')
                 by_pixels[digest] = file_name
                 files[file_name] = image
             index[kind][name] = by_pixels[digest]
@@ -64,7 +66,7 @@ def main():
     except BaseException:
         shutil.rmtree(tmp, ignore_errors=True)  # a failed save leaves nothing behind in the repository
         raise
-    shutil.rmtree(out, ignore_errors=True)
+    shutil.rmtree(out)  # no ignore_errors: a folder that cannot be removed must stop the run, not the rename
     tmp.rename(out)
     (catalog / 'vanilla-icons.json').write_text(
         json.dumps(index, indent=1, sort_keys=True, ensure_ascii=False) + '\n', encoding='utf-8')
