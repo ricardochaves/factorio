@@ -26,7 +26,7 @@ Everything runs with Python 3 (standard library only, except `catalog/dump_icons
 | `dump_prototypes.sh` | Regenerates the file above from the local game with scenario `ingame/data/scenarios/dump-prototypes`; it refuses to save if any mod other than `base` is active. Re-run after a Factorio update. |
 | `vanilla-locale.json` | In-game names of items, entities, recipes and fluids in English, Brazilian Portuguese and Spanish, used by the website. |
 | `dump_locale.py` | Regenerates the file above from the game's locale files (`$FACTORIO_BIN` or the Steam install). Re-run after a Factorio update. |
-| `vanilla-icons/`, `vanilla-icons.json` | The game's icons of every item, fluid and recipe (64 × 64, lossless WebP; a recipe that looks like its item shares the file) and the index (kind → name → file). `site/build.py` packs the icons that each page shows into one sprite per page. |
+| `vanilla-icons/`, `vanilla-icons.json` | The game's icons of every item, fluid and recipe (64 × 64, lossless WebP; a recipe that looks like its item shares the file) and the index (kind → name → file). `site/build.py` packs the icons that each single-blueprint page shows into one sprite for that page. |
 | `dump_icons.sh`, `dump_icons.py` | Regenerate the two above: the script runs the game headless with the base mod only (`--dump-icon-sprites`, refuses to save if another mod loads) and the Python part packs the images (needs Pillow, so it stops before starting the game when the repository's `.venv` does not exist). Re-run after a Factorio update. |
 
 ## Belt balancers

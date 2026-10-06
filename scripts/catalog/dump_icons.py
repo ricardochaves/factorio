@@ -58,8 +58,12 @@ def main():
     out, tmp = catalog / 'vanilla-icons', catalog / 'vanilla-icons.tmp'
     shutil.rmtree(tmp, ignore_errors=True)
     tmp.mkdir()
-    for name, image in files.items():
-        image.save(tmp / name, 'WEBP', lossless=True, quality=100, method=6)
+    try:
+        for name, image in files.items():
+            image.save(tmp / name, 'WEBP', lossless=True, quality=100, method=6)
+    except BaseException:
+        shutil.rmtree(tmp, ignore_errors=True)  # a failed save leaves nothing behind in the repository
+        raise
     shutil.rmtree(out, ignore_errors=True)
     tmp.rename(out)
     (catalog / 'vanilla-icons.json').write_text(
