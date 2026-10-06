@@ -517,7 +517,8 @@ class Icons:
                 used += [('item', name) for name, _n in e['bom'] + e['requests']]
                 for kind, name in sorted(set(used)):
                     if self.file(kind, name) is None:
-                        print(f'warning: no icon for {kind} {name} ({e["slug"]})', file=sys.stderr)
+                        # repr, because the name comes from a blueprint and must not carry control characters into the log
+                        print(f'warning: no icon for {kind!r} {name!r} ({e["slug"]!r})', file=sys.stderr)
                 self.sprites[e['slug']] = self.pack(sorted({self.file(kind, name) for kind, name in used} - {None}))
 
     def pack(self, files):

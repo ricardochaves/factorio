@@ -278,7 +278,7 @@ select { min-height: 44px; padding: 0 12px; background: var(--chip); color: var(
 .rows-tight .row-name { font-weight: 400; color: var(--text-2); }
 /* A game icon in front of a name: build.py packs the sprite, the page's <style> sets its image and grid, --x and --y pick the cell. */
 .ic { --s: 28px; flex: none; width: var(--s); height: var(--s); background-repeat: no-repeat; background-size: calc(var(--s) * var(--ic-cols)) calc(var(--s) * var(--ic-rows)); background-position: calc(var(--s) * var(--x) * -1) calc(var(--s) * var(--y) * -1); }
-.ic-none { background: none; }
+.ic.ic-none { background: none; }  /* two classes: wins over the page's <style>, which comes after this file */
 .rows-tight .ic { --s: 24px; }
 .rows-icons li { padding-top: 8px; padding-bottom: 8px; }
 .rows-icons.rows-tight li { padding-top: 4px; padding-bottom: 4px; }
