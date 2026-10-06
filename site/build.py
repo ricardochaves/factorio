@@ -497,8 +497,8 @@ def build_model(out):
 class Icons:
     """The game's own icons in front of the recipes and materials of a blueprint page (scripts/catalog/dump_icons.py).
     Each single-blueprint page gets ONE sprite with only the icons it shows, so the page costs one request and
-    downloads no icon that it does not draw; pages with the same icons share the file. The CSS cuts a cell out of the sprite with
-    --x and --y (column and row)."""
+    downloads no icon that it does not draw; pages with the same icons share the file. The CSS cuts a cell out of the
+    sprite with --x and --y (column and row)."""
     FILE_NAME = re.compile(r'(item|fluid|recipe)-[a-z0-9_-]+\.webp')
 
     def __init__(self, entries):
